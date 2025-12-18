@@ -19,7 +19,7 @@ import { memo, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colorKit } from 'reanimated-color-picker';
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics';
-import { easeGradient } from '@/app/utils/ease-gradient';
+import { easeGradient } from '@/utils/ease-gradient';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
