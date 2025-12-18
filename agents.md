@@ -1,6 +1,7 @@
 ## Lifelong — personal longevity app
 
 Lifelong is a React Native app (Expo + Expo Router + Expo UI) focused on personalized longevity: it guides users through research-grounded, pragmatic protocols tailored to the individual.
+This repo is the Lifelong app and houses many shared components we copy from `/Users/param-singh/Development/Mobile-Development/rn-makeitanimated`.
 
 ### Project layout
 - `app/`: Expo Router native tab routes and entry screens (Home, Health, Social, More); routing stays here.
