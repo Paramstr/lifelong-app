@@ -1,10 +1,9 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Carousel from '@/components/opal/carousel';
-import { simulatePress } from '@/utils/simulate-press';
+import StartTimerButton from '@/components/opal/start-timer-button';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
@@ -32,7 +31,6 @@ const HomeScreen = () => {
 
         </View>
 
-          
         <Text style={styles.sectionTitle}>Upcoming</Text>
         <View style={styles.placeholderBox}>
           <View style={[styles.placeholderLine, styles.w1_3]} />
@@ -74,6 +72,10 @@ const HomeScreen = () => {
         </View>
 
       </ScrollView>
+
+      <View style={[styles.bottomButtonContainer, { bottom: insets.bottom + 80 }]}>
+        <StartTimerButton />
+      </View>
 
 
 

@@ -18,7 +18,7 @@ export const ScreenBottomBlur: FC = () => {
   });
 
   return (
-    <View className="absolute bottom-0 left-0 right-0" style={{ height }}>
+    <View style={[{ position: 'absolute', bottom: 0, left: 0, right: 0 }, { height }]}>
       <LinearGradient colors={colors} locations={locations} style={StyleSheet.absoluteFill} />
       <ProgressiveBlurView position="bottom" height={height} />
     </View>
