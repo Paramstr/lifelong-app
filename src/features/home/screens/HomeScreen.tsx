@@ -5,22 +5,27 @@ import { StyleSheet } from 'react-native-unistyles';
 
 import Carousel from '@/components/opal/carousel';
 import StartTimerButton from '@/components/opal/start-timer-button';
+import WeeklyProgress from '@/components/opal/weekly-progress';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.container}>
+
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
           {
-            paddingTop: insets.top + 24,
+            paddingTop: 12,
             paddingBottom: insets.bottom + 120,
           },
         ]}
         showsVerticalScrollIndicator={false}
       >
+        <View style={{ paddingTop: insets.top }}>
+          <WeeklyProgress />
+        </View>
         <View style={styles.headerRow}>
           <View style={styles.headerTextContainer}>
             <Text style={styles.greetingText}>Hi Param,</Text>

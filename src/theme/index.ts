@@ -194,6 +194,15 @@ export const lightTheme = {
         },
         progress,
         gradient: gradients.vital.light,
+        weekProgress: {
+            completed: semantic.success.base,
+            current: ['#3CB371', 'rgba(60, 179, 113, 0)'],
+            future: {
+                border: '#E5E9EE',
+                background: 'transparent',
+            },
+            label: '#94A3B8',
+        },
     },
     spacing,
     radius,
@@ -265,6 +274,15 @@ export const darkTheme = {
         },
         progress,
         gradient: gradients.vital.dark,
+        weekProgress: {
+            completed: '#4DC47E',
+            current: ['#3CB371', 'rgba(60, 179, 113, 0)'],
+            future: {
+                border: '#263042',
+                background: 'transparent',
+            },
+            label: '#7C8A9D',
+        },
     },
     spacing,
     radius,
