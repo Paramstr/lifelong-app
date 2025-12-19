@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet } from 'react-native-unistyles';
 
 import Carousel from '@/components/opal/carousel';
 import StartTimerButton from '@/components/opal/start-timer-button';
@@ -28,7 +29,6 @@ const HomeScreen = () => {
               You're doing great. Stay on track to feel your best.
             </Text>
           </View>
-
         </View>
 
         <Text style={styles.sectionTitle}>Upcoming</Text>
@@ -70,125 +70,86 @@ const HomeScreen = () => {
             ]}
           />
         </View>
-
       </ScrollView>
 
       <View style={[styles.bottomButtonContainer, { bottom: insets.bottom + 80 }]}>
         <StartTimerButton />
       </View>
-
-
-
-      {/* <ScreenTopBlur /> */}
-      {/* <ScreenBottomBlur /> */}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+// Using Unistyles with theme support
+const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: theme.colors.background.primary,
   },
   scrollContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: theme.spacing.lg - 4, // 20px
   },
   sectionTitle: {
-    color: '#fafafa',
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 16,
+    color: theme.colors.text.primary,
+    fontSize: theme.typography.title.fontSize,
+    fontWeight: theme.typography.title.fontWeight,
+    marginBottom: theme.spacing.md,
   },
   sectionTitleNoMB: {
-    color: '#fafafa',
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: theme.colors.text.primary,
+    fontSize: theme.typography.title.fontSize,
+    fontWeight: theme.typography.title.fontWeight,
+    marginBottom: theme.spacing.xs,
   },
   sectionSubtitle: {
-    color: '#a3a3a3',
-    fontSize: 16,
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.body.fontSize,
     fontWeight: '500',
-    marginBottom: 16,
-  },
-  mb8: {
-    marginBottom: 32,
-  },
-  dashedBoxInternal: {
-    width: '100%',
-    height: 120,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(23, 23, 23, 0.7)',
-    gap: 12,
-  },
-  plusIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: '#262626',
-    borderWidth: 1,
-    borderColor: '#404040',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dashedBoxText: {
-    color: '#e5e5e5',
-    fontSize: 18,
-    fontWeight: '500',
+    marginBottom: theme.spacing.md,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 40,
+    marginBottom: theme.spacing['2xl'],
   },
   headerTextContainer: {
     flex: 1,
   },
   greetingText: {
-    color: '#a3a3a3',
-    fontSize: 16,
+    color: theme.colors.text.muted,
+    fontSize: theme.typography.body.fontSize,
     fontWeight: '400',
-    marginBottom: 4,
+    marginBottom: theme.spacing.xs,
   },
   heroHeadline: {
-    color: 'white',
-    fontSize: 32,
-    fontWeight: '800',
-    marginBottom: 12,
-    lineHeight: 38,
-    letterSpacing: -0.5,
+    color: theme.colors.text.primary,
+    fontSize: theme.typography.display.fontSize,
+    fontWeight: theme.typography.display.fontWeight,
+    marginBottom: theme.spacing.md - 4, // 12px
+    lineHeight: theme.typography.display.lineHeight,
+    letterSpacing: theme.typography.display.letterSpacing,
   },
   heroDescription: {
-    color: '#d4d4d4',
-    fontSize: 16,
-    lineHeight: 22,
+    color: theme.colors.text.secondary,
+    fontSize: theme.typography.body.fontSize,
+    lineHeight: theme.typography.body.lineHeight,
     fontWeight: '400',
-  },
-  iconButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: '#f3f4f6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 4,
   },
   placeholderBox: {
     width: '100%',
     height: 120,
-    borderRadius: 24,
-    padding: 16,
-    paddingTop: 24,
-    backgroundColor: 'rgba(23, 23, 23, 0.7)',
-    marginBottom: 16,
+    borderRadius: theme.radius['2xl'],
+    padding: theme.spacing.md,
+    paddingTop: theme.spacing.lg,
+    backgroundColor: theme.colors.surface.card,
+    marginBottom: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border.subtle,
   },
   placeholderLine: {
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#171717',
+    backgroundColor: theme.colors.border.divider,
   },
   w1_3: {
     width: '33.333333%',
@@ -197,18 +158,15 @@ const styles = StyleSheet.create({
     width: '66.666667%',
   },
   mb12: {
-    marginBottom: 48,
+    marginBottom: theme.spacing['3xl'],
   },
   carouselWrapperMB12: {
     marginHorizontal: -20,
-    marginBottom: 48,
+    marginBottom: theme.spacing['3xl'],
   },
   carouselWrapperMB10: {
     marginHorizontal: -20,
-    marginBottom: 40,
-  },
-  borderCurve: {
-    borderCurve: 'continuous',
+    marginBottom: theme.spacing['2xl'],
   },
   bottomButtonContainer: {
     position: 'absolute',
@@ -217,6 +175,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
   },
-});
+}));
 
 export default HomeScreen;
