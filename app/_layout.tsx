@@ -1,6 +1,7 @@
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
 import { DynamicColorIOS } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { FloatingDevTools } from '@react-buoy/core';
 
 export default function RootLayout() {
   const tintColor = DynamicColorIOS({
@@ -36,6 +37,7 @@ export default function RootLayout() {
           <Icon sf={{ default: 'ellipsis.circle', selected: 'ellipsis.circle.fill' }} drawable="ic_menu_more" />
         </NativeTabs.Trigger>
       </NativeTabs>
+      {__DEV__ && <FloatingDevTools environment="local" userRole="admin" />}
     </GestureHandlerRootView>
   );
 }

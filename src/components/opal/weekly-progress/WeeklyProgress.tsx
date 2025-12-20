@@ -21,7 +21,7 @@ const WeeklyProgress = () => {
   useEffect(() => {
     // Center today's circle
     // Fixed formula: ITEM_WIDTH * index centers it relative to the paddingHorizontal
-    const scrollX = ITEM_WIDTH * currentDayIndex-20;
+    const scrollX = ITEM_WIDTH * currentDayIndex;
     
     const timer = setTimeout(() => {
         scrollViewRef.current?.scrollTo({ x: scrollX, animated: true });
@@ -109,6 +109,8 @@ const styles = StyleSheet.create((theme) => ({
     width: ITEM_WIDTH,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'red',
   },
   glow: {
     position: 'absolute',

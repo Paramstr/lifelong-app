@@ -5,6 +5,12 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@react-buoy/shared-ui": [
+        "./node_modules/@react-buoy/core/node_modules/@react-buoy/shared-ui/lib/typescript/module/index.d.ts"
+      ],
+      "@react-buoy/shared-ui/*": [
+        "./node_modules/@react-buoy/core/node_modules/@react-buoy/shared-ui/lib/typescript/module/*"
       ]
     }
   },
