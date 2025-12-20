@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 const MoreScreen = () => {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} pointerEvents="box-none">
       <Text style={styles.text}>More Screen</Text>
     </View>
   );

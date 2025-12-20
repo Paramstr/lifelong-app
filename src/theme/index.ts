@@ -17,7 +17,7 @@ const brand = {
     },
     // Secondary - Sky Calm Blue (headers, cards, illustrations, background accents)
     secondary: {
-        light: '#A9CFE5',
+        light: '#ffffffff',
         dark: '#6FA8C9',
     },
     // Accent - Longevity Yellow (subtle emphasis, icons, badges, optimism)
@@ -159,7 +159,7 @@ export const lightTheme = {
     // Background colors
     colors: {
         background: {
-            primary: '#F7FAFC',
+            primary: '#FFFFFF',
             secondary: '#FFFFFF',
         },
         surface: {

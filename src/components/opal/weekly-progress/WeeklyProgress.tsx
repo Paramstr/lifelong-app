@@ -10,6 +10,8 @@ const SPACING = 12;
 const ITEM_WIDTH = CIRCLE_SIZE + SPACING;
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const TOTAL_WIDTH = ITEM_WIDTH * DAYS.length;
+const H_PADDING = Math.max((SCREEN_WIDTH - TOTAL_WIDTH) / 2, SPACING);
 
 const WeeklyProgress = () => {
   const scrollViewRef = useRef<ScrollView>(null);
@@ -19,14 +21,13 @@ const WeeklyProgress = () => {
   const currentDayIndex = today === 0 ? 6 : today - 1; // Adjust so Mon=0, Sun=6
 
   useEffect(() => {
-    // Center today's circle
-    // Fixed formula: ITEM_WIDTH * index centers it relative to the paddingHorizontal
-    const scrollX = ITEM_WIDTH * currentDayIndex;
-    
+    const maxX = H_PADDING + ITEM_WIDTH * (DAYS.length - 1);
+    const scrollX = Math.min(Math.max(H_PADDING + ITEM_WIDTH * currentDayIndex, 0), maxX);
+
     const timer = setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ x: scrollX, animated: true });
+      scrollViewRef.current?.scrollTo({ x: scrollX, animated: true });
     }, 100);
-    
+
     return () => clearTimeout(timer);
   }, [currentDayIndex]);
 
@@ -86,6 +87,7 @@ const WeeklyProgress = () => {
         horizontal
         scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         decelerationRate="fast"
         snapToInterval={ITEM_WIDTH}
@@ -100,17 +102,20 @@ const styles = StyleSheet.create((theme) => ({
   container: {
     paddingVertical: theme.spacing.md,
     backgroundColor: 'transparent',
+    alignItems: 'center',
+  },
+  scrollView: {
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollContent: {
-    paddingHorizontal: SCREEN_WIDTH / 2 - ITEM_WIDTH / 2,
+    paddingHorizontal: H_PADDING,
     alignItems: 'center',
   },
   itemContainer: {
     width: ITEM_WIDTH,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'red',
   },
   glow: {
     position: 'absolute',
