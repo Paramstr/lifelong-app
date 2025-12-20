@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "iOS Beta (Radon)",
+            "type": "radon-ide",
+            "request": "launch",
+            "appRoot": "./",
+            "env": {
+                "DEVELOPER_DIR": "/Applications/Xcode-beta.app/Contents/Developer"
+            },
+            "ios": {
+                "scheme": "lifelongapp",
+                "configuration": "Debug",
+                "deviceId": "8B4EAD6E-1380-4E84-B7F6-74D1E6A14A75"
+            }
+        }
+    ]
+}
