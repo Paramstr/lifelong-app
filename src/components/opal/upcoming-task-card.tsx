@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { GlassView } from 'expo-glass-effect';
 import React from 'react';
-import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageSourcePropType, Pressable, Text, View } from 'react-native';
 
 interface UpcomingTaskCardProps {
     title: string;
@@ -12,6 +12,7 @@ interface UpcomingTaskCardProps {
     // New props for the redesign
     avatarUrl?: ImageSourcePropType;
     taskImage?: ImageSourcePropType;
+    backgroundImage?: ImageSourcePropType;
     username?: string;
     tag?: string;
     timestamp?: string;
@@ -26,6 +27,7 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
     onPress,
     avatarUrl,
     taskImage,
+    backgroundImage,
     username = 'Param',
     tag = '/orb',
     timestamp = '18:12',
@@ -49,11 +51,32 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
                 // @ts-ignore: borderCurve is a valid react-native style for iOS 13+ but requires newer types
                 borderCurve: 'continuous',
             }}>
+                <Image 
+                    source={backgroundImage || taskImage || require('../../../assets/images/header.png')}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                    }}
+                    resizeMode="cover"
+                />
+
                 {/* 
                   GlassView from expo-glass-effect provides the liquid glass surface.
                   It fills the container and provides the blur.
                 */}
-                <GlassView style={StyleSheet.absoluteFill} />
+                <GlassView 
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                    }}
+                    glassEffectStyle="clear"
+                />
 
                 <View style={{
                     flexDirection: 'row',
