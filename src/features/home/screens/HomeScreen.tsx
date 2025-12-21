@@ -4,7 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
 import Carousel from '@/components/opal/carousel';
-import StartTimerButton from '@/components/opal/start-timer-button';
+import TopBlurHeader from '@/components/opal/top-blur-header';
+import UpcomingTaskCard from '@/components/opal/upcoming-task-card';
 import WeeklyProgress from '@/components/opal/weekly-progress';
 
 const HomeScreen = () => {
@@ -14,38 +15,43 @@ const HomeScreen = () => {
     <View style={styles.container}>
 
       <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingTop: 12,
-            paddingBottom: insets.bottom + 120,
-          },
-        ]}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 120,
+        }}
       >
-        <View style={{ paddingTop: insets.top }}>
-          <WeeklyProgress />
-        </View>
-        <View style={styles.headerRow}>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.greetingText}>Hi Param,</Text>
-            <Text style={styles.heroHeadline}>Keep up the mobility.</Text>
-            <Text style={styles.heroDescription}>
-              You're doing great. Stay on track to feel your best.
-            </Text>
+        {/* <TopBlurHeader fadeStart={0.1} fadeEnd={0.8} blurIntensity={60} /> */}
+        
+        <View style={styles.scrollContent}>
+          <View style={styles.weeklyProgressContainer}>
+            <WeeklyProgress />
           </View>
-        </View>
+          <View style={styles.headerRow}>
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.greetingText}>Hi Param,</Text>
+              <Text style={styles.heroHeadline}>Keep up the mobility.</Text>
+              <Text style={styles.heroDescription}>
+                You're doing great. Stay on track to feel your best.
+              </Text>
+            </View>
+          </View>
 
         <Text style={styles.sectionTitle}>Upcoming</Text>
-        <View style={styles.placeholderBox}>
-          <View style={[styles.placeholderLine, styles.w1_3]} />
-          <View style={[styles.placeholderLine, styles.w2_3]} />
-          <View style={[styles.placeholderLine, styles.w2_3]} />
-        </View>
-        <View style={[styles.placeholderBox, styles.mb12]}>
-          <View style={[styles.placeholderLine, styles.w1_3]} />
-          <View style={[styles.placeholderLine, styles.w2_3]} />
-          <View style={[styles.placeholderLine, styles.w2_3]} />
+        <UpcomingTaskCard 
+          title="Morning Mobility"
+          journey="Knee Recovery"
+          duration="10 min"
+          icon="sunny-outline"
+          onPress={() => console.log('Start Morning Mobility')}
+        />
+        <View style={styles.mb8}>
+          <UpcomingTaskCard 
+            title="Evening Mobility"
+            journey="Knee Recovery"
+            duration="15 min"
+            icon="moon-outline"
+            onPress={() => console.log('Start Evening Mobility')}
+          />
         </View>
 
         <Text style={styles.sectionTitleNoMB}>Get More Done</Text>
@@ -75,11 +81,9 @@ const HomeScreen = () => {
             ]}
           />
         </View>
+        </View>
       </ScrollView>
 
-      <View style={[styles.bottomButtonContainer, { bottom: insets.bottom + 80 }]}>
-        <StartTimerButton />
-      </View>
     </View>
   );
 };
@@ -92,6 +96,7 @@ const styles = StyleSheet.create(theme => ({
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.lg - 4, // 20px
+    paddingTop: 12,
   },
   sectionTitle: {
     color: theme.colors.text.primary,
@@ -162,8 +167,15 @@ const styles = StyleSheet.create(theme => ({
   w2_3: {
     width: '66.666667%',
   },
+  weeklyProgressContainer: {
+    marginTop: 20, // Adjust this to push content down so it's not too high up
+    paddingTop: theme.spacing.md,
+  },
+  mb8: {
+    marginBottom: theme.spacing.sm,
+  },
   mb12: {
-    marginBottom: theme.spacing['3xl'],
+    marginBottom: theme.spacing['4xl'],
   },
   carouselWrapperMB12: {
     marginHorizontal: -20,
