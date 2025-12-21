@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
 import Carousel from '@/components/opal/carousel';
-import TopBlurHeader from '@/components/opal/top-blur-header';
 import UpcomingTaskCard from '@/components/opal/upcoming-task-card';
 import WeeklyProgress from '@/components/opal/weekly-progress';
 
@@ -41,18 +40,24 @@ const HomeScreen = () => {
           title="Morning Mobility"
           journey="Knee Recovery"
           duration="10 min"
-          icon="sunny-outline"
+          taskImage={require('../../../../assets/images/morning-mobility.png')}
+          timestamp="08:30"
+          count={3}
+          username="Param"
           onPress={() => console.log('Start Morning Mobility')}
         />
-        <View style={styles.mb8}>
-          <UpcomingTaskCard 
-            title="Evening Mobility"
-            journey="Knee Recovery"
-            duration="15 min"
-            icon="moon-outline"
-            onPress={() => console.log('Start Evening Mobility')}
-          />
-        </View>
+        <View style={styles.cardGap} />
+        <UpcomingTaskCard 
+          title="Evening Mobility"
+          journey="Knee Recovery"
+          duration="15 min"
+          taskImage={require('../../../../assets/images/evening-mobility.png')}
+          timestamp="19:45"
+          count={1}
+          username="Param"
+          onPress={() => console.log('Start Evening Mobility')}
+        />
+        <View style={styles.mb8} />
 
         <Text style={styles.sectionTitleNoMB}>Get More Done</Text>
         <Text style={styles.sectionSubtitle}>Maximize your productivity while staying sane.</Text>
@@ -173,6 +178,9 @@ const styles = StyleSheet.create(theme => ({
   },
   mb8: {
     marginBottom: theme.spacing.sm,
+  },
+  cardGap: {
+    height: 12,
   },
   mb12: {
     marginBottom: theme.spacing['4xl'],
