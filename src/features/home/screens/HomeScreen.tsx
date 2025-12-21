@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -97,7 +98,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.primary,
+    backgroundColor: '#F8FAFC', // Fallback
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.lg - 4, // 20px

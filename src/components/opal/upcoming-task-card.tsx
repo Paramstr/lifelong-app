@@ -1,27 +1,7 @@
-import {
-    Circle,
-    Text as ExpoText,
-    GlassEffectContainer,
-    Host,
-    HStack,
-    Spacer,
-    VStack,
-    ZStack
-} from '@expo/ui/swift-ui';
-import {
-    border,
-    cornerRadius,
-    foregroundStyle,
-    frame,
-    offset,
-    opacity,
-    padding,
-    shadow
-} from '@expo/ui/swift-ui/modifiers';
 import { Ionicons } from '@expo/vector-icons';
+import { GlassView } from 'expo-glass-effect';
 import React from 'react';
-import { Image, ImageSourcePropType, Pressable } from 'react-native';
-import { StyleSheet } from 'react-native-unistyles';
+import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface UpcomingTaskCardProps {
     title: string;
@@ -52,172 +32,138 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
     count = 1,
 }) => {
     return (
-        <Pressable onPress={onPress}>
-            {/* 
-              matchContents ensures the Host only takes as much space as the card.
-            */}
-            <Host>
+        <Pressable 
+            onPress={onPress} 
+            style={({ pressed }) => ({
+                marginVertical: 8,
+                transform: [{ scale: pressed ? 0.98 : 1 }]
+            })}
+        >
+            <View style={{
+                borderRadius: 24,
+                overflow: 'hidden',
+                minHeight: 104,
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: 'rgba(0, 0, 0, 0.08)',
+                // @ts-ignore: borderCurve is a valid react-native style for iOS 13+ but requires newer types
+                borderCurve: 'continuous',
+            }}>
                 {/* 
-                  Modifiers belong on the GlassEffectContainer to ensure the background,
-                  border, and shadow all share the same layout and rounding.
+                  GlassView from expo-glass-effect provides the liquid glass surface.
+                  It fills the container and provides the blur.
                 */}
-                <GlassEffectContainer 
-                    modifiers={[
-                        cornerRadius(16),
-                        border({ 
-                            color: 'rgba(128, 128, 128, 0.3)', // Gray border
-                            width: 1
-                        }),
-                        shadow({
-                            radius: 12,
-                            x: 0,
-                            y: 4,
-                            color: 'rgba(0, 0, 0, 0.08)',
-                        }),
-                    ]}
-                >
-                    {/* 
-                      ZStack for layering the main content and the bottom-right notification badge.
-                      We apply rounding here too to ensure the "water" (glass) and content match.
-                    */}
-                    <ZStack 
-                        alignment="bottomTrailing"
-                        modifiers={[
-                            cornerRadius(16)
-                        ]}
-                    >
-                        {/* 
-                          Main layout row: 
-                          - Image column is content-sized.
-                          - Text column is flexible.
-                        */}
-                        <HStack 
-                            spacing={12} 
-                            alignment="center"
-                            modifiers={[
-                                padding({ all: 12 }),
-                                cornerRadius(16)
-                            ]}
-                        >
-                            {/* 1. Strictly content-sized image column */}
-                            <ZStack 
-                                alignment="bottomTrailing"
-                                modifiers={[
-                                    frame({ width: 80, height: 80 })
-                                ]}
-                            >
+                <GlassView style={StyleSheet.absoluteFill} />
+
+                <View style={{
+                    flexDirection: 'row',
+                    padding: 12,
+                    alignItems: 'center',
+                }}>
+                    {/* Image Section */}
+                    <View style={{
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 4,
+                    }}>
+                        <Image 
+                            source={taskImage || require('../../assets/images/task-logo.png')}
+                            style={{
+                                width: 80,
+                                height: 80,
+                                borderRadius: 18,
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            }}
+                            resizeMode="cover"
+                        />
+                    </View>
+
+                    {/* Text Section */}
+                    <View style={{
+                        flex: 1,
+                        marginLeft: 14,
+                        justifyContent: 'center',
+                    }}>
+                        {/* Header: User + Time */}
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginBottom: 4,
+                        }}>
+                            {avatarUrl && (
                                 <Image 
-                                    source={taskImage || require('../../assets/images/task-logo.png')}
-                                    style={{ 
-                                        width: 80, 
-                                        height: 80, 
-                                        borderRadius: 20,
-                                        backgroundColor: 'rgba(255,255,255,0.05)',
-                                        // Ensure image is visible
-                                        opacity: 1,
+                                    source={avatarUrl}
+                                    style={{
+                                        width: 18,
+                                        height: 18,
+                                        borderRadius: 9,
+                                        marginRight: 6,
                                     }}
-                                    resizeMode="cover"
                                 />
+                            )}
+                            <Text style={{
+                                fontSize: 13,
+                                fontWeight: '600',
+                                color: 'rgba(0, 0, 0, 0.7)',
+                            }}>{username}</Text>
+                            <View style={{ flex: 1 }} />
+                            <Text style={{
+                                fontSize: 11,
+                                color: 'rgba(0, 0, 0, 0.4)',
+                                fontWeight: '500',
+                            }}>{timestamp}</Text>
+                        </View>
 
-                            </ZStack>
+                        {/* Title */}
+                        <Text style={{
+                            fontSize: 18,
+                            fontWeight: '700',
+                            color: '#000',
+                            marginBottom: 2,
+                        }} numberOfLines={1}>{title}</Text>
 
-                            {/* 2. Flexible text column */}
-                            <VStack 
-                                alignment="leading" 
-                                spacing={2} 
-                                modifiers={[
-                                    frame({ maxWidth: 'infinity' as any, alignment: 'leading' })
-                                ]}
-                            >
-                                {/* 4. Header row strictly contains the Spacer */}
-                                <HStack spacing={6} alignment="center">
-                                    {avatarUrl && (
-                                        <Image 
-                                            source={avatarUrl}
-                                            style={styles.avatar}
-                                        />
-                                    )}
-                                    <ExpoText weight="semibold" size={14}>
-                                        {username}
-                                    </ExpoText>
-                                    <Spacer />
-                                    <ExpoText modifiers={[opacity(0.4)]} size={11}>
-                                        {timestamp}
-                                    </ExpoText>
-                                </HStack>
+                        {/* Journey & Duration */}
+                        <Text style={{
+                            fontSize: 13,
+                            color: 'rgba(0, 0, 0, 0.5)',
+                            fontWeight: '500',
+                        }}>{`${journey} • ${duration}`}</Text>
+                    </View>
+                </View>
 
-                                {/* Task Title */}
-                                <ExpoText weight="bold" size={18}>
-                                    {title}
-                                </ExpoText>
-
-                                {/* Journey & Duration details */}
-                                <ExpoText modifiers={[opacity(0.6)]} size={14}>
-                                    {`${journey}: ${duration}`}
-                                </ExpoText>
-                            </VStack>
-                        </HStack>
-
-                        {/* Restoring Badge as it's part of the visual design */}
-                        <ZStack modifiers={[
-                            frame({ width: 28, height: 28 }),
-                            offset({ x: -14, y: -14 })
-                        ]}>
-                            <Circle modifiers={[foregroundStyle('#FF3B30')]} />
-                            <ExpoText weight="bold" color="white" size={13}>
-                                {count.toString()}
-                            </ExpoText>
-                        </ZStack>
-                    </ZStack>
-                </GlassEffectContainer>
-            </Host>
+                {/* Notification Badge */}
+                {count > 0 && (
+                    <View style={{
+                        position: 'absolute',
+                        bottom: 12,
+                        right: 12,
+                    }}>
+                        <View style={{
+                            backgroundColor: '#FF3B30',
+                            minWidth: 26,
+                            height: 26,
+                            borderRadius: 13,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingHorizontal: 4,
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.2,
+                            shadowRadius: 4,
+                        }}>
+                            <Text style={{
+                                color: '#FFF',
+                                fontSize: 13,
+                                fontWeight: 'bold',
+                                textAlign: 'center',
+                            }}>{count}</Text>
+                        </View>
+                    </View>
+                )}
+            </View>
         </Pressable>
     );
 };
-
-const styles = StyleSheet.create((theme) => ({
-    pinContainer: {
-        position: 'absolute',
-        bottom: -4,
-        right: -4,
-        zIndex: 10,
-    },
-    pinCircle: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    avatar: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-    },
-    badgeContainer: {
-        position: 'absolute',
-        bottom: 12,
-        right: 12,
-    },
-    badge: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: '#FF3B30', // Red badge like in the design
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-}));
 
 export default UpcomingTaskCard;
