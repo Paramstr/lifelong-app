@@ -6,6 +6,7 @@ import Animated, {
     Easing,
     useAnimatedStyle,
     useSharedValue,
+    withDelay,
     withRepeat,
     withSequence,
     withTiming
@@ -27,6 +28,8 @@ interface UpcomingTaskCardProps {
     tag?: string;
     timestamp?: string;
     count?: number;
+    // Gradient configuration: [Base Blob, Highlight Blob, Accent Blob]
+    gradientColors?: [string, string, string]; 
 }
 
 const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
@@ -42,61 +45,116 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
     tag = '/orb',
     timestamp = '18:12',
     count = 1,
+    gradientColors = [
+        'rgba(20, 83, 45, 0.35)', // Deep Forest Green
+        'rgba(34, 197, 94, 0.25)', // Vibrant Emerald
+        'rgba(20, 83, 45, 0.3)'   // Deep Forest Light
+    ]
 }) => {
     // Animation Shared Values
     const orb1X = useSharedValue(0);
     const orb1Y = useSharedValue(0);
+    const orb1Scale = useSharedValue(1);
+
     const orb2X = useSharedValue(0);
     const orb2Y = useSharedValue(0);
+    const orb2Scale = useSharedValue(1);
 
+    const orb3X = useSharedValue(0);
+    const orb3Y = useSharedValue(0);
+    const orb3Scale = useSharedValue(1);
+
+    // Helper to generate randomish floating motion
     useEffect(() => {
-        // Orb 1: Circular/Figure-8 motion
+        // Orb 1: Base - Slow, large movements
         orb1X.value = withRepeat(
             withSequence(
-                withTiming(30, { duration: 4000, easing: Easing.inOut(Easing.ease) }),
-                withTiming(-20, { duration: 5000, easing: Easing.inOut(Easing.ease) }),
-                withTiming(0, { duration: 4000, easing: Easing.inOut(Easing.ease) })
-            ),
-            -1,
-            true
+                withTiming(40, { duration: 5000, easing: Easing.inOut(Easing.ease) }),
+                withTiming(-30, { duration: 6000, easing: Easing.inOut(Easing.ease) }),
+                withTiming(0, { duration: 5000, easing: Easing.inOut(Easing.ease) })
+            ), -1, true
         );
         orb1Y.value = withRepeat(
             withSequence(
-                withTiming(-20, { duration: 5000, easing: Easing.inOut(Easing.ease) }),
-                withTiming(20, { duration: 4000, easing: Easing.inOut(Easing.ease) }),
-                withTiming(0, { duration: 5000, easing: Easing.inOut(Easing.ease) })
-            ),
-            -1,
-            true
+                withTiming(-30, { duration: 6000, easing: Easing.inOut(Easing.ease) }),
+                withTiming(20, { duration: 5000, easing: Easing.inOut(Easing.ease) }),
+                withTiming(0, { duration: 6000, easing: Easing.inOut(Easing.ease) })
+            ), -1, true
+        );
+        orb1Scale.value = withRepeat(
+            withSequence(
+                withTiming(1.1, { duration: 7000, easing: Easing.inOut(Easing.ease) }),
+                withTiming(0.9, { duration: 7000, easing: Easing.inOut(Easing.ease) })
+            ), -1, true
         );
 
-        // Orb 2: Counter motion
+        // Orb 2: Highlight - Faster, more erratic
         orb2X.value = withRepeat(
             withSequence(
-                withTiming(-20, { duration: 4500, easing: Easing.inOut(Easing.ease) }),
-                withTiming(30, { duration: 5500, easing: Easing.inOut(Easing.ease) }),
-                withTiming(0, { duration: 4500, easing: Easing.inOut(Easing.ease) })
-            ),
-            -1,
-            true
+                withDelay(500, withTiming(-50, { duration: 4500, easing: Easing.inOut(Easing.quad) })),
+                withTiming(40, { duration: 4000, easing: Easing.inOut(Easing.quad) }),
+                withTiming(0, { duration: 4500, easing: Easing.inOut(Easing.quad) })
+            ), -1, true
         );
         orb2Y.value = withRepeat(
             withSequence(
-                withTiming(20, { duration: 5500, easing: Easing.inOut(Easing.ease) }),
-                withTiming(-30, { duration: 4500, easing: Easing.inOut(Easing.ease) }),
-                withTiming(0, { duration: 5500, easing: Easing.inOut(Easing.ease) })
-            ),
-            -1,
-            true
+                withTiming(200, { duration: 5000, easing: Easing.inOut(Easing.quad) }),
+                withTiming(-40, { duration: 4500, easing: Easing.inOut(Easing.quad) }),
+                withTiming(0, { duration: 5000, easing: Easing.inOut(Easing.quad) })
+            ), -1, true
+        );
+        orb2Scale.value = withRepeat(
+            withSequence(
+                withTiming(1.2, { duration: 4000, easing: Easing.inOut(Easing.ease) }),
+                withTiming(0.8, { duration: 5000, easing: Easing.inOut(Easing.ease) })
+            ), -1, true
+        );
+
+        // Orb 3: Accent - Gentle Drift
+        orb3X.value = withRepeat(
+            withSequence(
+                withTiming(-30, { duration: 7000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(20, { duration: 8000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(0, { duration: 7000, easing: Easing.inOut(Easing.sin) })
+            ), -1, true
+        );
+        orb3Y.value = withRepeat(
+            withSequence(
+                withTiming(60, { duration: 4000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(-120, { duration: 7000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(0, { duration: 6000, easing: Easing.inOut(Easing.sin) })
+            ), -1, true
+        );
+        orb3Scale.value = withRepeat(
+            withSequence(
+                withTiming(1.15, { duration: 8000, easing: Easing.inOut(Easing.ease) }),
+                withTiming(0.85, { duration: 8000, easing: Easing.inOut(Easing.ease) })
+            ), -1, true
         );
     }, []);
 
     const rStyleOrb1 = useAnimatedStyle(() => ({
-        transform: [{ translateX: orb1X.value }, { translateY: orb1Y.value }]
+        transform: [
+            { translateX: orb1X.value }, 
+            { translateY: orb1Y.value },
+            { scale: orb1Scale.value }
+        ]
     }));
 
     const rStyleOrb2 = useAnimatedStyle(() => ({
-        transform: [{ translateX: orb2X.value }, { translateY: orb2Y.value }]
+        transform: [
+            { translateX: orb2X.value }, 
+            { translateY: orb2Y.value },
+            { scale: orb2Scale.value }
+        ]
+    }));
+
+    const rStyleOrb3 = useAnimatedStyle(() => ({
+        transform: [
+            { translateX: orb3X.value }, 
+            { translateY: orb3Y.value },
+            { scale: orb3Scale.value }
+        ]
     }));
 
     return (
@@ -130,39 +188,51 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
                         style={{ flex: 1 }} 
                         spacing={40} // High spacing for "blobs merging" effect
                     >
-                        {/* Blob 1: Deep Forest Green - Base */}
+                        {/* Blob 1: Base */}
                         <AnimatedGlassView 
                             style={[{
                                 position: 'absolute',
                                 top: -40,
                                 left: -40,
-                                width: 220,
-                                height: 220,
-                                borderRadius: 110,
+                                width: 240,
+                                height: 240,
+                                borderRadius: 120,
                             }, rStyleOrb1]}
                             glassEffectStyle="regular"
-                            tintColor="rgba(20, 83, 45, 0.35)" // Deep Forest
+                            tintColor={gradientColors[0]}
                         />
                         
-                        {/* Blob 2: Vibrant Emerald - Highlight */}
+                        {/* Blob 2: Highlight */}
                         <AnimatedGlassView 
                             style={[{
                                 position: 'absolute',
                                 top: 20,
                                 left: 60,
-                                width: 180,
-                                height: 180,
-                                borderRadius: 90,
+                                width: 200,
+                                height: 200,
+                                borderRadius: 100,
                             }, rStyleOrb2]}
                             glassEffectStyle="regular"
-                            tintColor="rgba(34, 197, 94, 0.25)" // Emerald/Leaf
+                            tintColor={gradientColors[1]}
+                        />
+
+                        {/* Blob 3: Accent */}
+                        <AnimatedGlassView 
+                            style={[{
+                                position: 'absolute',
+                                top: -20,
+                                right: -50,
+                                width: 260,
+                                height: 260,
+                                borderRadius: 130,
+                            }, rStyleOrb3]}
+                            glassEffectStyle="regular"
+                            tintColor={gradientColors[2]}
                         />
                     </GlassContainer>
                 </View>
 
-                {/* Main Card Surface Glass (Optional overlay to unify) 
-                    Set to 'clear' or transparent white to just let the blobs show through but still blur background if needed.
-                */}
+                {/* Main Card Surface Glass */}
                 <GlassView 
                     style={{
                         position: 'absolute',
@@ -172,7 +242,7 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
                         bottom: 0,
                     }}
                     glassEffectStyle="regular"
-                    tintColor="rgba(255, 255, 255, 0.1)" 
+                    tintColor="rgba(255, 255, 255, 0.01)" 
                 />
 
                 <View style={{

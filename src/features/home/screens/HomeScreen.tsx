@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -46,6 +45,11 @@ const HomeScreen = () => {
           count={3}
           username="Param"
           onPress={() => console.log('Start Morning Mobility')}
+          gradientColors={[
+            'rgba(20, 83, 45, 0.35)', // Deep Forest Green
+            'rgba(34, 197, 94, 0.25)', // Vibrant Emerald
+            'rgba(20, 83, 45, 0.3)'   // Deep Forest Light
+          ]}
         />
         <View style={styles.cardGap} />
         <UpcomingTaskCard 
@@ -57,6 +61,11 @@ const HomeScreen = () => {
           count={1}
           username="Param"
           onPress={() => console.log('Start Evening Mobility')}
+          gradientColors={[
+            'rgba(200, 200, 200, 0.3)', // Soft Grey
+            'rgba(240, 240, 240, 0.2)', // Off White
+            'rgba(180, 180, 180, 0.25)' // Neutral Mist
+          ]}
         />
         <View style={styles.mb8} />
 
