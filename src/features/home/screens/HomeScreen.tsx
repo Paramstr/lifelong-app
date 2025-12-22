@@ -3,9 +3,9 @@ import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
-import Carousel from '@/components/opal/carousel';
-import UpcomingTaskCard from '@/components/opal/upcoming-task-card';
-import WeeklyProgress from '@/components/opal/weekly-progress';
+import Carousel from '@/components/home/carousel';
+import UpcomingTaskCard from '@/components/home/upcoming-task-card';
+import WeeklyProgress from '@/components/home/weekly-progress';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
@@ -27,15 +27,15 @@ const HomeScreen = () => {
           </View>
           <View style={styles.headerRow}>
             <View style={styles.headerTextContainer}>
-              <Text style={styles.greetingText}>Hi Param,</Text>
+              {/* <Text style={styles.greetingText}>Hi Param,</Text> */}
               <Text style={styles.heroHeadline}>Keep up the mobility.</Text>
               <Text style={styles.heroDescription}>
-                You're doing great. Stay on track to feel your best.
+                Yesterday was quite strenous, today try do movement for active recovery and rest.
               </Text>
             </View>
           </View>
 
-        <Text style={styles.sectionTitle}>Upcoming</Text>
+        {/* <Text style={styles.sectionTitle}>Upcoming</Text> */}
         <UpcomingTaskCard 
           title="Morning Mobility"
           journey="Knee Recovery"
