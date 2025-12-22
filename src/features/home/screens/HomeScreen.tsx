@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native-unistyles';
 
 import Carousel from '@/components/home/carousel';
 import UpcomingTaskCard from '@/components/home/upcoming-task-card';
-import WeeklyProgress from '@/components/home/weekly-progress';
+import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
@@ -23,7 +23,17 @@ const HomeScreen = () => {
         
         <View style={styles.scrollContent}>
           <View style={styles.weeklyProgressContainer}>
-            <WeeklyProgress />
+            <WeeklyProgressHeader
+              title="lean"
+              completionCount={1}
+              currentDate={new Date()}
+              progressByDay={[
+                { date: '2025-12-22', progress: 0.75 },
+                { date: '2025-12-21', progress: 1.0 },
+                { date: '2025-12-20', progress: 0.4 },
+                { date: '2025-12-19', progress: 0.8 },
+              ]}
+            />
           </View>
           <View style={styles.headerRow}>
             <View style={styles.headerTextContainer}>
