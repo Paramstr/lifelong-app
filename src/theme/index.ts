@@ -125,7 +125,7 @@ const typography = {
         letterSpacing: -0.5,
     },
     headline: {
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: '700' as const,
         lineHeight: 30,
     },

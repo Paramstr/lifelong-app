@@ -24,7 +24,7 @@ const HomeScreen = () => {
         <View style={styles.scrollContent}>
           <View style={styles.weeklyProgressContainer}>
             <WeeklyProgressHeader
-              title="lean"
+              title="Lifelong"
               completionCount={1}
               currentDate={new Date()}
               progressByDay={[
@@ -79,7 +79,7 @@ const HomeScreen = () => {
         />
         <View style={styles.mb8} />
 
-        <Text style={styles.sectionTitleNoMB}>Get More Done</Text>
+        {/* <Text style={styles.sectionTitleNoMB}>Get More Done</Text>
         <Text style={styles.sectionSubtitle}>Maximize your productivity while staying sane.</Text>
         <View style={styles.carouselWrapperMB12}>
           <Carousel
@@ -105,7 +105,7 @@ const HomeScreen = () => {
               'L25Xx[rV00%#Mw%M%2Mw00x]~qMd',
             ]}
           />
-        </View>
+        </View> */}
         </View>
       </ScrollView>
 

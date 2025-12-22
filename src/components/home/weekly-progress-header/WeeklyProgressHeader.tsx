@@ -83,15 +83,25 @@ export const WeeklyProgressHeader: React.FC<WeeklyProgressHeaderProps> = ({
 
             const DayContent = (
               <View key={day.dateIso} style={styles.dayItem}>
-                <DayRing
-                  dayNumber={day.dayNumber}
-                  progress={progress}
-                  isSelected={isSelected}
-                  size={32}
-                />
+                <View style={styles.dayTopRow}>
+                  {progress >= 1 ? (
+                    <Ionicons name="checkmark-circle" size={16} color={styles.checkIcon.color} />
+                  ) : (
+                    <Text style={[styles.dayNumber, isSelected && styles.selectedDayNumber]}>{day.dayNumber}</Text>
+                  )}
+                </View>
+
                 <Text style={[styles.weekdayLabel, isSelected && styles.selectedWeekdayLabel]}>
                   {day.weekdayLabel}
                 </Text>
+
+                <View style={styles.ringRow}>
+                  <DayRing
+                    progress={progress}
+                    isSelected={isSelected}
+                    size={32}
+                  />
+                </View>
               </View>
             );
 
@@ -134,7 +144,7 @@ const styles = StyleSheet.create((theme) => ({
     marginBottom: theme.spacing.md,
   },
   title: {
-    fontSize: 28,
+    fontSize: 18,
     fontWeight: '700',
     color: theme.colors.text.primary,
     letterSpacing: -0.5,
@@ -167,14 +177,33 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: 'center',
     width: 40, // Consistent footprint
   },
+  dayTopRow: {
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dayNumber: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: theme.colors.text.muted,
+  },
+  selectedDayNumber: {
+    color: theme.colors.brand.primary,
+  },
   weekdayLabel: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '800',
     color: theme.colors.text.muted,
     marginTop: 6,
     letterSpacing: 0.5,
   },
   selectedWeekdayLabel: {
     color: theme.colors.brand.primary,
-  }
+  },
+  ringRow: {
+    marginTop: 6,
+  },
+  checkIcon: {
+    color: theme.colors.brand.primary,
+  },
 }));
