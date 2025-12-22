@@ -43,12 +43,12 @@ const HomeScreen = () => {
           taskImage={require('../../../../assets/images/morning-mobility.png')}
           timestamp="08:30"
           count={3}
-          username="Param"
+          username="-"
           onPress={() => console.log('Start Morning Mobility')}
           gradientColors={[
-            'rgba(20, 83, 45, 0.35)', // Deep Forest Green
-            'rgba(34, 197, 94, 0.25)', // Vibrant Emerald
-            'rgba(20, 83, 45, 0.3)'   // Deep Forest Light
+            'rgba(188, 239, 134, 0.35)', // Deep Forest Green
+            'rgba(1, 191, 61, 0.25)', // Vibrant Emerald
+            'rgba(3, 66, 41, 0.3)'   // Deep Forest Light
           ]}
         />
         <View style={styles.cardGap} />
@@ -59,12 +59,12 @@ const HomeScreen = () => {
           taskImage={require('../../../../assets/images/evening-mobility.png')}
           timestamp="19:45"
           count={1}
-          username="Param"
+          username="-"
           onPress={() => console.log('Start Evening Mobility')}
           gradientColors={[
-            'rgba(200, 200, 200, 0.3)', // Soft Grey
-            'rgba(240, 240, 240, 0.2)', // Off White
-            'rgba(180, 180, 180, 0.25)' // Neutral Mist
+            'rgba(127, 127, 127, 0.3)', // Soft Grey
+            'rgba(228, 228, 228, 0.2)', // Off White
+            'rgba(203, 203, 203, 0.25)' // Neutral Mist
           ]}
         />
         <View style={styles.mb8} />
