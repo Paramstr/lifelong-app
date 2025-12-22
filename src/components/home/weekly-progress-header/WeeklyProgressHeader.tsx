@@ -30,7 +30,7 @@ export const WeeklyProgressHeader: React.FC<WeeklyProgressHeaderProps> = ({
   currentDate,
   progressByDay = [],
   onDayPress,
-  containerPaddingHorizontal = 16,
+  containerPaddingHorizontal = 0,
   maxWidth,
   colors,
 }) => {

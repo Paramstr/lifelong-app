@@ -56,9 +56,9 @@ const HomeScreen = () => {
           username="-"
           onPress={() => console.log('Start Morning Mobility')}
           gradientColors={[
-            'rgba(188, 239, 134, 0.35)', // Deep Forest Green
-            'rgba(1, 191, 61, 0.25)', // Vibrant Emerald
-            'rgba(3, 66, 41, 0.3)'   // Deep Forest Light
+            'rgba(24, 222, 103, 0.5)', // Deep Forest Green
+            'rgba(164, 211, 44, 0.33)', // Vibrant Emerald
+            'rgba(0, 149, 69, 1)'   // Deep Forest Light
           ]}
         />
         <View style={styles.cardGap} />

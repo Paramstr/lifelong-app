@@ -91,14 +91,14 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
         // Orb 2: Highlight - Faster, more erratic
         orb2X.value = withRepeat(
             withSequence(
-                withDelay(500, withTiming(-50, { duration: 4500, easing: Easing.inOut(Easing.quad) })),
+                withDelay(50, withTiming(-500, { duration: 4500, easing: Easing.inOut(Easing.quad) })),
                 withTiming(40, { duration: 4000, easing: Easing.inOut(Easing.quad) }),
                 withTiming(0, { duration: 4500, easing: Easing.inOut(Easing.quad) })
             ), -1, true
         );
         orb2Y.value = withRepeat(
             withSequence(
-                withTiming(200, { duration: 5000, easing: Easing.inOut(Easing.quad) }),
+                withTiming(40, { duration: 5000, easing: Easing.inOut(Easing.quad) }),
                 withTiming(-40, { duration: 4500, easing: Easing.inOut(Easing.quad) }),
                 withTiming(0, { duration: 5000, easing: Easing.inOut(Easing.quad) })
             ), -1, true
@@ -113,15 +113,15 @@ const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
         // Orb 3: Accent - Gentle Drift
         orb3X.value = withRepeat(
             withSequence(
-                withTiming(-30, { duration: 7000, easing: Easing.inOut(Easing.sin) }),
-                withTiming(20, { duration: 8000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(-90, { duration: 7000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(90, { duration: 8000, easing: Easing.inOut(Easing.sin) }),
                 withTiming(0, { duration: 7000, easing: Easing.inOut(Easing.sin) })
             ), -1, true
         );
         orb3Y.value = withRepeat(
             withSequence(
-                withTiming(60, { duration: 4000, easing: Easing.inOut(Easing.sin) }),
-                withTiming(-120, { duration: 7000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(90, { duration: 4000, easing: Easing.inOut(Easing.sin) }),
+                withTiming(-90, { duration: 7000, easing: Easing.inOut(Easing.sin) }),
                 withTiming(0, { duration: 6000, easing: Easing.inOut(Easing.sin) })
             ), -1, true
         );
