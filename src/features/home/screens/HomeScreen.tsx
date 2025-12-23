@@ -3,15 +3,74 @@ import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
-import Carousel from '@/components/home/carousel';
+import DailyTimeline from '@/components/home/daily-timeline';
 import UpcomingTaskCard from '@/components/home/upcoming-task-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
+import SoftRadialGradient from '@/components/shared/soft-radial-gradient';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
 
+  const timelineEntries = [
+    {
+      id: '1',
+      time: '8:10 am',
+      type: 'meal' as const,
+      mealType: 'Breakfast',
+      title: 'Eggs with avocado on toast',
+      calories: '500',
+      carbs: '30',
+      protein: '30',
+      fat: '30',
+      image: require('../../../../assets/images/eggs-avocado-toast.png'),
+    },
+    {
+      id: '2',
+      time: '9:30 am',
+      type: 'thought' as const,
+      thought: 'Feeling a bit depleted and anxious about the day, potential due to sleep.',
+    },
+    {
+      id: '3',
+      time: '1:30 pm',
+      type: 'meal' as const,
+      mealType: 'Breakfast',
+      title: 'Chicken rice bowl',
+      calories: '600',
+      carbs: '40',
+      protein: '45',
+      fat: '60',
+      image: require('../../../../assets/images/chicken-rice-bowl.png'),
+    },
+    {
+      id: '4',
+      time: '5:30 pm',
+      type: 'meal' as const,
+      mealType: 'Dinner',
+      title: 'Chicken rice bowl',
+      calories: '600',
+      carbs: '40',
+      protein: '45',
+      fat: '60',
+      image: require('../../../../assets/images/chicken-rice-bowl.png'),
+    },
+    {
+      id: '5',
+      time: '6:30 pm',
+      type: 'meal' as const,
+      mealType: 'Snack',
+      title: 'Protein Shake',
+      calories: '300',
+      carbs: '10',
+      protein: '24',
+      fat: '10',
+      image: require('../../../../assets/images/protein-shake.png'),
+    },
+  ];
+
   return (
     <View style={styles.container}>
+      <SoftRadialGradient />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -77,6 +136,10 @@ const HomeScreen = () => {
             'rgba(203, 203, 203, 0.25)' // Neutral Mist
           ]}
         />
+        <View style={styles.cardGap} />
+        
+        <DailyTimeline entries={timelineEntries} />
+
         <View style={styles.mb8} />
 
         {/* <Text style={styles.sectionTitleNoMB}>Get More Done</Text>
@@ -117,7 +180,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC', // Fallback
+    backgroundColor: '#FFFFFF',
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.lg - 4, // 20px
