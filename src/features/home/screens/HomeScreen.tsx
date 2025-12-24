@@ -132,9 +132,9 @@ const HomeScreen = () => {
           username="-"
           onPress={() => console.log('Start Evening Mobility')}
           gradientColors={[
-            'rgba(127, 127, 127, 0.3)', // Soft Grey
+            'rgba(114, 114, 114, 0.3)', // Soft Grey
             'rgba(228, 228, 228, 0.2)', // Off White
-            'rgba(203, 203, 203, 0.25)' // Neutral Mist
+            'rgba(0, 0, 0, 0.25)' // Neutral Mist
           ]}
         />
         <View style={styles.cardGap} />

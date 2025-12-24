@@ -1,3 +1,4 @@
+import AnimatedDashedBorder from '@/components/opal/animated-dashed-border';
 import { parseTime } from '@/utils/date-utils';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo } from 'react';
@@ -47,11 +48,18 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
       </View>
       
       <View style={styles.inputContainer}>
-        <TextInput 
-            style={styles.input}
-            placeholder="Add food"
-            placeholderTextColor={theme.colors.text.muted}
-        />
+        <AnimatedDashedBorder
+          borderRadius={theme.radius.xl}
+          strokeColor={theme.colors.text.muted}
+          dashLength={8}
+          gapLength={4}
+        >
+          <TextInput 
+              style={styles.input}
+              placeholder="Add food"
+              placeholderTextColor={theme.colors.text.muted}
+          />
+        </AnimatedDashedBorder>
       </View>
 
       <View style={styles.content}>
