@@ -1,11 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { StyleSheet } from 'react-native-unistyles';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 
 interface DayRingProps {
   progress: number; // 0 to 1
-  dayNumber: number;
   isSelected: boolean;
   size?: number;
   strokeWidth?: number;
@@ -13,15 +12,21 @@ interface DayRingProps {
 
 export const DayRing: React.FC<DayRingProps> = ({
   progress,
-  dayNumber,
   isSelected,
   size = 32,
   strokeWidth = 2,
 }) => {
+  // Use the useUnistyles hook to access the current theme
+  const { theme } = useUnistyles();
+  
   const clampedProgress = Math.min(Math.max(progress, 0), 1);
-  const radius = size / 2 - strokeWidth - 1; // slight inset for breathing room
+  const radius = size / 2 - strokeWidth - 1; 
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - clampedProgress);
+
+  const ringColor = isSelected 
+    ? theme.colors.brand.primary 
+    : theme.colors.text.muted;
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
@@ -38,7 +43,7 @@ export const DayRing: React.FC<DayRingProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={isSelected ? '#ff7a45' : '#94A3B8'}
+          stroke={ringColor}
           strokeWidth={strokeWidth}
           strokeDasharray={`${circumference}`}
           strokeDashoffset={strokeDashoffset}

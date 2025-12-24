@@ -119,35 +119,45 @@ const radius = {
 
 const typography = {
     display: {
-        fontSize: 32,
+        fontSize: 26,
         fontWeight: '600' as const,
-        lineHeight: 38,
+        lineHeight: 32,
         letterSpacing: -0.5,
     },
     headline: {
-        fontSize: 18,
-        fontWeight: '700' as const,
-        lineHeight: 30,
-    },
-    title: {
         fontSize: 20,
-        fontWeight: '600' as const,
+        fontWeight: '700' as const,
         lineHeight: 26,
     },
+    title: {
+        fontSize: 18,
+        fontWeight: '600' as const,
+        lineHeight: 24,
+    },
     body: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '400' as const,
-        lineHeight: 22,
+        lineHeight: 21,
     },
     caption: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '500' as const,
-        lineHeight: 18,
+        lineHeight: 17,
+    },
+    label: {
+        fontSize: 12,
+        fontWeight: '600' as const,
+        lineHeight: 16,
     },
     small: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: '400' as const,
-        lineHeight: 16,
+        lineHeight: 15,
+    },
+    xs: {
+        fontSize: 10,
+        fontWeight: '500' as const,
+        lineHeight: 14,
     },
 } as const;
 

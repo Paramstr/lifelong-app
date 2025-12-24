@@ -32,8 +32,8 @@ const ThoughtCard: React.FC<ThoughtCardProps> = ({
 
 const styles = StyleSheet.create(theme => ({
   container: {
-    gap: 8,
-    paddingVertical: theme.spacing.md,
+    gap: 6,
+    paddingVertical: theme.spacing.sm,
   },
   timeRow: {
     flexDirection: 'row',
@@ -41,31 +41,31 @@ const styles = StyleSheet.create(theme => ({
     gap: 8,
   },
   timeText: {
-    fontSize: 16,
+    fontSize: theme.typography.caption.fontSize,
     color: theme.colors.text.muted,
   },
   separator: {
-    fontSize: 14,
+    fontSize: theme.typography.xs.fontSize,
     color: theme.colors.text.muted,
   },
   headerText: {
-    fontSize: 16,
+    fontSize: theme.typography.caption.fontSize,
     color: theme.colors.text.muted,
   },
   thoughtText: {
-    fontSize: 20,
+    fontSize: theme.typography.title.fontSize,
     color: theme.colors.text.secondary,
-    lineHeight: 28,
+    lineHeight: theme.typography.title.lineHeight,
   },
   viewFullRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 4,
-    marginTop: 4,
+    marginTop: 2,
   },
   viewFullText: {
-    fontSize: 14,
+    fontSize: theme.typography.small.fontSize,
     color: theme.colors.text.muted,
   },
 }));

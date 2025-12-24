@@ -30,15 +30,15 @@ export default function RootLayout() {
         <Icon sf={{ default: 'house', selected: 'house.fill' }} drawable="ic_menu_home" />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="family">
+        <Label>Family</Label>
+        <Icon sf={{ default: 'person.2', selected: 'person.2.fill' }} drawable="ic_menu_share" />
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="health">
         <Label>Health</Label>
         <Icon sf={{ default: 'heart', selected: 'heart.fill' }} drawable="ic_menu_today" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="social">
-        <Label>Social</Label>
-        <Icon sf={{ default: 'person.2', selected: 'person.2.fill' }} drawable="ic_menu_share" />
-      </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="more" role="search">
         <Label>More</Label>
@@ -49,7 +49,7 @@ export default function RootLayout() {
     <Tabs>
       <Tabs.Screen name="index" options={{ title: 'Home' }} />
       <Tabs.Screen name="health" options={{ title: 'Health' }} />
-      <Tabs.Screen name="social" options={{ title: 'Social' }} />
+      <Tabs.Screen name="family" options={{ title: 'Family' }} />
       <Tabs.Screen name="more" options={{ title: 'More' }} />
     </Tabs>
   );

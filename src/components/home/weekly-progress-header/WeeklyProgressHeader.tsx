@@ -132,7 +132,7 @@ const styles = StyleSheet.create((theme) => ({
   outerContainer: {
     width: '100%',
     alignItems: 'center',
-    paddingVertical: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
   },
   contentWrapper: {
     width: '100%',
@@ -144,8 +144,8 @@ const styles = StyleSheet.create((theme) => ({
     marginBottom: theme.spacing.md,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: theme.typography.title.fontSize,
+    fontWeight: theme.typography.title.fontWeight,
     color: theme.colors.text.primary,
     letterSpacing: -0.5,
   },
@@ -153,18 +153,18 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(60, 179, 113, 0.1)', // Light success background
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: theme.radius.full,
   },
   checkmarkContainer: {
-    marginRight: 6,
+    marginRight: 4,
   },
   countContainer: {
-    minWidth: 12,
+    minWidth: 10,
   },
   countText: {
-    fontSize: 16,
+    fontSize: theme.typography.body.fontSize,
     fontWeight: '600',
     color: theme.colors.text.secondary,
   },
@@ -175,15 +175,15 @@ const styles = StyleSheet.create((theme) => ({
   },
   dayItem: {
     alignItems: 'center',
-    width: 40, // Consistent footprint
+    width: 38, // Consistent footprint
   },
   dayTopRow: {
-    height: 18,
+    height: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
   dayNumber: {
-    fontSize: 12,
+    fontSize: theme.typography.label.fontSize,
     fontWeight: '700',
     color: theme.colors.text.muted,
   },
@@ -191,17 +191,17 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.brand.primary,
   },
   weekdayLabel: {
-    fontSize: 10,
+    fontSize: theme.typography.xs.fontSize,
     fontWeight: '800',
     color: theme.colors.text.muted,
-    marginTop: 6,
+    marginTop: 4,
     letterSpacing: 0.5,
   },
   selectedWeekdayLabel: {
     color: theme.colors.brand.primary,
   },
   ringRow: {
-    marginTop: 6,
+    marginTop: 4,
   },
   checkIcon: {
     color: theme.colors.brand.primary,

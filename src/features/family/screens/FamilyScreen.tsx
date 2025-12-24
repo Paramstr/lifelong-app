@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-const SocialScreen = () => {
+const FamilyScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Social Screen</Text>
+      <Text style={styles.text}>Family Screen</Text>
     </View>
   );
 };
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SocialScreen;
+export default FamilyScreen;

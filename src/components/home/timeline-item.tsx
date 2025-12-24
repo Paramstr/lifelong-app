@@ -28,18 +28,18 @@ const styles = StyleSheet.create(theme => ({
     flexDirection: 'row',
   },
   timelineColumn: {
-    width: 24,
+    width: 20,
     alignItems: 'center',
   },
   line: {
     width: 1,
     flex: 1,
-    backgroundColor: '#E5E5E5',
-    marginVertical: 4,
+    backgroundColor: theme.colors.border.divider,
+    marginVertical: 2,
   },
   contentColumn: {
     flex: 1,
-    paddingLeft: 4,
+    paddingLeft: 0,
   },
 }));
 

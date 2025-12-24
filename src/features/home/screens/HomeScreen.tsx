@@ -184,13 +184,13 @@ const styles = StyleSheet.create(theme => ({
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.lg - 4, // 20px
-    paddingTop: 12,
+    paddingTop: 8,
   },
   sectionTitle: {
     color: theme.colors.text.primary,
     fontSize: theme.typography.title.fontSize,
     fontWeight: theme.typography.title.fontWeight,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   sectionTitleNoMB: {
     color: theme.colors.text.primary,
@@ -202,12 +202,12 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.secondary,
     fontSize: theme.typography.body.fontSize,
     fontWeight: '500',
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing['2xl'],
+    marginBottom: theme.spacing.xl,
   },
   headerTextContainer: {
     flex: 1,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.primary,
     fontSize: theme.typography.display.fontSize,
     fontWeight: theme.typography.display.fontWeight,
-    marginBottom: theme.spacing.md - 4, // 12px
+    marginBottom: theme.spacing.xs,
     lineHeight: theme.typography.display.lineHeight,
     letterSpacing: theme.typography.display.letterSpacing,
   },
@@ -256,14 +256,14 @@ const styles = StyleSheet.create(theme => ({
     width: '66.666667%',
   },
   weeklyProgressContainer: {
-    marginTop: 20, // Adjust this to push content down so it's not too high up
-    paddingTop: theme.spacing.md,
+    marginTop: 12, 
+    paddingTop: theme.spacing.sm,
   },
   mb8: {
     marginBottom: theme.spacing.sm,
   },
   cardGap: {
-    height: 12,
+    height: 8,
   },
   mb12: {
     marginBottom: theme.spacing['4xl'],
