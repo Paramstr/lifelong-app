@@ -51,12 +51,13 @@ const styles = StyleSheet.create(theme => ({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: 0, // Let TimelineItem handle spacing
     opacity: 0.9,
+    marginBottom: 4,
   },
   content: {
     flex: 1,
-    gap: 4,
+    gap: 2,
   },
   timeRow: {
     flexDirection: 'row',

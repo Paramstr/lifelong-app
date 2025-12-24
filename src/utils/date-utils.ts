@@ -64,3 +64,21 @@ export const isSameDay = (d1: Date, d2: Date) => {
         d1.getDate() === d2.getDate()
     );
 };
+
+/**
+ * Parse time string (e.g., "8:10 am") to minutes from midnight for sorting.
+ * Returns -1 if invalid.
+ */
+export const parseTime = (timeStr: string): number => {
+    const match = timeStr.match(/(\d+):(\d+)\s*(am|pm)/i);
+    if (!match) return -1;
+
+    let [_, h, m, period] = match;
+    let hours = parseInt(h, 10);
+    const minutes = parseInt(m, 10);
+
+    if (period.toLowerCase() === 'pm' && hours !== 12) hours += 12;
+    if (period.toLowerCase() === 'am' && hours === 12) hours = 0;
+
+    return hours * 60 + minutes;
+};

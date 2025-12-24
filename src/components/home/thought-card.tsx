@@ -32,8 +32,9 @@ const ThoughtCard: React.FC<ThoughtCardProps> = ({
 
 const styles = StyleSheet.create(theme => ({
   container: {
-    gap: 6,
-    paddingVertical: theme.spacing.sm,
+    gap: 4,
+    paddingVertical: 0,
+    marginBottom: 4,
   },
   timeRow: {
     flexDirection: 'row',

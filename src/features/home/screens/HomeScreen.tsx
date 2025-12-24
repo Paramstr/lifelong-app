@@ -75,6 +75,7 @@ const HomeScreen = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
+          paddingTop: insets.top,
           paddingBottom: insets.bottom + 120,
         }}
       >
