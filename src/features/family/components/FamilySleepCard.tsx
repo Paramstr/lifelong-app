@@ -72,11 +72,12 @@ export const FamilySleepCard = () => {
                                 styles.barFill, 
                                 { 
                                     height: `${value * 100}%`,
+                                    backgroundColor: barColor,
                                 }
                             ]} 
                         >
                              <LinearGradient
-                                colors={[barColor, 'rgba(255,255,255,0.2)', barColor]}
+                                colors={[barColor, 'rgba(255,255,255,0.4)']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 0, y: 1 }}
                                 style={StyleSheet.absoluteFill}
@@ -92,7 +93,7 @@ export const FamilySleepCard = () => {
   };
 
   return (
-    <GlassView style={styles.card} glassEffectStyle="regular">
+    <GlassView style={styles.card} glassEffectStyle="clear">
       
       {/* Header */}
       <View style={styles.header}>

@@ -202,14 +202,15 @@ export default function FamilyScreen() {
           </View>
 
         </View>
+        
+        <View style={[styles.sectionSpacer, { marginTop: 16 }]}>
+           <FamilySleepCard />
+        </View>
 
         <View style={styles.sectionSpacer}>
            <FamilyStressCard />
         </View>
 
-        <View style={[styles.sectionSpacer, { marginTop: 16 }]}>
-           <FamilySleepCard />
-        </View>
 
         <View style={[styles.sectionSpacer, { marginTop: 16 }]}>
            <FamilyStepsGraph />
