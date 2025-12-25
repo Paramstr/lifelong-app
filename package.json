@@ -21,6 +21,8 @@
     "@react-navigation/native": "^7.1.8",
     "@shopify/react-native-skia": "^2.2.12",
     "clsx": "^2.1.1",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "expo": "~54.0.29",
     "expo-blur": "~15.0.8",
     "expo-build-properties": "~1.0.10",
@@ -28,6 +30,7 @@
     "expo-font": "~14.0.10",
     "expo-glass-effect": "~0.1.8",
     "expo-haptics": "^15.0.8",
+    "expo-image": "^3.0.11",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.10",
     "expo-router": "~6.0.20",
@@ -51,6 +54,8 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.1.7",
     "@types/react": "~19.1.0",
     "expo-mcp": "~0.2.1",
     "react-test-renderer": "19.1.0",

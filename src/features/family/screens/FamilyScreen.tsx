@@ -16,6 +16,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue
 } from 'react-native-reanimated';
+import { FamilyStepsGraph } from '../components/FamilyStepsGraph';
 
 const { width, height } = Dimensions.get('window');
 
@@ -181,6 +182,11 @@ export default function FamilyScreen() {
           </View>
 
         </View>
+
+        <View style={styles.sectionSpacer}>
+           <FamilyStepsGraph />
+        </View>
+
         
         {/* Extra space at bottom */}
         <View style={{ height: 100 }} />
@@ -234,6 +240,13 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     alignItems: 'center',
+    paddingBottom: 40,
+  },
+  sectionSpacer: {
+    width: '100%',
+    paddingHorizontal: 16, // Standard spacing requested
+    marginTop: 32,         // Fix "practically touching" issue
+    marginBottom: 16,
   },
   profileSection: {
     alignItems: 'center',
