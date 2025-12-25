@@ -17,6 +17,7 @@ import Animated, {
   useSharedValue
 } from 'react-native-reanimated';
 import { FamilyStepsGraph } from '../components/FamilyStepsGraph';
+import { FamilyStressCard } from '../components/FamilyStressCard';
 
 const { width, height } = Dimensions.get('window');
 
@@ -184,6 +185,10 @@ export default function FamilyScreen() {
         </View>
 
         <View style={styles.sectionSpacer}>
+           <FamilyStressCard />
+        </View>
+
+        <View style={[styles.sectionSpacer, { marginTop: 16 }]}>
            <FamilyStepsGraph />
         </View>
 
@@ -206,8 +211,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: height * 0.45, // Reduced height (approx 1/2 of previous)
-    paddingTop: 0,
     zIndex: 0,
+    paddingTop: 20,
   },
   carouselContent: {
     alignItems: 'center',
@@ -216,7 +221,7 @@ const styles = StyleSheet.create({
     width: ITEM_WIDTH,
     height: height * 0.45, // Match background height
     marginHorizontal: SPACING,
-    borderRadius: 30, // Rounded top
+    borderRadius: 20, // Rounded top
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
     backgroundColor: '#333',
