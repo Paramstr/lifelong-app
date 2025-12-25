@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -114,7 +115,7 @@ const HomeScreen = () => {
           timestamp="08:30"
           count={3}
           username="-"
-          onPress={() => console.log('Start Morning Mobility')}
+          onPress={() => router.push('/protocol/morning-mobility')}
           gradientColors={[
             'rgba(24, 222, 103, 0.5)', // Deep Forest Green
             'rgba(164, 211, 44, 0.33)', // Vibrant Emerald
