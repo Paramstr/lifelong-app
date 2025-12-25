@@ -6,7 +6,6 @@ import React from 'react';
 import {
   Dimensions,
   Image as RNImage,
-  ScrollView,
   StyleSheet,
   Text,
   View
@@ -14,7 +13,8 @@ import {
 import Animated, {
   SharedValue,
   useAnimatedScrollHandler,
-  useSharedValue
+  useAnimatedStyle,
+  useSharedValue,
 } from 'react-native-reanimated';
 import { FamilyStepsGraph } from '../components/FamilyStepsGraph';
 import { FamilyStressCard } from '../components/FamilyStressCard';
@@ -52,8 +52,20 @@ const CarouselItem = ({ item, index, scrollX }: { item: string; index: number; s
 
 export default function FamilyScreen() {
   const scrollX = useSharedValue(0);
+  const scrollY = useSharedValue(0);
+
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollX.value = event.contentOffset.x;
+  });
+
+  const mainScrollHandler = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
+
+  const animatedBackgroundStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: -scrollY.value }],
+    };
   });
 
   const getItemLayout = (_: any, index: number) => ({
@@ -70,45 +82,51 @@ export default function FamilyScreen() {
     <View style={styles.container}>
       <StatusBar style="dark" />
 
-      {/* 1. Background Carousel Layer */}
-      <View style={styles.backgroundLayer}>
-        <Animated.FlatList
-          data={CAROUSEL_IMAGES}
-          renderItem={renderItem}
-          keyExtractor={(_, index) => index.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={ITEM_WIDTH + SPACING * 2}
-          snapToAlignment="start"
-          decelerationRate="fast"
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
-          contentContainerStyle={{
-            paddingHorizontal: SPACING, // Small padding at start
-            alignItems: 'center',
-          }}
-          getItemLayout={getItemLayout}
+      {/* Animated Background Wrapper */}
+      <Animated.View style={[StyleSheet.absoluteFill, animatedBackgroundStyle, { zIndex: 0 }]}>
+        {/* 1. Background Carousel Layer */}
+        <View style={styles.backgroundLayer}>
+          <Animated.FlatList
+            data={CAROUSEL_IMAGES}
+            renderItem={renderItem}
+            keyExtractor={(_, index) => index.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={ITEM_WIDTH + SPACING * 2}
+            snapToAlignment="start"
+            decelerationRate="fast"
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
+            contentContainerStyle={{
+              paddingHorizontal: SPACING, // Small padding at start
+              paddingTop: 40, // Moved padding here to prevent clipping
+              alignItems: 'center',
+            }}
+            getItemLayout={getItemLayout}
+          />
+        </View>
+
+        {/* 2. Glass / Blur Effect Layer */}
+        {/* Increased intensity to be visible (0.8 is too low) */}
+        <BlurView intensity={10} style={[StyleSheet.absoluteFill, { height: height * 0.45, zIndex: 1 }]} tint="light" />
+
+        {/* 3. White Gradient Overlay */}
+        {/* Fully white by roughly 1/3 of screen height */}
+        <LinearGradient
+          colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.6)', '#ffffff']}
+          locations={[0, 0.4, 1]}
+          style={styles.gradientOverlay}
+          pointerEvents="none"
         />
-      </View>
-
-      {/* 2. Glass / Blur Effect Layer */}
-      {/* Increased intensity to be visible (0.8 is too low) */}
-      <BlurView intensity={10} style={[StyleSheet.absoluteFill, { height: height * 0.45, zIndex: 1 }]} tint="light" />
-
-      {/* 3. White Gradient Overlay */}
-      {/* Fully white by roughly 1/3 of screen height */}
-      <LinearGradient
-        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.6)', '#ffffff']}
-        locations={[0, 0.4, 1]}
-        style={styles.gradientOverlay}
-        pointerEvents="none"
-      />
+      </Animated.View>
 
       {/* 4. Content Layer (Avatar + Info) */}
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={mainScrollHandler}
+        scrollEventThrottle={16}
       >
         {/* Spacer to push content down to the white area */}
         <View style={{ height: height * 0.32 }} />
@@ -144,7 +162,7 @@ export default function FamilyScreen() {
           <Text style={styles.name}>Singh Family</Text>
           
           <Text style={styles.bio}>
-            Dedcicated to a lifetime of health and happiness. An active family who loves hiking trails, weekend adventures, and prioritizing longevity together.
+            Dedicated to a lifetime of health and happiness. An active family who loves hiking trails, weekend adventures, and prioritizing longevity together.
           </Text>
           
           <View style={styles.socialRow}>
@@ -195,7 +213,7 @@ export default function FamilyScreen() {
         
         {/* Extra space at bottom */}
         <View style={{ height: 100 }} />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
@@ -212,7 +230,7 @@ const styles = StyleSheet.create({
     right: 0,
     height: height * 0.45, // Reduced height (approx 1/2 of previous)
     zIndex: 0,
-    paddingTop: 20,
+    // paddingTop: 20, // Removed to prevent clipping, moved to contentContainerStyle
   },
   carouselContent: {
     alignItems: 'center',
@@ -221,7 +239,7 @@ const styles = StyleSheet.create({
     width: ITEM_WIDTH,
     height: height * 0.45, // Match background height
     marginHorizontal: SPACING,
-    borderRadius: 20, // Rounded top
+    borderRadius: 30, // Rounded top
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
     backgroundColor: '#333',
