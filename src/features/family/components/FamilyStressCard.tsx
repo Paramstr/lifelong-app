@@ -2,7 +2,7 @@ import { GlassView } from 'expo-glass-effect';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SymbolView } from 'expo-symbols';
 import React, { useMemo } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_PADDING = 16;
@@ -70,10 +70,19 @@ export const FamilyStressCard = () => {
   }, []);
 
   return (
-    <GlassView style={styles.card} glassEffectStyle="clear">
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>Medium</Text>
+    <GlassView style={styles.card} glassEffectStyle="regular">
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+            <Text style={styles.subTitleLabel}>Family Stress</Text>
+            <SymbolView name="info.circle" tintColor="#999" style={{ width: 14, height: 14, marginLeft: 4 }} />
+        </View>
+        <TouchableOpacity style={styles.detailsButton}>
+             <SymbolView name="sparkles" tintColor="#444" style={{ width: 14, height: 14, marginRight: 4 }} />
+             <Text style={styles.detailsText}>Protocol</Text>
+        </TouchableOpacity>
       </View>
+
+      <Text style={styles.summaryText}>Medium</Text>
 
       <View style={styles.barsContainer}>
         {bars.map((bar, index) => (
@@ -102,7 +111,6 @@ export const FamilyStressCard = () => {
 
       <View style={styles.footerRow}>
         <SymbolView name="umbrella.fill" tintColor="#666" style={{ width: 18, height: 18 }} />
-        <Text style={styles.footerText}>Family Stress Level</Text>
         <Text style={styles.percentage}>{(TOTAL_STRESS * 100).toFixed(0)}%</Text>
       </View>
     </GlassView>
@@ -116,14 +124,40 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
   },
-  headerRow: {
-    marginBottom: 12,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  title: {
+  headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+  },
+  subTitleLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+  },
+  detailsButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#f2f2f2', // Light grey pill
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 12,
+  },
+  detailsText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: '#333',
+  },
+  summaryText: {
     fontSize: 22,
     fontWeight: '700',
     color: '#333',
     letterSpacing: -0.5,
+    marginBottom: 12,
   },
   barsContainer: {
     flexDirection: 'row',
@@ -140,7 +174,8 @@ const styles = StyleSheet.create({
   },
   footerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
     gap: 8,
   },
   footerText: {

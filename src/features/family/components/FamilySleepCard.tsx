@@ -93,7 +93,7 @@ export const FamilySleepCard = () => {
   };
 
   return (
-    <GlassView style={styles.card} glassEffectStyle="clear">
+    <GlassView style={styles.card} glassEffectStyle="regular">
       
       {/* Header */}
       <View style={styles.header}>

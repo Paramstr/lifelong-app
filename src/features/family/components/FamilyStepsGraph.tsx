@@ -1,7 +1,8 @@
-import { Canvas, Circle, Group, Path, Skia } from '@shopify/react-native-skia';
+import { Canvas, Circle, Group, LinearGradient, Path, Skia, vec } from '@shopify/react-native-skia';
 import * as d3Scale from 'd3-scale';
 import * as d3 from 'd3-shape';
 import { GlassView } from 'expo-glass-effect';
+import { SymbolView } from 'expo-symbols';
 import React, { useMemo } from 'react';
 import { Dimensions, Image as RNImage, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -96,16 +97,18 @@ export const FamilyStepsGraph = () => {
   return (
     <GlassView style={styles.card} glassEffectStyle="regular">
         <View style={styles.header}>
-            <Text style={styles.title}>Weekly Steps</Text>
-            <Text style={styles.subtitle}>Last 7 Days</Text>
+            <View style={styles.headerLeft}>
+                <Text style={styles.subTitleLabel}>Weekly Steps</Text>
+                <SymbolView name="info.circle" tintColor="#999" style={{ width: 14, height: 14, marginLeft: 4 }} />
+            </View>
         </View>
+
+        <Text style={styles.summaryText}>Last 7 Days</Text>
 
         <View style={styles.graphContainer}>
              <GestureDetector gesture={gesture}>
                 <Animated.View>
                     <Canvas style={{ width: GRAPH_WIDTH, height: GRAPH_HEIGHT }}>
-                        {/* Grid Lines (Optional - Clean white look usually doesn't have many) */}
-                        
                         {/* Lines and Dots */}
                         <Group>
                             {paths.map((p, i) => (
@@ -114,11 +117,15 @@ export const FamilyStepsGraph = () => {
                                         path={p.path}
                                         style="stroke"
                                         strokeWidth={4}
-                                        color={p.color}
                                         strokeJoin="round"
                                         strokeCap="round"
-                                        // shadow
-                                    />
+                                    >
+                                        <LinearGradient
+                                            start={vec(0, PADDING_VERTICAL)}
+                                            end={vec(0, GRAPH_HEIGHT - PADDING_VERTICAL)}
+                                            colors={[p.color, 'rgba(200,200,200,0.5)']}
+                                        />
+                                    </Path>
                                     {/* Dots for each point */}
                                     {p.data.map((d: any, index: number) => (
                                         <Circle
@@ -212,20 +219,24 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: 20,
-    paddingHorizontal: 8,
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1a1a1a',
-    letterSpacing: -0.5,
+  headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
   },
-  subtitle: {
+  subTitleLabel: {
     fontSize: 14,
-    color: '#888',
-    fontWeight: '500',
+    fontWeight: '600',
+    color: '#666',
+  },
+  summaryText: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#333',
+    letterSpacing: -0.5,
+    marginBottom: 12,
   },
   graphContainer: {
     height: GRAPH_HEIGHT,
