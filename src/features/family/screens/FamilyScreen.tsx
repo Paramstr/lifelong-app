@@ -288,10 +288,10 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 37.5,
-    shadowColor: '#ffffff96',
+    shadowColor: '#ffffffff',
     shadowOffset: { width: 0, height: 0 }, // Center glow
-    shadowOpacity: 0.6,
-    shadowRadius: 15, // Large glow
+    shadowOpacity: 1,
+    shadowRadius: 10, // Large glow
     elevation: 5,
     zIndex: 0,
   },
@@ -394,8 +394,10 @@ const styles = StyleSheet.create({
       width: 32,
       height: 32,
       borderRadius: 16,
-      borderWidth: 2,
-      borderColor: '#fff',
+      shadowColor: '#ffffffff',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.5,
+      shadowRadius: 5,
   },
   socialLabel: {
       fontSize: 12,
