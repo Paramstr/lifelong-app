@@ -16,6 +16,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
+import { FamilySleepCard } from '../components/FamilySleepCard';
 import { FamilyStepsGraph } from '../components/FamilyStepsGraph';
 import { FamilyStressCard } from '../components/FamilyStressCard';
 
@@ -204,6 +205,10 @@ export default function FamilyScreen() {
 
         <View style={styles.sectionSpacer}>
            <FamilyStressCard />
+        </View>
+
+        <View style={[styles.sectionSpacer, { marginTop: 16 }]}>
+           <FamilySleepCard />
         </View>
 
         <View style={[styles.sectionSpacer, { marginTop: 16 }]}>
