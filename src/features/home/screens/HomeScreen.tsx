@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
 import DailyTimeline from '@/components/home/daily-timeline';
-import UpcomingTaskCard from '@/components/home/upcoming-task-card';
+import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
 import SoftRadialGradient from '@/components/shared/soft-radial-gradient';
 
@@ -106,7 +106,7 @@ const HomeScreen = () => {
           </View>
 
         {/* <Text style={styles.sectionTitle}>Upcoming</Text> */}
-        <UpcomingTaskCard 
+        <UpcomingProtocolCard 
           title="Morning Mobility"
           journey="Knee Recovery"
           duration="10 min"
@@ -122,7 +122,7 @@ const HomeScreen = () => {
           ]}
         />
         <View style={styles.cardGap} />
-        <UpcomingTaskCard 
+        <UpcomingProtocolCard 
           title="Evening Mobility"
           journey="Knee Recovery"
           duration="15 min"

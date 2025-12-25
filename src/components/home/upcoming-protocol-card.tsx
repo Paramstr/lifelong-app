@@ -15,7 +15,7 @@ import { StyleSheet } from 'react-native-unistyles';
 
 const AnimatedGlassView = Animated.createAnimatedComponent(GlassView);
 
-interface UpcomingTaskCardProps {
+interface UpcomingProtocolCardProps {
     title: string;
     journey: string;
     duration: string;
@@ -33,7 +33,7 @@ interface UpcomingTaskCardProps {
     gradientColors?: [string, string, string]; 
 }
 
-const UpcomingTaskCard: React.FC<UpcomingTaskCardProps> = ({
+const UpcomingProtocolCard: React.FC<UpcomingProtocolCardProps> = ({
     title,
     journey,
     duration,
@@ -364,5 +364,5 @@ const styles = StyleSheet.create(theme => ({
     },
 }));
 
-export default UpcomingTaskCard;
+export default UpcomingProtocolCard;
 
