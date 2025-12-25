@@ -6,11 +6,13 @@ interface TimelineItemProps {
   children: React.ReactNode;
   showLine?: boolean; // Deprecated but kept for compatibility if needed, though we use isLast now
   isLast?: boolean;
+  lineOpacity?: number;
 }
 
 const TimelineItem: React.FC<TimelineItemProps> = ({
   children,
   isLast = false,
+  lineOpacity = 1,
 }) => {
   const { theme } = useUnistyles();
 
@@ -18,7 +20,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
     <View style={styles.container}>
       <View style={styles.timelineColumn}>
         {/* Continuous Line */}
-        {!isLast && <View style={styles.line} />}
+        {!isLast && <View style={[styles.line, { opacity: lineOpacity }]} />}
         
         {/* Node */}
         <View style={styles.node} />
@@ -45,7 +47,7 @@ const styles = StyleSheet.create(theme => ({
     top: theme.spacing.md + 6, // Start below the node center
     bottom: -theme.spacing.md - 6, // Extend to next node
     width: 2,
-    backgroundColor: theme.colors.border.divider, // Continuous refined line
+    backgroundColor: theme.colors.text.muted, // Continuous refined line
     left: 15, // Center in 32px width (32/2 - 1)
   },
   node: {

@@ -63,7 +63,15 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
       </View>
 
       <View style={styles.content}>
-        {sortedEntries.map((entry, index) => (
+        {sortedEntries.map((entry, index) => {
+          const total = sortedEntries.length;
+          // Calculate opacity: Start at 1.0, fade down to 0.2
+          // If 1 item, opacity 1. 
+          // If multiple, index 0 = 1.0, index last = 0.2
+          const progress = total > 1 ? index / (total - 1) : 0;
+          const lineOpacity = Math.max(0.2, 1 - progress * 0.8);
+
+          return (
           <TimelineItem 
             key={entry.id} 
             showLine={index !== sortedEntries.length - 1} // Or always show line? "Continuous" usually implies connecting.
@@ -71,6 +79,7 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
             // Standard timeline: Points are on a line. The line connects them.
             // Let's pass 'isLast' to handle the line ending.
             isLast={index === sortedEntries.length - 1}
+            lineOpacity={lineOpacity}
           >
             {entry.type === 'meal' ? (
               <MealCard
@@ -90,7 +99,8 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
               />
             )}
           </TimelineItem>
-        ))}
+        );
+        })}
       </View>
     </View>
   );
