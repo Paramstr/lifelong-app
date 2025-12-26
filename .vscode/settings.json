@@ -9,5 +9,19 @@
       "GEMINI.md",
       "AGENTS.md"
     ]
-  }
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/ios/Pods/**": true,
+    "**/android/**": true
+  },
+  "search.exclude": {
+    "**/node_modules/**": true,
+    "**/ios/Pods/**": true,
+    "**/android/**": true
+  },
+  "swift.path.exclude": [
+    "**/node_modules/**",
+    "**/ios/Pods/**"
+  ]
 }
