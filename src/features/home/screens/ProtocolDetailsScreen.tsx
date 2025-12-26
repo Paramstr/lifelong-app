@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
     Dimensions,
-    Image,
+    Image as RNImage,
     Text,
     TouchableOpacity,
     View,
@@ -17,6 +17,7 @@ import {
 import Animated, {
     Extrapolation,
     interpolate,
+    SharedValue,
     useAnimatedScrollHandler,
     useAnimatedStyle,
     useSharedValue,
@@ -26,14 +27,43 @@ import { StyleSheet } from 'react-native-unistyles';
 
 const { width, height } = Dimensions.get('window');
 
+// Carousel Constants
+const CAROUSEL_IMAGES = [
+  'https://i.pinimg.com/736x/0b/78/ae/0b78ae008ae0924deb8709191ed2cf69.jpg',
+  'https://i.pinimg.com/1200x/05/e5/25/05e52588f71872631068a0f8504f364e.jpg',
+  'https://i.pinimg.com/736x/10/6e/9f/106e9fa45826b993739449166b81c5c2.jpg',
+  'https://i.pinimg.com/1200x/4b/61/93/4b6193893b5e78852385512422b9fa9e.jpg',
+  'https://i.pinimg.com/1200x/4b/61/93/4b6193893b5e78852385512422b9fa9e.jpg',
+];
+
+const ITEM_WIDTH = width * 0.28;
+const SPACING = 8;
+
+const CarouselItem = ({ item, index, scrollX }: { item: string; index: number; scrollX: SharedValue<number> }) => {
+  return (
+    <Animated.View style={styles.carouselItemContainer}>
+      <RNImage
+        source={{ uri: item }}
+        style={styles.carouselImage}
+        resizeMode="cover"
+      />
+    </Animated.View>
+  );
+};
+
 interface ProtocolDetailsScreenProps {
   protocolId: string;
 }
 
 const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolId }) => {
     const insets = useSafeAreaInsets();
+    const scrollX = useSharedValue(0);
     const scrollY = useSharedValue(0);
     const [showFeedback, setShowFeedback] = useState(false);
+
+    const scrollHandler = useAnimatedScrollHandler((event) => {
+        scrollX.value = event.contentOffset.x;
+    });
 
     const onScroll = useAnimatedScrollHandler(event => {
         scrollY.value = event.contentOffset.y;
@@ -54,6 +84,16 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
         };
     });
 
+    const getItemLayout = (_: any, index: number) => ({
+        length: ITEM_WIDTH + SPACING * 2,
+        offset: (ITEM_WIDTH + SPACING * 2) * index,
+        index,
+    });
+
+    const renderItem = ({ item, index }: { item: string; index: number }) => {
+        return <CarouselItem item={item} index={index} scrollX={scrollX} />;
+    };
+
     const steps = [
         { id: 1, title: 'Deep Squat Hold', desc: 'Sit in a deep squat position to open up hips.', duration: '2 mins', reps: '1 set' },
         { id: 2, title: 'Forward Fold', desc: 'Hinge at hips, reaching for toes.', duration: '1 min', reps: '2 sets' },
@@ -66,24 +106,37 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
         <View style={styles.container}>
             <StatusBar style="dark" />
 
-            {/* Background Layer (Parallax) */}
+            {/* Background Layer (Carousel) */}
             <Animated.View style={[StyleSheet.absoluteFill, backgroundAnimatedStyle, { zIndex: 0 }]}>
-                {/* 1. Image Layer */}
+                {/* 1. Carousel Layer */}
                 <View style={styles.backgroundLayer}>
-                    <Image
-                        source={require('../../../../assets/images/morning-mobility.png')}
-                        style={styles.backgroundImage}
-                        resizeMode="cover"
-                    />
+                     <Animated.FlatList
+                        data={CAROUSEL_IMAGES}
+                        renderItem={renderItem}
+                        keyExtractor={(_, index) => index.toString()}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        snapToInterval={ITEM_WIDTH + SPACING * 2}
+                        snapToAlignment="start"
+                        decelerationRate="fast"
+                        onScroll={scrollHandler}
+                        scrollEventThrottle={16}
+                        contentContainerStyle={{
+                          paddingHorizontal: SPACING,
+                          paddingTop: 40,
+                          alignItems: 'center',
+                        }}
+                        getItemLayout={getItemLayout}
+                      />
                 </View>
 
                 {/* 2. Blur Effect Layer */}
-                <BlurView intensity={10} style={[StyleSheet.absoluteFill, { height: height * 0.55, zIndex: 1 }]} tint="light" />
+                <BlurView intensity={10} style={[StyleSheet.absoluteFill, { height: height * 0.45, zIndex: 1 }]} tint="light" />
 
                 {/* 3. White Gradient Overlay */}
                 <LinearGradient
-                    colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)', '#ffffff']}
-                    locations={[0, 0.45, 1]}
+                    colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.6)', '#ffffff']}
+                    locations={[0, 0.4, 1]}
                     style={styles.gradientOverlay}
                     pointerEvents="none"
                 />
@@ -95,6 +148,12 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                     <GlassView style={styles.glassButton} glassEffectStyle="regular">
                         <Ionicons name="chevron-back" size={24} color="#000" />
                     </GlassView>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.rightHeaderButton}>
+                     <GlassView style={styles.glassButtonRight} glassEffectStyle="regular">
+                        <Text style={styles.headerButtonText}>Joint Mobility</Text>
+                     </GlassView>
                 </TouchableOpacity>
             </View>
 
@@ -111,6 +170,18 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
             >
                 {/* Header Content */}
                 <Animated.View style={[styles.headerContent, headerAnimatedStyle]}>
+                    <GlassView 
+                        style={styles.protocolImageContainer} 
+                        glassEffectStyle="clear" 
+                        tintColor="#ffffff85"
+                    >
+                         <RNImage 
+                            source={require('../../../../assets/images/morning-mobility.png')}
+                            style={styles.protocolImage}
+                            resizeMode="cover"
+                         />
+                    </GlassView>
+
                     <Text style={styles.superTitle}>RECOVERY JOURNEY</Text>
                     <Text style={styles.heroTitle}>Morning Mobility</Text>
                     <Text style={styles.description}>
@@ -185,10 +256,20 @@ const styles = StyleSheet.create(theme => ({
         top: 0,
         left: 0,
         right: 0,
-        height: height * 0.55,
+        height: height * 0.45,
         zIndex: 0,
     },
-    backgroundImage: {
+    carouselItemContainer: {
+        width: ITEM_WIDTH,
+        height: height * 0.45,
+        marginHorizontal: SPACING,
+        borderRadius: 30,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        backgroundColor: '#333',
+        overflow: 'hidden',
+    },
+    carouselImage: {
         width: '100%',
         height: '100%',
     },
@@ -197,7 +278,7 @@ const styles = StyleSheet.create(theme => ({
         top: 0,
         left: 0,
         right: 0,
-        height: height * 0.55,
+        height: height * 0.45,
         zIndex: 2,
     },
     topBar: {
@@ -207,10 +288,17 @@ const styles = StyleSheet.create(theme => ({
         right: 0,
         zIndex: 10,
         paddingHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     backButton: {
         width: 40,
         height: 40,
+    },
+    rightHeaderButton: {
+        height: 40,
+        justifyContent: 'center',
     },
     glassButton: {
         flex: 1,
@@ -219,8 +307,34 @@ const styles = StyleSheet.create(theme => ({
         justifyContent: 'center',
         overflow: 'hidden',
     },
+    glassButtonRight: {
+        flex: 1,
+        borderRadius: 20,
+        paddingHorizontal: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+    },
+    headerButtonText: {
+        color: '#000',
+        fontWeight: '600',
+        fontSize: 14,
+    },
     headerContent: {
         marginBottom: 30,
+    },
+    protocolImageContainer: {
+        width: '25%',
+        aspectRatio: 1,
+        borderRadius: 24,
+        overflow: 'hidden',
+        marginBottom: 20,
+        padding: 0,
+        
+    },
+    protocolImage: {
+         width: '100%',
+         height: '100%',
     },
     superTitle: {
         color: '#666',
