@@ -42,7 +42,7 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
     <View style={styles.wrapper}>
         <GlassView 
             style={styles.cardContainer}
-            glassEffectStyle="regular"
+            glassEffectStyle="clear"
             tintColor={theme.colors.surface.overlay}
         >
         <View style={styles.header}>

@@ -174,7 +174,7 @@ export const lightTheme = {
         },
         surface: {
             card: '#FFFFFF',
-            overlay: 'rgba(247, 250, 252, 0.9)',
+            overlay: 'rgba(255, 255, 255, 1)',
         },
         border: {
             subtle: '#E5E9EE',

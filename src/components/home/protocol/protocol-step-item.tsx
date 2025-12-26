@@ -19,7 +19,7 @@ const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
     description,
     duration,
     reps,
-    videoPlaceholderColor = '#eee'
+    videoPlaceholderColor = '#f0f0f0'
 }) => {
     return (
         <GlassView style={styles.container} glassEffectStyle="regular">
@@ -34,7 +34,7 @@ const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
 
                 {/* Video Placeholder */}
                 <View style={[styles.videoPlaceholder, { backgroundColor: videoPlaceholderColor }]}>
-                    <Ionicons name="play-circle-outline" size={40} color="rgba(0,0,0,0.2)" />
+                    <Ionicons name="play-circle-outline" size={40} color="rgba(0,0,0,0.1)" />
                 </View>
 
                 {/* Description */}
@@ -65,9 +65,13 @@ const styles = StyleSheet.create(theme => ({
         borderRadius: theme.radius['2xl'],
         overflow: 'hidden',
         marginBottom: theme.spacing.md,
-        backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        backgroundColor: 'rgba(255, 255, 255, 0.4)', // More opaque for light mode
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        borderColor: 'rgba(255, 255, 255, 0.4)',
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 4 },
+        // shadowOpacity: 0.05,
+        // shadowRadius: 10,
     },
     content: {
         padding: theme.spacing.lg,
@@ -94,7 +98,7 @@ const styles = StyleSheet.create(theme => ({
     title: {
         fontSize: theme.typography.body.fontSize,
         fontWeight: '600',
-        color: '#000',
+        color: '#1a1a1a', // Darker black
     },
     videoPlaceholder: {
         width: '100%',
@@ -106,7 +110,7 @@ const styles = StyleSheet.create(theme => ({
     },
     description: {
         fontSize: theme.typography.body.fontSize,
-        color: theme.colors.text.secondary,
+        color: '#444', // Dark grey
         lineHeight: 22,
         marginBottom: theme.spacing.md,
     },
