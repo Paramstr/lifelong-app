@@ -1,11 +1,3 @@
----
-trigger: always_on
-glob:
-description: Agents for the Lifelong app
----
-
-
-
 # Lifelong — Personal Longevity App
 
 @DESIGN.md
@@ -48,9 +40,9 @@ Components are co-located with their feature or view.
 ## Development Workflow
 
 ### Scripts
--   `npm start`: Start the Expo Go / Dev Client packager.
--   `./run-ios-beta.sh`: **Preferred**. Builds and runs the native iOS app (Debug).
--   `npm run ios:nuke`: **Fix-All**. Nukes `node_modules`, `ios/`, pods, and rebuilds from scratch. Use this if native modules (Glass, Skia, Nitro) crash.
+-   `npm run ios:clean`: **Primary Build Command**. Cleans, Prebuilds, and runs the Native App on Simulator. Use this when native dependencies change.
+-   `npx expo start`: **Daily Development**. Starts Metro for the Dev Client (hot-reload only).
+-   `npm run ios:nuke`: **Fix-All**. Nukes `node_modules`, `ios/`, pods, and rebuilds from scratch.
 
 ### Design Standard
 Always refer to the **Design System** in `DESIGN.md` (imported above) for styling rules.
