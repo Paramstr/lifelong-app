@@ -40,7 +40,8 @@
             "deploymentTarget": "18.0"
           }
         }
-      ]
+      ],
+      "./plugins/withPodfileDeploymentTarget"
     ],
     "experiments": {
       "typedRoutes": true

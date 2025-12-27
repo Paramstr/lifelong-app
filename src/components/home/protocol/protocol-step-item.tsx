@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { GlassView } from 'expo-glass-effect';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 interface ProtocolStepItemProps {
@@ -11,6 +11,7 @@ interface ProtocolStepItemProps {
     duration?: string;
     reps?: string;
     videoPlaceholderColor?: string;
+    onPress?: () => void;
 }
 
 const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
@@ -19,7 +20,8 @@ const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
     description,
     duration,
     reps,
-    videoPlaceholderColor = '#f0f0f0'
+    videoPlaceholderColor = '#f0f0f0',
+    onPress
 }) => {
     return (
         <GlassView style={styles.container} glassEffectStyle="regular">
@@ -33,9 +35,11 @@ const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
                 </View>
 
                 {/* Video Placeholder */}
-                <View style={[styles.videoPlaceholder, { backgroundColor: videoPlaceholderColor }]}>
-                    <Ionicons name="play-circle-outline" size={40} color="rgba(0,0,0,0.1)" />
-                </View>
+                <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+                    <View style={[styles.videoPlaceholder, { backgroundColor: videoPlaceholderColor }]}>
+                        <Ionicons name="play-circle-outline" size={40} color="rgba(0,0,0,0.1)" />
+                    </View>
+                </TouchableOpacity>
 
                 {/* Description */}
                 <Text style={styles.description}>{description}</Text>

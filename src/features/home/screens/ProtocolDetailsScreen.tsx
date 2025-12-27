@@ -6,7 +6,7 @@ import { GlassView } from 'expo-glass-effect';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
     Dimensions,
     Image as RNImage,
@@ -24,16 +24,17 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
+import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe';
 
 const { width, height } = Dimensions.get('window');
 
 // Carousel Constants
 const CAROUSEL_IMAGES = [
-  'https://i.pinimg.com/736x/0b/78/ae/0b78ae008ae0924deb8709191ed2cf69.jpg',
-  'https://i.pinimg.com/1200x/05/e5/25/05e52588f71872631068a0f8504f364e.jpg',
-  'https://i.pinimg.com/736x/10/6e/9f/106e9fa45826b993739449166b81c5c2.jpg',
-  'https://i.pinimg.com/1200x/4b/61/93/4b6193893b5e78852385512422b9fa9e.jpg',
-  'https://i.pinimg.com/1200x/4b/61/93/4b6193893b5e78852385512422b9fa9e.jpg',
+  'https://i.pinimg.com/1200x/cd/02/86/cd0286ceb9781411d52daf8d85c62853.jpg',
+  'https://i.pinimg.com/736x/41/c8/f4/41c8f4ce8a4cc286a3fa82061c8f7299.jpg',
+  'https://i.pinimg.com/736x/e6/99/61/e69961fcf2cb16193e805139a750fbbf.jpg',
+  'https://i.pinimg.com/1200x/92/ff/7f/92ff7fa9878f285bbf84b672af6923bb.jpg',
+  'https://i.pinimg.com/736x/62/40/4c/62404c963e0c7e592e5b352e341b8cb3.jpg',
 ];
 
 const ITEM_WIDTH = width * 0.28;
@@ -65,6 +66,8 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
         scrollX.value = event.contentOffset.x;
     });
 
+    const playerRef = useRef<YoutubeIframeRef>(null);
+
     const onScroll = useAnimatedScrollHandler(event => {
         scrollY.value = event.contentOffset.y;
     });
@@ -94,13 +97,38 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
         return <CarouselItem item={item} index={index} scrollX={scrollX} />;
     };
 
-    const steps = [
-        { id: 1, title: 'Deep Squat Hold', desc: 'Sit in a deep squat position to open up hips.', duration: '2 mins', reps: '1 set' },
-        { id: 2, title: 'Forward Fold', desc: 'Hinge at hips, reaching for toes.', duration: '1 min', reps: '2 sets' },
-        { id: 3, title: 'Butterfly Stretch', desc: 'Soles of feet together, knees out.', duration: '2 mins', reps: '1 set' },
-        { id: 4, title: 'Cat-Cow', desc: 'Arch and round spine on hands and knees.', duration: '1 min', reps: '10 reps' },
-        { id: 5, title: 'Childs Pose', desc: 'Rest hips on heels, arms forward.', duration: '3 mins', reps: '1 set' },
+    const parseTime = (time: string) => {
+        const [min, sec] = time.split(':').map(Number);
+        return min * 60 + sec;
+    };
+
+    const VIDEO_ID = 'mSZWSQSSEjE';
+
+    const CHAPTERS = [
+        { startTime: "0:00", title: "Introduction" },
+        { startTime: "0:48", title: "Finger Pulses" },
+        { startTime: "1:26", title: "Palm Pulses" },
+        { startTime: "1:59", title: "Side-to-Side Palm Rotations" },
+        { startTime: "2:28", title: "Front Facing Elbow Rotations" },
+        { startTime: "3:06", title: "Side-to-Side Wrist Stretch" },
+        { startTime: "3:39", title: "Rear Facing Wrist Stretch Palms Down" },
+        { startTime: "4:25", title: "Rear Facing Wrist Stretch Palms Up" },
+        { startTime: "4:45", title: "Rear Facing Elbow Rotations" },
+        { startTime: "5:31", title: "Forward Facing Wrist Stretch" }
     ];
+
+    const steps = CHAPTERS.map((chapter, index) => ({
+        id: index + 1,
+        title: chapter.title,
+        startTime: parseTime(chapter.startTime),
+        desc: `Starts at ${chapter.startTime}`,
+        duration: '-', // Placeholder
+        reps: '1 set'  // Placeholder
+    }));
+
+    const handleStepPress = useCallback((time: number) => {
+        playerRef.current?.seekTo(time, true);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -131,9 +159,9 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                 </View>
 
                 {/* 2. Blur Effect Layer */}
-                <BlurView intensity={10} style={[StyleSheet.absoluteFill, { height: height * 0.45, zIndex: 1 }]} tint="light" />
+                <BlurView intensity={20} style={[StyleSheet.absoluteFill, { height: height * 0.45, zIndex: 1 }]} tint="light" />
 
-                {/* 3. White Gradient Overlay */}
+                {/* 3. White Gradient Overlagiy */}
                 <LinearGradient
                     colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.6)', '#ffffff']}
                     locations={[0, 0.4, 1]}
@@ -170,17 +198,18 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
             >
                 {/* Header Content */}
                 <Animated.View style={[styles.headerContent, headerAnimatedStyle]}>
-                    <GlassView 
-                        style={styles.protocolImageContainer} 
-                        glassEffectStyle="clear" 
-                        tintColor="#ffffff85"
-                    >
-                         <RNImage 
-                            source={require('../../../../assets/images/morning-mobility.png')}
-                            style={styles.protocolImage}
-                            resizeMode="cover"
+                    <View style={styles.videoContainer}>
+                         <YoutubePlayer
+                            ref={playerRef}
+                            height={220}
+                            width={width - 40} // Full width minus padding
+                            videoId={VIDEO_ID}
+                            webViewProps={{
+                                allowsFullscreenVideo: true,
+                                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
+                            }}
                          />
-                    </GlassView>
+                    </View>
 
                     <Text style={styles.superTitle}>RECOVERY JOURNEY</Text>
                     <Text style={styles.heroTitle}>Morning Mobility</Text>
@@ -215,6 +244,7 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                             description={step.desc}
                             duration={step.duration}
                             reps={step.reps}
+                            onPress={() => handleStepPress(step.startTime)}
                         />
                     ))}
                 </View>
@@ -323,19 +353,14 @@ const styles = StyleSheet.create(theme => ({
     headerContent: {
         marginBottom: 30,
     },
-    protocolImageContainer: {
-        width: '25%',
-        aspectRatio: 1,
+    videoContainer: {
+        width: '100%',
         borderRadius: 24,
         overflow: 'hidden',
         marginBottom: 20,
-        padding: 0,
-        
+        backgroundColor: '#000', // Placeholder for video load
     },
-    protocolImage: {
-         width: '100%',
-         height: '100%',
-    },
+    // Removed protocolImage styles as replaced by videoContainer
     superTitle: {
         color: '#666',
         fontSize: 12,
