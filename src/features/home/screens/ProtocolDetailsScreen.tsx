@@ -196,7 +196,7 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                         <RNImage
                             source={WRIST_MOBILITY_PROTOCOL.image || require('../../../../assets/images/protocols/task-logo.png')}
                             style={styles.protocolImage}
-                            resizeMode="cover"
+                            resizeMode="contain"
                         />
                     </View>
 
@@ -344,16 +344,16 @@ const styles = StyleSheet.create(theme => ({
         marginBottom: 30,
     },
     videoContainer: {
-        width: '100%',
-        height: height * 0.25, // 1/4th screen height
+        width: 120,
+        height: 120,
         borderRadius: 24,
         overflow: 'hidden',
         marginBottom: 20,
-        backgroundColor: '#f4f4f5',
+        backgroundColor: '#ffffff',
     },
     protocolImage: {
-        width: '50%',
-        height: '50%',
+        width: '100%',
+        height: '100%',
     },
     superTitle: {
         color: '#666',
