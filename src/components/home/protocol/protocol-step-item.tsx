@@ -37,14 +37,15 @@ const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const handlePress = useCallback(() => {
-        setPlaying(prev => {
-            const nextState = !prev;
-            if (nextState) {
-                setMuted(false); // Unmute when playing
-            }
-            return nextState;
-        });
-    }, []);
+        // If it's currently "loading" (playing + muted), or just paused, we want to PLAY unmuted.
+        if (muted) {
+            setMuted(false);
+            setPlaying(true);
+        } else {
+            // Normal toggle if already unmuted
+            setPlaying(prev => !prev);
+        }
+    }, [muted]);
 
     const onStateChange = useCallback((state: string) => {
         if (state === 'playing') {
@@ -97,7 +98,7 @@ const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
                 </View>
 
                 {/* Video Placeholder */}
-                <TouchableOpacity activeOpacity={0.8} onPress={handlePress} disabled={playing}>
+                <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
                     <View style={[styles.videoPlaceholder, { backgroundColor: videoPlaceholderColor }]}>
                         <View style={styles.videoThumbnail} pointerEvents={playing && !muted ? 'auto' : 'none'}>
                              <YoutubePlayer
