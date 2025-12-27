@@ -216,10 +216,7 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                             <Ionicons name="fitness" size={12} color="#666" />
                             <Text style={styles.chipText}>5 Exercises</Text>
                         </View>
-                        <View style={styles.chip}>
-                            <Ionicons name="sparkles" size={12} color="#666" />
-                            <Text style={styles.chipText}>AI Curated</Text>
-                        </View>
+
                     </View>
                 </Animated.View>
 
