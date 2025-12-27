@@ -24,7 +24,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
-import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe';
+import { YoutubeIframeRef } from 'react-native-youtube-iframe';
+import { WRIST_MOBILITY_PROTOCOL } from '../data/protocol-data';
 
 const { width, height } = Dimensions.get('window');
 
@@ -66,6 +67,7 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
         scrollX.value = event.contentOffset.x;
     });
 
+    // Player ref kept for future use, but currently unused as player is removed
     const playerRef = useRef<YoutubeIframeRef>(null);
 
     const onScroll = useAnimatedScrollHandler(event => {
@@ -73,7 +75,7 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
     });
 
     const headerAnimatedStyle = useAnimatedStyle(() => {
-        const opacity = interpolate(scrollY.value, [0, 100], [1, 0], Extrapolation.CLAMP);
+        const opacity = interpolate(scrollY.value, [100, 100], [1, 0], Extrapolation.CLAMP);
         const translateY = interpolate(scrollY.value, [0, 100], [0, -20], Extrapolation.CLAMP);
         return {
             opacity,
@@ -102,22 +104,11 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
         return min * 60 + sec;
     };
 
-    const VIDEO_ID = 'mSZWSQSSEjE';
+    // Extract Video ID and Thumbnail
+    const videoId = WRIST_MOBILITY_PROTOCOL.videoUrl.split('v=')[1];
+    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
-    const CHAPTERS = [
-        { startTime: "0:00", title: "Introduction" },
-        { startTime: "0:48", title: "Finger Pulses" },
-        { startTime: "1:26", title: "Palm Pulses" },
-        { startTime: "1:59", title: "Side-to-Side Palm Rotations" },
-        { startTime: "2:28", title: "Front Facing Elbow Rotations" },
-        { startTime: "3:06", title: "Side-to-Side Wrist Stretch" },
-        { startTime: "3:39", title: "Rear Facing Wrist Stretch Palms Down" },
-        { startTime: "4:25", title: "Rear Facing Wrist Stretch Palms Up" },
-        { startTime: "4:45", title: "Rear Facing Elbow Rotations" },
-        { startTime: "5:31", title: "Forward Facing Wrist Stretch" }
-    ];
-
-    const steps = CHAPTERS.map((chapter, index) => ({
+    const steps = WRIST_MOBILITY_PROTOCOL.chapters.map((chapter, index) => ({
         id: index + 1,
         title: chapter.title,
         startTime: parseTime(chapter.startTime),
@@ -127,7 +118,10 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
     }));
 
     const handleStepPress = useCallback((time: number) => {
-        playerRef.current?.seekTo(time, true);
+        // Video player is currently removed, so this action is disabled.
+        // if (playerRef.current) {
+        //     playerRef.current.seekTo(time, true);
+        // }
     }, []);
 
     return (
@@ -161,7 +155,7 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                 {/* 2. Blur Effect Layer */}
                 <BlurView intensity={20} style={[StyleSheet.absoluteFill, { height: height * 0.45, zIndex: 1 }]} tint="light" />
 
-                {/* 3. White Gradient Overlagiy */}
+                {/* 3. White Gradient Overlay */}
                 <LinearGradient
                     colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.6)', '#ffffff']}
                     locations={[0, 0.4, 1]}
@@ -199,20 +193,15 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                 {/* Header Content */}
                 <Animated.View style={[styles.headerContent, headerAnimatedStyle]}>
                     <View style={styles.videoContainer}>
-                         <YoutubePlayer
-                            ref={playerRef}
-                            height={220}
-                            width={width - 40} // Full width minus padding
-                            videoId={VIDEO_ID}
-                            webViewProps={{
-                                allowsFullscreenVideo: true,
-                                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
-                            }}
-                         />
+                        <RNImage
+                            source={WRIST_MOBILITY_PROTOCOL.image || require('../../../../assets/images/protocols/task-logo.png')}
+                            style={styles.protocolImage}
+                            resizeMode="cover"
+                        />
                     </View>
 
                     <Text style={styles.superTitle}>RECOVERY JOURNEY</Text>
-                    <Text style={styles.heroTitle}>Morning Mobility</Text>
+                    <Text style={styles.heroTitle}>Wrist Mobility</Text>
                     <Text style={styles.description}>
                         A gentle routine to wake up your joints and prepare for the day.
                         Focus on breathing deeply.
@@ -244,6 +233,7 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                             description={step.desc}
                             duration={step.duration}
                             reps={step.reps}
+                            imageUrl={thumbnailUrl}
                             onPress={() => handleStepPress(step.startTime)}
                         />
                     ))}
@@ -355,12 +345,16 @@ const styles = StyleSheet.create(theme => ({
     },
     videoContainer: {
         width: '100%',
+        height: height * 0.25, // 1/4th screen height
         borderRadius: 24,
         overflow: 'hidden',
         marginBottom: 20,
-        backgroundColor: '#000', // Placeholder for video load
+        backgroundColor: '#f4f4f5',
     },
-    // Removed protocolImage styles as replaced by videoContainer
+    protocolImage: {
+        width: '50%',
+        height: '50%',
+    },
     superTitle: {
         color: '#666',
         fontSize: 12,

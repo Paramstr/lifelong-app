@@ -7,7 +7,6 @@ import { StyleSheet } from 'react-native-unistyles';
 import DailyTimeline from '@/components/home/daily-timeline';
 import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
-import SoftRadialGradient from '@/components/shared/soft-radial-gradient';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
@@ -71,7 +70,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <SoftRadialGradient />
+      {/* <SoftRadialGradient /> */}
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -108,14 +107,14 @@ const HomeScreen = () => {
 
         {/* <Text style={styles.sectionTitle}>Upcoming</Text> */}
         <UpcomingProtocolCard 
-          title="Morning Mobility"
-          journey="Knee Recovery"
+          title="Wrist Mobility"
+          journey="Joint Recovery"
           duration="10 min"
-          taskImage={require('../../../../assets/images/morning-mobility.png')}
+          taskImage={require('../../../../assets/images/protocols/wrist-mobility.png')}
           timestamp="08:30"
           count={3}
           username="-"
-          onPress={() => router.push('/protocol/morning-mobility')}
+          onPress={() => router.push('/protocol/wrist-mobility')}
           gradientColors={[
             'rgba(24, 222, 103, 0.5)', // Deep Forest Green
             'rgba(164, 211, 44, 0.33)', // Vibrant Emerald
@@ -127,7 +126,7 @@ const HomeScreen = () => {
           title="Evening Mobility"
           journey="Knee Recovery"
           duration="15 min"
-          taskImage={require('../../../../assets/images/evening-mobility.png')}
+          taskImage={require('../../../../assets/images/protocols/evening-mobility.png')}
           timestamp="19:45"
           count={1}
           username="-"

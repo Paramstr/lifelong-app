@@ -214,7 +214,7 @@ const UpcomingProtocolCard: React.FC<UpcomingProtocolCardProps> = ({
                                 isInteractive={true}
                             />
                             <Image 
-                                source={taskImage || require('../../assets/images/task-logo.png')}
+                                source={taskImage || require('../../../assets/images/protocols/task-logo.png')}
                                 style={styles.taskImage}
                                 resizeMode="cover"
                             />
