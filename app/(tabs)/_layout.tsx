@@ -1,7 +1,15 @@
+import { isLiquidGlassAvailable } from 'expo-glass-effect';
 import { Tabs } from 'expo-router';
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
 import React from 'react';
-import { DynamicColorIOS } from 'react-native';
+import { AccessibilityInfo, DynamicColorIOS, Platform } from 'react-native';
+
+console.log(
+  'Platform Info:',
+  Platform.Version,
+  (Platform.constants as any)?.osVersion,
+  (Platform.constants as any)?.systemName
+);
 
 export default function TabsLayout() {
   const tintColor = DynamicColorIOS({
@@ -10,6 +18,13 @@ export default function TabsLayout() {
   });
 
   const USE_NATIVE_TABS = true; // Set to false to use standard Tabs (for Element Inspector support)
+
+  React.useEffect(() => {
+    console.log('isLiquidGlassAvailable:', isLiquidGlassAvailable());
+    AccessibilityInfo.isReduceTransparencyEnabled().then((enabled) => {
+      console.log('isReduceTransparencyEnabled:', enabled);
+    });
+  }, []);
 
   return USE_NATIVE_TABS ? (
     <NativeTabs
