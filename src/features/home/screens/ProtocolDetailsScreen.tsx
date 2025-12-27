@@ -106,16 +106,18 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
 
     // Extract Video ID and Thumbnail
     const videoId = WRIST_MOBILITY_PROTOCOL.videoUrl.split('v=')[1];
-    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-
-    const steps = WRIST_MOBILITY_PROTOCOL.chapters.map((chapter, index) => ({
-        id: index + 1,
-        title: chapter.title,
-        startTime: parseTime(chapter.startTime),
-        desc: `Starts at ${chapter.startTime}`,
-        duration: '-', // Placeholder
-        reps: '1 set'  // Placeholder
-    }));
+     const steps = WRIST_MOBILITY_PROTOCOL.chapters.map((chapter, index) => {
+        const nextChapter = WRIST_MOBILITY_PROTOCOL.chapters[index + 1];
+        return {
+            id: index + 1,
+            title: chapter.title,
+            startTime: parseTime(chapter.startTime),
+            endTime: nextChapter ? parseTime(nextChapter.startTime) : undefined,
+            desc: `Starts at ${chapter.startTime}`,
+            duration: '-', // Placeholder
+            reps: '1 set'  // Placeholder
+        };
+    });
 
     const handleStepPress = useCallback((time: number) => {
         // Video player is currently removed, so this action is disabled.
@@ -230,7 +232,9 @@ const ProtocolDetailsScreen: React.FC<ProtocolDetailsScreenProps> = ({ protocolI
                             description={step.desc}
                             duration={step.duration}
                             reps={step.reps}
-                            imageUrl={thumbnailUrl}
+                            videoId={videoId}
+                            startTime={step.startTime}
+                            endTime={step.endTime}
                             onPress={() => handleStepPress(step.startTime)}
                         />
                     ))}

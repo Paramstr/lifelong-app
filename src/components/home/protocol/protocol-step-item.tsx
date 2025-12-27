@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { GlassView } from 'expo-glass-effect';
-import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
+import YoutubePlayer, { YoutubeIframeRef } from 'react-native-youtube-iframe';
 
 interface ProtocolStepItemProps {
     stepNumber: number;
@@ -11,7 +12,9 @@ interface ProtocolStepItemProps {
     duration?: string;
     reps?: string;
     videoPlaceholderColor?: string;
-    imageUrl?: string;
+    videoId: string;
+    startTime: number;
+    endTime?: number;
     onPress?: () => void;
 }
 
@@ -22,33 +25,102 @@ const ProtocolStepItem: React.FC<ProtocolStepItemProps> = ({
     duration,
     reps,
     videoPlaceholderColor = '#f0f0f0',
-    imageUrl,
+    videoId,
+    startTime,
+    endTime,
     onPress
 }) => {
+    const [playing, setPlaying] = useState(true); // Start playing to load video
+    const [muted, setMuted] = useState(true); // Start muted
+    const [completed, setCompleted] = useState(false);
+    const playerRef = useRef<YoutubeIframeRef>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    const handlePress = useCallback(() => {
+        setPlaying(prev => {
+            const nextState = !prev;
+            if (nextState) {
+                setMuted(false); // Unmute when playing
+            }
+            return nextState;
+        });
+    }, []);
+
+    const onStateChange = useCallback((state: string) => {
+        if (state === 'playing') {
+            // Initial thumbnail load logic:
+            // If we are starting muted (auto-play for thumbnail), pause immediately after seeking is done/video starts
+             if (muted && !completed) {
+                // We use a small timeout to let it render a frame before pausing
+                setTimeout(() => {
+                    setPlaying(false);
+                }, 500);
+            }
+        }
+    }, [muted, completed]);
+
+    useEffect(() => {
+        if (playing && !muted && endTime) {
+            // Start polling for time check
+            intervalRef.current = setInterval(async () => {
+                const currentTime = await playerRef.current?.getCurrentTime();
+                if (currentTime && currentTime >= endTime) {
+                    setPlaying(false);
+                    setCompleted(true);
+                    setMuted(true); // Mute for next time
+                    if (intervalRef.current) clearInterval(intervalRef.current);
+                }
+            }, 1000);
+        } else {
+             if (intervalRef.current) clearInterval(intervalRef.current);
+        }
+
+        return () => {
+             if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, [playing, muted, endTime]);
+
+
+
     return (
         <GlassView style={styles.container} glassEffectStyle="regular">
             <View style={styles.content}>
                 {/* Header: Step Info */}
                 <View style={styles.header}>
-                    <View style={styles.stepBadge}>
-                        <Text style={styles.stepText}>{stepNumber}</Text>
+
+                    <View style={[styles.stepBadge, completed && styles.stepBadgeCompleted]}>
+                        <Text style={[styles.stepText, completed && styles.stepTextCompleted]}>
+                            {completed ? <Ionicons name="checkmark" size={12} color="#fff" /> : stepNumber}
+                        </Text>
                     </View>
                     <Text style={styles.title}>{title}</Text>
                 </View>
 
                 {/* Video Placeholder */}
-                <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+                <TouchableOpacity activeOpacity={0.8} onPress={handlePress} disabled={playing}>
                     <View style={[styles.videoPlaceholder, { backgroundColor: videoPlaceholderColor }]}>
-                        {imageUrl ? (
-                            <Image
-                                source={{ uri: imageUrl }}
-                                style={styles.videoThumbnail}
-                                resizeMode="cover"
+                        <View style={styles.videoThumbnail} pointerEvents={playing && !muted ? 'auto' : 'none'}>
+                             <YoutubePlayer
+                                ref={playerRef}
+                                height={200}
+                                play={playing}
+                                mute={muted}
+                                videoId={videoId}
+                                onChangeState={onStateChange}
+                                initialPlayerParams={{
+                                    start: startTime,
+                                    controls: 0, 
+                                    showInfo: 0,
+                                    modestbranding: 1,
+                                    rel: 0
+                                }}
                             />
-                        ) : null}
-                        <View style={styles.playIconContainer}>
-                            <Ionicons name="play-circle" size={48} color="rgba(0,0,0,0.5)" />
                         </View>
+                        {!playing && (
+                            <View style={styles.playIconContainer} pointerEvents="none">
+                                <Ionicons name="play-circle" size={48} color="rgba(0,0,0,0.5)" />
+                            </View>
+                        )}
                     </View>
                 </TouchableOpacity>
 
@@ -101,10 +173,15 @@ const styles = StyleSheet.create(theme => ({
         justifyContent: 'center',
         marginRight: theme.spacing.sm,
     },
+    stepBadgeCompleted: {
+        backgroundColor: '#51cf66',
+    },
     stepText: {
         fontSize: 12,
         fontWeight: 'bold',
-        color: '#666',
+    },
+    stepTextCompleted: {
+        color: '#fff',
     },
     title: {
         fontSize: theme.typography.body.fontSize,
