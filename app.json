@@ -41,7 +41,7 @@
           }
         }
       ],
-      "./plugins/withPodfileDeploymentTarget"
+       "./plugins/withPodfileDeploymentTarget"
     ],
     "experiments": {
       "typedRoutes": true
