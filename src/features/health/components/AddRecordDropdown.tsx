@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import { SymbolView } from 'expo-symbols';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 
 type Option = {
   id: string;
@@ -55,30 +56,35 @@ const AddRecordDropdown: React.FC<AddRecordDropdownProps> = ({ visible, onSelect
 
   return (
     <View style={[styles.container, { top }]}>
-      {OPTIONS.map((option) => (
-        <TouchableOpacity
+      {OPTIONS.map((option, index) => (
+        <Animated.View
           key={option.id}
-          style={styles.optionItem}
-          onPress={() => {
-            onSelect(option.id);
-            onClose();
-          }}
-          activeOpacity={0.7}
+          entering={FadeInDown.delay(index * 30).springify().mass(0.6).damping(14).stiffness(150)}
+          exiting={FadeOutUp.duration(150)}
         >
-          <Text style={styles.optionText}>{option.label}</Text>
-          <View style={styles.iconContainer}>
-            {Platform.OS === 'ios' ? (
-              <SymbolView
-                name={option.icon}
-                size={20}
-                tintColor={option.color}
-                resizeMode="scaleAspectFit"
-              />
-            ) : (
-              <Ionicons name={option.fallbackIcon} size={20} color={option.color} />
-            )}
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.optionItem}
+            onPress={() => {
+              onSelect(option.id);
+              onClose();
+            }}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.optionText}>{option.label}</Text>
+            <View style={styles.iconContainer}>
+              {Platform.OS === 'ios' ? (
+                <SymbolView
+                  name={option.icon}
+                  size={26}
+                  tintColor={option.color}
+                  resizeMode="scaleAspectFit"
+                />
+              ) : (
+                <Ionicons name={option.fallbackIcon} size={26} color={option.color} />
+              )}
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
       ))}
     </View>
   );
@@ -87,42 +93,27 @@ const AddRecordDropdown: React.FC<AddRecordDropdownProps> = ({ visible, onSelect
 const styles = StyleSheet.create((theme) => ({
   container: {
     position: 'absolute',
-    top: 60, // Adjust based on header height
-    right: theme.spacing.md,
-    backgroundColor: theme.colors.surface.card, // Or transparent if strictly requested "no border or fill" but usually needs background to read over content. 
-    // User said: "dropdown options with no border or fill" -> This might mean the *buttons* inside don't have borders, but the dropdown container usually needs a background.
-    // IF the user meant the dropdown CONTAINER has no border/fill, it would float on top of other text which is bad UI.
-    // However, "dropdown options with no border or fill" likely refers to the items themselves.
-    // I will give the container a clean look, maybe just a subtle shadow or blur, but let's stick to a solid card background for readability first.
-    // Re-reading: "opens drop down options with no border or fill" -> The options themselves.
-    borderRadius: theme.radius.xl,
-    padding: theme.spacing.md,
-    shadowColor: theme.shadows.lg.shadowColor,
-    shadowOffset: theme.shadows.lg.shadowOffset,
-    shadowOpacity: theme.shadows.lg.shadowOpacity,
-    shadowRadius: theme.shadows.lg.shadowRadius,
-    elevation: theme.shadows.lg.elevation,
+    right: theme.spacing.lg, // Aligned with header's paddingHorizontal
     zIndex: 1000,
-    minWidth: 180,
-    gap: theme.spacing.sm,
+    minWidth: 200,
+    gap: theme.spacing.md,
   },
   optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end', // Text on left, icon on right as per description "text ie. ... with a colour filled sf symbols logo next to it" -> usually implies text then icon? Or icon then text?
-    // "text ie. Medical Record... with a ... logo NEXT TO IT".
-    // I'll put text left, icon right to align with the "right side" origin of the menu.
+    justifyContent: 'flex-end',
     paddingVertical: theme.spacing.xs,
+    paddingRight: theme.spacing.xs, // Slight adjustment to match the + icon's internal padding
   },
   optionText: {
-    ...theme.typography.body,
+    ...theme.typography.headline,
     color: theme.colors.text.primary,
-    marginRight: theme.spacing.sm,
-    fontWeight: '500',
+    marginRight: theme.spacing.md,
+    fontWeight: '600',
   },
   iconContainer: {
-    width: 24,
-    height: 24,
+    width: 32,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },

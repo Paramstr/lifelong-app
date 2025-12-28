@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Platform } from 'react-native';
-import { StyleSheet } from 'react-native-unistyles';
+import { View, Text, TouchableOpacity, FlatList, Platform, StyleSheet as RNStyleSheet, Pressable } from 'react-native';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SymbolView } from 'expo-symbols';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import HealthRecordCard, { RecordType } from '../components/HealthRecordCard';
 import AddRecordDropdown from '../components/AddRecordDropdown';
 
@@ -72,6 +74,7 @@ const MOCK_DATA: HealthRecord[] = [
 ];
 
 const HealthScreen = () => {
+  const { theme } = useUnistyles();
   const insets = useSafeAreaInsets();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
@@ -91,18 +94,18 @@ const HealthScreen = () => {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Health</Text>
+        <Text style={styles.headerTitle}>Records</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.iconButton}>
             {Platform.OS === 'ios' ? (
               <SymbolView
                 name="square.and.pencil"
                 size={22}
-                tintColor="#94A3B8"
+                tintColor="black"
                 resizeMode="scaleAspectFit"
               />
             ) : (
-              <Ionicons name="create-outline" size={24} color="#94A3B8" />
+              <Ionicons name="create-outline" size={24} color="black" />
             )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={toggleDropdown}>
@@ -110,11 +113,11 @@ const HealthScreen = () => {
               <SymbolView
                 name="plus"
                 size={22}
-                tintColor="#94A3B8"
+                tintColor="black"
                 resizeMode="scaleAspectFit"
               />
             ) : (
-              <Ionicons name="add" size={24} color="#94A3B8" />
+              <Ionicons name="add" size={24} color="black" />
             )}
           </TouchableOpacity>
         </View>
@@ -136,7 +139,23 @@ const HealthScreen = () => {
         )}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={!isDropdownVisible} 
       />
+
+      {isDropdownVisible && (
+        <Animated.View 
+            entering={FadeIn.duration(200)} 
+            exiting={FadeOut.duration(200)} 
+            style={RNStyleSheet.absoluteFill}
+        >
+             <BlurView
+                intensity={20}
+                style={RNStyleSheet.absoluteFill}
+                tint="default"
+            />
+            <Pressable style={[RNStyleSheet.absoluteFill, styles.overlay]} onPress={closeDropdown} />
+        </Animated.View>
+      )}
 
       <AddRecordDropdown
         visible={isDropdownVisible}
@@ -159,11 +178,15 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: 'space-between',
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.md,
+    zIndex: 1001, // Ensure header is above overlay if we want buttons to remain clickable, but overlay should probably cover everything except the dropdown. 
+    // Wait, if overlay covers everything, header buttons (including +) will be covered.
+    // If we want to toggle close by clicking +, we need to ensure it's above or the overlay handles it.
+    // The overlay has onPress={closeDropdown}, so clicking anywhere outside dropdown closes it.
   },
   headerTitle: {
     ...theme.typography.display, // Large title
     color: theme.colors.text.primary,
-    fontSize: 32, // Override if needed to match screenshot "History" size
+    fontSize: 32,
   },
   headerActions: {
     flexDirection: 'row',
@@ -177,6 +200,9 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.xl,
   },
+  overlay: {
+      backgroundColor: 'rgba(255, 255, 255, 0.4)', // White opacity as requested
+  }
 }));
 
 export default HealthScreen;
