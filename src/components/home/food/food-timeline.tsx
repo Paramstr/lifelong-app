@@ -1,6 +1,6 @@
 import AnimatedDashedBorder from '@/components/opal/animated-dashed-border';
 import { parseTime } from '@/utils/date-utils';
-import { Ionicons } from '@expo/vector-icons';
+import { SymbolView } from 'expo-symbols';
 import { GlassView } from 'expo-glass-effect';
 import React, { useMemo } from 'react';
 import { ImageSourcePropType, Text, TextInput, View } from 'react-native';
@@ -46,10 +46,18 @@ const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
         >
         <View style={styles.header}>
             <View style={styles.headerLeft}>
-            <Ionicons name="nutrition" size={18} color={theme.colors.brand.primary} />
+            <SymbolView 
+                name="carrot.fill" 
+                tintColor={theme.colors.brand.primary} 
+                style={{ width: 18, height: 18 }} 
+            />
             <Text style={styles.headerTitle}>Food</Text>
             </View>
-            <Ionicons name="information-circle-outline" size={20} color={theme.colors.text.muted} />
+            <SymbolView 
+                name="info.circle" 
+                tintColor={theme.colors.text.muted} 
+                style={{ width: 20, height: 20 }} 
+            />
         </View>
         
         <View style={styles.inputContainer}>
