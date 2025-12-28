@@ -25,7 +25,7 @@ const MOCK_DATA: HealthRecord[] = [
   {
     id: '1',
     title: 'Blood work panel.pdf',
-    subtitle: 'Medical Record • 08:32, 12 Dec 2025',
+    subtitle: '08:32, 12 Dec 2025',
     type: 'record',
     icon: 'doc.text.fill',
     iconColor: '#4DA3D9',
@@ -39,7 +39,7 @@ const MOCK_DATA: HealthRecord[] = [
   {
     id: '3',
     title: 'Right ankle sprain',
-    subtitle: 'Injury • 18:10, 23 Dec 2025',
+    subtitle: '18:10, 23 Dec 2025',
     type: 'injury',
     icon: 'bandage.fill',
     iconColor: '#E5533D',

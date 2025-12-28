@@ -70,6 +70,30 @@ const HealthRecordCard: React.FC<HealthRecordCardProps> = ({
       fallbackIcon: 'analytics' as const,
       color: '#3CB371',
     },
+    injury: {
+      label: 'Injury',
+      icon: 'bandage.fill',
+      fallbackIcon: 'medkit' as const,
+      color: '#E5533D',
+    },
+    collection: {
+      label: 'Collection',
+      icon: 'folder.fill',
+      fallbackIcon: 'folder' as const,
+      color: '#6FA8C9',
+    },
+    image: {
+      label: 'Image',
+      icon: 'photo.fill.on.rectangle.fill',
+      fallbackIcon: 'image' as const,
+      color: '#6FA8C9',
+    },
+    generic: {
+      label: 'Record',
+      icon: 'doc.fill',
+      fallbackIcon: 'document' as const,
+      color: '#6FA8C9',
+    },
   } as const;
 
   const renderThumbnail = () => {
@@ -116,7 +140,7 @@ const HealthRecordCard: React.FC<HealthRecordCardProps> = ({
         </Text>
         <View style={styles.metaContainer}>
            <View style={styles.metaLeft}>
-             {!thumbnail && meta && (
+             {meta && (
                <View style={styles.typeBadge}>
                  {Platform.OS === 'ios' ? (
                    <SymbolView
