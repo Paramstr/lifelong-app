@@ -47,10 +47,9 @@ export default function TabsLayout() {
         <Icon sf={{ default: 'heart', selected: 'heart.fill' }} drawable="ic_menu_today" />
       </NativeTabs.Trigger>
 
-
-      <NativeTabs.Trigger name="more" role="search">
-        <Label>More</Label>
-        <Icon sf={{ default: 'ellipsis.circle', selected: 'ellipsis.circle.fill' }} drawable="ic_menu_more" />
+      <NativeTabs.Trigger name="beta">
+        <Label style={{ color: '#007AFF' }}>Beta</Label>
+        <Icon sf={{ default: 'testtube.2', selected: 'testtube.2.fill' }} drawable="ic_menu_more" color="#007AFF" />
       </NativeTabs.Trigger>
     </NativeTabs>
   ) : (
@@ -58,7 +57,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" options={{ title: 'Home' }} />
       <Tabs.Screen name="health" options={{ title: 'Health' }} />
       <Tabs.Screen name="family" options={{ title: 'Family' }} />
-      <Tabs.Screen name="more" options={{ title: 'More' }} />
+      <Tabs.Screen name="beta" options={{ title: 'Beta' }} />
     </Tabs>
   );
 }
