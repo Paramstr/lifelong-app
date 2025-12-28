@@ -173,6 +173,114 @@ const DebugLayoutSingle = ({
     paddingRight,
   } = resolvedSpacing;
 
+  const minMeasure = 12;
+
+  const renderMarginMeasureLine = (
+    axis: 'x' | 'y',
+    start: number,
+    end: number,
+    value: number,
+  ) => {
+    if (!layout || value < minMeasure) return null;
+
+    if (axis === 'y') {
+      const top = Math.min(start, end);
+      const height = Math.abs(end - start);
+      if (height < minMeasure) return null;
+      const left = layout.width / 2;
+      return (
+        <View
+          style={[
+            styles.measureLine,
+            styles.measureLineVertical,
+            styles.marginLine,
+            { left, top, height },
+          ]}
+        >
+          <View style={styles.measureLabelContainerVertical}>
+            <Text style={[styles.measureLabel, styles.marginLabel]}>
+              {Math.round(value)}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    const left = Math.min(start, end);
+    const width = Math.abs(end - start);
+    if (width < minMeasure) return null;
+    const top = layout.height / 2;
+    return (
+      <View
+        style={[
+          styles.measureLine,
+          styles.measureLineHorizontal,
+          styles.marginLine,
+          { top, left, width },
+        ]}
+      >
+        <View style={styles.measureLabelContainerHorizontal}>
+          <Text style={[styles.measureLabel, styles.marginLabel]}>
+            {Math.round(value)}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderPaddingMeasureLine = (
+    axis: 'x' | 'y',
+    start: number,
+    end: number,
+    value: number,
+  ) => {
+    if (!layout || value < minMeasure) return null;
+
+    if (axis === 'y') {
+      const top = Math.min(start, end);
+      const height = Math.abs(end - start);
+      if (height < minMeasure) return null;
+      const left = layout.width / 2;
+      return (
+        <View
+          style={[
+            styles.measureLine,
+            styles.measureLineVertical,
+            styles.paddingLine,
+            { left, top, height },
+          ]}
+        >
+          <View style={styles.measureLabelContainerVertical}>
+            <Text style={[styles.measureLabel, styles.paddingLabel]}>
+              {Math.round(value)}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    const left = Math.min(start, end);
+    const width = Math.abs(end - start);
+    if (width < minMeasure) return null;
+    const top = layout.height / 2;
+    return (
+      <View
+        style={[
+          styles.measureLine,
+          styles.measureLineHorizontal,
+          styles.paddingLine,
+          { top, left, width },
+        ]}
+      >
+        <View style={styles.measureLabelContainerHorizontal}>
+          <Text style={[styles.measureLabel, styles.paddingLabel]}>
+            {Math.round(value)}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View
       style={[styles.container, style, childMarginStyle]}
@@ -192,6 +300,17 @@ const DebugLayoutSingle = ({
           <View style={[styles.marginOverlay, { height: marginBottom as number, bottom: -(marginBottom as number), left: 0, right: 0 }]} />
           <View style={[styles.marginOverlay, { width: marginLeft as number, top: 0, bottom: 0, left: -(marginLeft as number) }]} />
           <View style={[styles.marginOverlay, { width: marginRight as number, top: 0, bottom: 0, right: -(marginRight as number) }]} />
+
+          {/* Measurement lines (only if value >= 12) */}
+          {renderPaddingMeasureLine('y', 0, paddingTop as number, paddingTop as number)}
+          {renderPaddingMeasureLine('y', (layout?.height ?? 0) - (paddingBottom as number), layout?.height ?? 0, paddingBottom as number)}
+          {renderPaddingMeasureLine('x', 0, paddingLeft as number, paddingLeft as number)}
+          {renderPaddingMeasureLine('x', (layout?.width ?? 0) - (paddingRight as number), layout?.width ?? 0, paddingRight as number)}
+
+          {renderMarginMeasureLine('y', -(marginTop as number), 0, marginTop as number)}
+          {renderMarginMeasureLine('y', layout?.height ?? 0, (layout?.height ?? 0) + (marginBottom as number), marginBottom as number)}
+          {renderMarginMeasureLine('x', -(marginLeft as number), 0, marginLeft as number)}
+          {renderMarginMeasureLine('x', layout?.width ?? 0, (layout?.width ?? 0) + (marginRight as number), marginRight as number)}
 
           {showDimensions && (
             <View style={[styles.labelContainer, { top: paddingTop as number, transform: [{ translateY: 0 }] }]}>
@@ -256,6 +375,55 @@ const styles = StyleSheet.create(theme => ({
     position: 'absolute',
     backgroundColor: 'rgba(0, 255, 0, 0.25)', // Green for Margin
     zIndex: 1,
+  },
+  measureLine: {
+    position: 'absolute',
+    zIndex: 3,
+  },
+  measureLineVertical: {
+    width: 0,
+    borderLeftWidth: 1,
+  },
+  measureLineHorizontal: {
+    height: 0,
+    borderTopWidth: 1,
+  },
+  paddingLine: {
+    borderColor: 'rgba(255, 0, 0, 0.5)',
+  },
+  marginLine: {
+    borderColor: 'rgba(0, 255, 0, 0.5)',
+  },
+  measureLabelContainerVertical: {
+    position: 'absolute',
+    left: -12,
+    right: -12,
+    top: '50%',
+    transform: [{ translateY: -7 }],
+    alignItems: 'center',
+  },
+  measureLabelContainerHorizontal: {
+    position: 'absolute',
+    top: -12,
+    bottom: -12,
+    left: '50%',
+    transform: [{ translateX: -7 }],
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  measureLabel: {
+    fontSize: 9,
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
+    paddingHorizontal: 2,
+    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+    borderRadius: 3,
+  },
+  paddingLabel: {
+    color: 'rgba(255, 0, 0, 0.9)',
+  },
+  marginLabel: {
+    color: 'rgba(0, 255, 0, 0.9)',
   },
   labelContainer: {
     position: 'absolute',

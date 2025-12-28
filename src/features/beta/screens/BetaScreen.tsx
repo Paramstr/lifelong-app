@@ -18,7 +18,7 @@ const BetaScreen = () => {
         contentContainerStyle={[styles.contentContainer, { paddingBottom: 100 }]}
       >
         <DebugLayout>
-        <View style={[styles.header, { marginTop: 0}]}>
+        <View style={[styles.header, { marginTop: 32}]}>
           <DebugLayout>
           <Text style={styles.headerTitle}>Lifelong Beta</Text>
           <Text style={[styles.headerVersion, { marginLeft: 8}]}>v{BETA_INFO.version}</Text>
