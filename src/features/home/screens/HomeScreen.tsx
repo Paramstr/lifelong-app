@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
@@ -85,29 +85,21 @@ const HomeScreen = () => {
         <View style={styles.scrollContent}>
           {/* Header Bar */}
           <View style={styles.topBar}>
-            <TouchableOpacity style={styles.iconButton}>
-              <SymbolView name="arrow.left" tintColor="#000" style={styles.icon} />
-            </TouchableOpacity>
+            <View>
+              <Text style={styles.bigTitle}>Today</Text>
+              <View style={styles.subtitleRow}>
+                <Text style={styles.subtitle}>Sunday, 28 Dec</Text>
+                <Text style={styles.bullet}> • </Text>
+                <Text style={[styles.subtitle, styles.highlight]}>4 tasks</Text>
+              </View>
+            </View>
 
-            <View style={styles.rightIcons}>
-              <TouchableOpacity style={styles.iconButton}>
-                <SymbolView name="magnifyingglass" tintColor="#000" style={styles.icon} />
-              </TouchableOpacity>
-              <View style={{ width: 12 }} />
-              <TouchableOpacity style={styles.iconButton}>
-                <SymbolView name="slider.horizontal.3" tintColor="#000" style={styles.icon} />
-              </TouchableOpacity>
-            </View>
-          </View>
-          
-          {/* Title Area */}
-          <View style={styles.titleContainer}>
-            <Text style={styles.bigTitle}>Lifelong</Text>
-            <View style={styles.subtitleRow}>
-              <Text style={styles.subtitle}>Sunday, 28 Dec</Text>
-              <Text style={styles.bullet}> • </Text>
-              <Text style={[styles.subtitle, styles.highlight]}>4 tasks</Text>
-            </View>
+            <TouchableOpacity>
+              <Image 
+                source={require('../../../../assets/images/family/param_avatar.jpg')} 
+                style={styles.avatar} 
+              />
+            </TouchableOpacity>
           </View>
 
         {/* <Text style={styles.sectionTitle}>Upcoming</Text> */}
@@ -190,13 +182,13 @@ const styles = StyleSheet.create(theme => ({
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.lg - 4, // 20px
-    paddingTop: 8,
+    paddingTop: 16,
   },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: theme.spacing.lg,
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing.xl,
   },
   rightIcons: {
     flexDirection: 'row',
@@ -213,8 +205,10 @@ const styles = StyleSheet.create(theme => ({
     width: 20,
     height: 20,
   },
-  titleContainer: {
-    marginBottom: theme.spacing.xl,
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
   },
   bigTitle: {
     fontSize: 34,
