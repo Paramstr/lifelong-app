@@ -83,7 +83,7 @@ const HealthScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top}]}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Records</Text>
         <View style={styles.headerActions}>
