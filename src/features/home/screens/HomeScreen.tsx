@@ -5,7 +5,7 @@ import { ScrollView, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
-import DailyTimeline from '@/components/home/daily-timeline';
+import FoodTimeline from '@/components/home/food/food-timeline';
 import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
 
@@ -25,12 +25,12 @@ const HomeScreen = () => {
       fat: '30',
       image: require('../../../../assets/images/eggs-avocado-toast.png'),
     },
-    {
-      id: '2',
-      time: '9:30 am',
-      type: 'thought' as const,
-      thought: 'Feeling a bit depleted and anxious about the day, potential due to sleep.',
-    },
+    // {
+    //   id: '2',
+    //   time: '9:30 am',
+    //   type: 'thought' as const,
+    //   thought: 'Feeling a bit depleted and anxious about the day, potential due to sleep.',
+    // },
     {
       id: '3',
       time: '1:30 pm',
@@ -102,8 +102,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
-        {/* <Text style={styles.sectionTitle}>Upcoming</Text> */}
-        <UpcomingProtocolCard 
+        {/* <UpcomingProtocolCard 
           title="Wrist Mobility"
           journey="Joint Recovery"
           duration="10 min"
@@ -133,10 +132,10 @@ const HomeScreen = () => {
             'rgba(228, 228, 228, 0.2)', // Off White
             'rgba(0, 0, 0, 0.25)' // Neutral Mist
           ]}
-        />
+        /> */}
         <View style={styles.cardGap} />
         
-        <DailyTimeline entries={timelineEntries} />
+        <FoodTimeline entries={timelineEntries} />
 
         <View style={styles.mb8} />
 

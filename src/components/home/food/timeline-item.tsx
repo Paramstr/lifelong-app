@@ -12,7 +12,7 @@ interface TimelineItemProps {
 const TimelineItem: React.FC<TimelineItemProps> = ({
   children,
   isLast = false,
-  lineOpacity = 1,
+  lineOpacity = 0.8,
 }) => {
   const { theme } = useUnistyles();
 
@@ -20,7 +20,13 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
     <View style={styles.container}>
       <View style={styles.timelineColumn}>
         {/* Continuous Line */}
-        {!isLast && <View style={[styles.line, { opacity: lineOpacity }]} />}
+        <View 
+          style={[
+            styles.line, 
+            { opacity: lineOpacity },
+            isLast ? { height: 52 } : { bottom: -12 }
+          ]} 
+        />
         
         {/* Node */}
         <View style={styles.node} />
@@ -35,34 +41,32 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
 const styles = StyleSheet.create(theme => ({
   container: {
     flexDirection: 'row',
-    minHeight: 80, // Ensure minimum height for the line to look good
   },
   timelineColumn: {
-    width: 32,
+    width: 28,
     alignItems: 'center',
-    paddingTop: theme.spacing.md, // Align node with text top approx
+    paddingTop: 4, // Align node with text top approx (17/2 - 10/2 = 3.5)
   },
   line: {
     position: 'absolute',
-    top: theme.spacing.md + 6, // Start below the node center
-    bottom: -theme.spacing.md - 6, // Extend to next node
+    top: 9, // Start at node center (paddingTop 4 + nodeHeight/2 5)
     width: 2,
-    backgroundColor: theme.colors.text.muted, // Continuous refined line
-    left: 15, // Center in 32px width (32/2 - 1)
+    backgroundColor: theme.colors.text.muted, // Match node color for continuity
+    left: 13, // Center in 28px width (28/2 - 1)
   },
   node: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: theme.colors.border.subtle, // "Subtle nodes"
+    backgroundColor: theme.colors.text.muted,
     borderWidth: 2,
     borderColor: theme.colors.surface.card, // Gap effect
     zIndex: 1,
   },
   contentColumn: {
     flex: 1,
-    paddingLeft: 4,
-    paddingBottom: theme.spacing.sm,
+    paddingLeft: 8,
+    paddingBottom: 32, // More spacing between items as per screenshot
   },
 }));
 

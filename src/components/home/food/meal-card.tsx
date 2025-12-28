@@ -51,9 +51,7 @@ const styles = StyleSheet.create(theme => ({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
-    paddingVertical: 0, // Let TimelineItem handle spacing
     opacity: 0.9,
-    marginBottom: 4,
   },
   content: {
     flex: 1,
@@ -63,6 +61,7 @@ const styles = StyleSheet.create(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    height: 17, // Match typography lineHeight for alignment
   },
   timeText: {
     ...theme.typography.caption,

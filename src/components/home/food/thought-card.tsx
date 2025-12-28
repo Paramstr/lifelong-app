@@ -33,13 +33,12 @@ const ThoughtCard: React.FC<ThoughtCardProps> = ({
 const styles = StyleSheet.create(theme => ({
   container: {
     gap: 4,
-    paddingVertical: 0,
-    marginBottom: 4,
   },
   timeRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    height: 17, // Match typography lineHeight for alignment
   },
   timeText: {
     ...theme.typography.caption,

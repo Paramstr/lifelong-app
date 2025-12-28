@@ -23,11 +23,11 @@ export type TimelineEntry = {
   thought?: string;
 };
 
-interface DailyTimelineProps {
+interface FoodTimelineProps {
   entries: TimelineEntry[];
 }
 
-const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
+const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
   const { theme } = useUnistyles();
 
   const sortedEntries = useMemo(() => {
@@ -42,8 +42,7 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
     <View style={styles.wrapper}>
         <GlassView 
             style={styles.cardContainer}
-            glassEffectStyle="clear"
-            tintColor={theme.colors.surface.overlay}
+            glassEffectStyle="regular"
         >
         <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -74,7 +73,7 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
             {sortedEntries.map((entry, index) => {
             const total = sortedEntries.length;
             const progress = total > 1 ? index / (total - 1) : 0;
-            const lineOpacity = Math.max(0.2, 1 - progress * 0.8);
+            const lineOpacity = Math.max(0.2, 0.6 - progress * 0.8);
 
             return (
             <TimelineItem 
@@ -111,31 +110,30 @@ const DailyTimeline: React.FC<DailyTimelineProps> = ({ entries }) => {
 
 const styles = StyleSheet.create(theme => ({
   wrapper: {
-    marginTop: theme.spacing.sm, // Keep margin outside the glass view
-    borderRadius: theme.radius['2xl'],
+    marginTop: theme.spacing.sm,
+    borderRadius: 24,
+    width: '100%',
     // Box shadow for the card itself
-    shadowColor: theme.shadows.sm.shadowColor,
-    shadowOffset: theme.shadows.sm.shadowOffset,
-    shadowOpacity: theme.shadows.sm.shadowOpacity,
-    shadowRadius: theme.shadows.sm.shadowRadius,
+    shadowColor: theme.shadows.md.shadowColor,
+    shadowOffset: theme.shadows.md.shadowOffset,
+    shadowOpacity: theme.shadows.md.shadowOpacity,
+    shadowRadius: theme.shadows.md.shadowRadius,
     backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#0000001a',
   },
   cardContainer: {
-    paddingBottom: theme.spacing.sm,
-    borderRadius: theme.radius['2xl'],
+    paddingVertical: 20,
+    paddingHorizontal: 12,
+    borderRadius: 24,
     overflow: 'hidden',
-    // Border for definition
-    borderWidth: 1,
-    borderColor: theme.colors.border.subtle,
-    borderCurve: 'continuous',
   },
   header: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
-    paddingBottom: theme.spacing.xs,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 8,
   },
   headerLeft: {
     flexDirection: 'row',
@@ -148,30 +146,25 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.primary,
   },
   inputContainer: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingBottom: theme.spacing.sm,
-    paddingTop: theme.spacing.xs,
+    marginTop: 13,
+    marginBottom: 24,
+    paddingHorizontal: 8,
   },
   inputWrapper: {
      // No background here, just the border
   },
   input: {
-    // Transparent background for input to let glass show through? 
-    // Or semi-transparent?
-    // User requested "ios native". Native inputs usually have a light background.
-    // But since it's within a glass card, maybe slightly translucent.
-    // Let's stick closer to the previous design but lighter.
     backgroundColor: 'rgba(0,0,0,0.05)', // Very subtle fill
     borderRadius: theme.radius.xl,
-    paddingVertical: 12,
+    paddingVertical: 18,
     paddingHorizontal: 16,
+    textAlign: 'center',
     ...theme.typography.body,
     color: theme.colors.text.primary,
   },
   content: {
-    paddingHorizontal: theme.spacing.md,
-    paddingTop: theme.spacing.xs,
+    // Content padding handled by container
   },
 }));
 
-export default DailyTimeline;
+export default FoodTimeline;
