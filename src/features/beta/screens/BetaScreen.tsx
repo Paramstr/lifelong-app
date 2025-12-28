@@ -17,14 +17,14 @@ const BetaScreen = () => {
         contentInsetAdjustmentBehavior="never"
         contentContainerStyle={[styles.contentContainer, { paddingBottom: 100 }]}
       >
-        <DebugLayout>
-        <View style={[styles.header, { marginTop: 32}]}>
-          <DebugLayout>
+
+        <View style={[styles.header]}>
+
           <Text style={styles.headerTitle}>Lifelong Beta</Text>
-          <Text style={[styles.headerVersion, { marginLeft: 8}]}>v{BETA_INFO.version}</Text>
-          </DebugLayout>
+          <Text style={styles.headerVersion}>v{BETA_INFO.version}</Text>
+
         </View>
-        </DebugLayout>
+
         <Text style={styles.description}>{BETA_INFO.description}</Text>
 
         <View style={styles.section}>
