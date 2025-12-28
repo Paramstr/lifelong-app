@@ -7,6 +7,28 @@
 - Xcode (latest recommended)
 - CocoaPods
 
+### Choose Xcode Toolchain (stable vs beta)
+Liquid Glass requires the iOS 26 beta toolchain (Swift 6.2). Use these commands to switch the active Xcode before building:
+- Stable (Xcode 16.2):  
+  ```bash
+  sudo xcode-select -s /Applications/Xcode.app
+  xcodebuild -version
+  ```
+- Beta (Xcode 26 beta):  
+  ```bash
+  sudo xcode-select -s "/Applications/Xcode-beta.app"
+  xcodebuild -version
+  ```
+After switching toolchains, rebuild native assets so pods pick up the active Xcode:
+```bash
+npx expo prebuild --clean
+(cd ios && pod install)
+```
+Then run a fresh install:
+```bash
+npx expo run:ios --no-build-cache
+```
+
 ### Setup
 1. Install dependencies:
    ```bash
