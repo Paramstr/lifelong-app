@@ -8,69 +8,25 @@ import { StyleSheet } from 'react-native-unistyles';
 import FoodTimeline from '@/components/home/food/food-timeline';
 import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
+import { ImmersiveBackground } from '@/components/home/immersive-background';
+import { TIMELINE_ENTRIES } from '../data/timeline-data';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
 
-  const timelineEntries = [
-    {
-      id: '1',
-      time: '8:10 am',
-      type: 'meal' as const,
-      mealType: 'Breakfast',
-      title: 'Eggs with avocado on toast',
-      calories: '500',
-      carbs: '30',
-      protein: '30',
-      fat: '30',
-      image: require('../../../../assets/images/eggs-avocado-toast.png'),
-    },
-    // {
-    //   id: '2',
-    //   time: '9:30 am',
-    //   type: 'thought' as const,
-    //   thought: 'Feeling a bit depleted and anxious about the day, potential due to sleep.',
-    // },
-    {
-      id: '3',
-      time: '1:30 pm',
-      type: 'meal' as const,
-      mealType: 'Breakfast',
-      title: 'Chicken rice bowl',
-      calories: '600',
-      carbs: '40',
-      protein: '45',
-      fat: '60',
-      image: require('../../../../assets/images/chicken-rice-bowl.png'),
-    },
-    {
-      id: '4',
-      time: '5:30 pm',
-      type: 'meal' as const,
-      mealType: 'Dinner',
-      title: 'Chicken rice bowl',
-      calories: '600',
-      carbs: '40',
-      protein: '45',
-      fat: '60',
-      image: require('../../../../assets/images/chicken-rice-bowl.png'),
-    },
-    {
-      id: '5',
-      time: '6:30 pm',
-      type: 'meal' as const,
-      mealType: 'Snack',
-      title: 'Protein Shake',
-      calories: '300',
-      carbs: '10',
-      protein: '24',
-      fat: '10',
-      image: require('../../../../assets/images/protein-shake.png'),
-    },
-  ];
+  // Immersive Background Controls
+  const BG_SCALE = 1.2;
+  const BG_TRANSLATE_X = 0;
+  const BG_TRANSLATE_Y = 0;
 
   return (
     <View style={styles.container}>
+      <ImmersiveBackground 
+        source={require('../../../../assets/images/Backgrounds/blue-mountains.png')}
+        scale={BG_SCALE}
+        translateX={BG_TRANSLATE_X}
+        translateY={BG_TRANSLATE_Y}
+      />
       {/* <SoftRadialGradient /> */}
 
       <ScrollView
@@ -135,8 +91,10 @@ const HomeScreen = () => {
           ]}
         /> */}
         <View style={styles.cardGap} />
-        
-        <FoodTimeline entries={timelineEntries} />
+        <View style={{marginTop:200}}>
+          
+        <FoodTimeline entries={TIMELINE_ENTRIES} />
+        </View>
 
         <View style={styles.mb8} />
 
@@ -178,7 +136,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: '#FFFFFF',
   },
   scrollContent: {
     paddingHorizontal: theme.spacing.lg - 4, // 20px
