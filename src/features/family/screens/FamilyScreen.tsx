@@ -337,6 +337,7 @@ const styles = StyleSheet.create({
     color: '#1a1a1a',
     marginBottom: 8,
     letterSpacing: -0.5,
+    fontFamily: 'ui-rounded',
   },
   tagsRow: {
     flexDirection: 'row',
@@ -349,6 +350,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     fontWeight: '500',
+    fontFamily: 'ui-rounded',
   },
   bio: {
     fontSize: 15,
@@ -357,6 +359,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     maxWidth: '90%',
+    fontFamily: 'ui-rounded',
   },
   statsRow: {
     flexDirection: 'row',
@@ -376,11 +379,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#000',
+    fontFamily: 'ui-rounded',
   },
   statLabel: {
     fontSize: 12,
     color: '#888',
     marginTop: 2,
+    fontFamily: 'ui-rounded',
   },
   socialRow: {
       flexDirection: 'row',
@@ -409,6 +414,7 @@ const styles = StyleSheet.create({
       fontSize: 12,
       color: '#444',
       fontWeight: '500',
+      fontFamily: 'ui-rounded',
   }
 
 });

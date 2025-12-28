@@ -230,6 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#666',
+    fontFamily: 'ui-rounded',
   },
   summaryText: {
     fontSize: 22,
@@ -237,6 +238,7 @@ const styles = StyleSheet.create({
     color: '#333',
     letterSpacing: -0.5,
     marginBottom: 12,
+    fontFamily: 'ui-rounded',
   },
   graphContainer: {
     height: GRAPH_HEIGHT,
@@ -254,6 +256,7 @@ const styles = StyleSheet.create({
     color: '#aaa',
     width: 30, 
     textAlign: 'center',
+    fontFamily: 'ui-rounded',
   },
   avatarContainer: {
     position: 'absolute',

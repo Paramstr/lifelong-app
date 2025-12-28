@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 
@@ -82,26 +83,30 @@ const HomeScreen = () => {
         {/* <TopBlurHeader fadeStart={0.1} fadeEnd={0.8} blurIntensity={60} /> */}
         
         <View style={styles.scrollContent}>
-          <View style={styles.weeklyProgressContainer}>
-            <WeeklyProgressHeader
-              title="Lifelong"
-              completionCount={1}
-              currentDate={new Date()}
-              progressByDay={[
-                { date: '2025-12-22', progress: 0.75 },
-                { date: '2025-12-21', progress: 1.0 },
-                { date: '2025-12-20', progress: 0.4 },
-                { date: '2025-12-19', progress: 0.8 },
-              ]}
-            />
+          {/* Header Bar */}
+          <View style={styles.topBar}>
+            <TouchableOpacity style={styles.iconButton}>
+              <SymbolView name="arrow.left" tintColor="#000" style={styles.icon} />
+            </TouchableOpacity>
+
+            <View style={styles.rightIcons}>
+              <TouchableOpacity style={styles.iconButton}>
+                <SymbolView name="magnifyingglass" tintColor="#000" style={styles.icon} />
+              </TouchableOpacity>
+              <View style={{ width: 12 }} />
+              <TouchableOpacity style={styles.iconButton}>
+                <SymbolView name="slider.horizontal.3" tintColor="#000" style={styles.icon} />
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.headerRow}>
-            <View style={styles.headerTextContainer}>
-              {/* <Text style={styles.greetingText}>Hi Param,</Text> */}
-              <Text style={styles.heroHeadline}>Keep up the mobility.</Text>
-              <Text style={styles.heroDescription}>
-                Yesterday was quite strenous, today try do movement for active recovery and rest.
-              </Text>
+          
+          {/* Title Area */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.bigTitle}>Lifelong</Text>
+            <View style={styles.subtitleRow}>
+              <Text style={styles.subtitle}>Sunday, 28 Dec</Text>
+              <Text style={styles.bullet}> • </Text>
+              <Text style={[styles.subtitle, styles.highlight]}>4 tasks</Text>
             </View>
           </View>
 
@@ -186,6 +191,57 @@ const styles = StyleSheet.create(theme => ({
   scrollContent: {
     paddingHorizontal: theme.spacing.lg - 4, // 20px
     paddingTop: 8,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  rightIcons: {
+    flexDirection: 'row',
+  },
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: theme.colors.background.secondary, // or '#F2F4F7' if theme isn't matching
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 20,
+    height: 20,
+  },
+  titleContainer: {
+    marginBottom: theme.spacing.xl,
+  },
+  bigTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    color: theme.colors.text.primary,
+    letterSpacing: 0.3,
+    marginBottom: 4,
+    fontFamily: 'ui-rounded',
+  },
+  subtitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  subtitle: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: theme.colors.text.secondary,
+    fontFamily: 'ui-rounded',
+  },
+  bullet: {
+    fontSize: 15,
+    color: theme.colors.text.disabled,
+    marginHorizontal: 4,
+    fontFamily: 'ui-rounded',
+  },
+  highlight: {
+    color: theme.colors.brand.primary, // or blue #007AFF
   },
   sectionTitle: {
     color: theme.colors.text.primary,

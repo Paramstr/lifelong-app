@@ -123,41 +123,49 @@ const typography = {
         fontWeight: '600' as const,
         lineHeight: 32,
         letterSpacing: -0.5,
+        fontFamily: 'ui-rounded',
     },
     headline: {
         fontSize: 20,
         fontWeight: '700' as const,
         lineHeight: 26,
+        fontFamily: 'ui-rounded',
     },
     title: {
         fontSize: 18,
         fontWeight: '600' as const,
         lineHeight: 24,
+        fontFamily: 'ui-rounded',
     },
     body: {
         fontSize: 15,
         fontWeight: '400' as const,
         lineHeight: 21,
+        fontFamily: 'ui-rounded',
     },
     caption: {
         fontSize: 13,
         fontWeight: '500' as const,
         lineHeight: 17,
+        fontFamily: 'ui-rounded',
     },
     label: {
         fontSize: 12,
         fontWeight: '600' as const,
         lineHeight: 16,
+        fontFamily: 'ui-rounded',
     },
     small: {
         fontSize: 11,
         fontWeight: '400' as const,
         lineHeight: 15,
+        fontFamily: 'ui-rounded',
     },
     xs: {
         fontSize: 10,
         fontWeight: '500' as const,
         lineHeight: 14,
+        fontFamily: 'ui-rounded',
     },
 } as const;
 
