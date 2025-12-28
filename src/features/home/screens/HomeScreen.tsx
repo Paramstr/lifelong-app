@@ -102,7 +102,8 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
-        {/* <UpcomingProtocolCard 
+
+        {/* <UpcomingProtocolCard       
           title="Wrist Mobility"
           journey="Joint Recovery"
           duration="10 min"

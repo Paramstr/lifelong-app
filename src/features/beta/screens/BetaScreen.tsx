@@ -6,6 +6,7 @@ import { ChangelogItem } from '../components/ChangelogItem';
 import { FeedbackSection } from '../components/FeedbackSection';
 import { ROADMAP_ITEMS, CHANGELOG_ITEMS, BETA_INFO } from '../data/beta-data';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DebugLayout } from '@/components/shared/DebugLayout';
 
 const BetaScreen = () => {
   const insets = useSafeAreaInsets();
@@ -16,11 +17,14 @@ const BetaScreen = () => {
         contentInsetAdjustmentBehavior="never"
         contentContainerStyle={[styles.contentContainer, { paddingBottom: 100 }]}
       >
-        <View style={[styles.header]}>
+        <DebugLayout>
+        <View style={[styles.header, { marginTop: 0}]}>
+          <DebugLayout>
           <Text style={styles.headerTitle}>Lifelong Beta</Text>
-          <Text style={styles.headerVersion}>v{BETA_INFO.version}</Text>
+          <Text style={[styles.headerVersion, { marginLeft: 8}]}>v{BETA_INFO.version}</Text>
+          </DebugLayout>
         </View>
-        
+        </DebugLayout>
         <Text style={styles.description}>{BETA_INFO.description}</Text>
 
         <View style={styles.section}>

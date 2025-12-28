@@ -8,5 +8,14 @@
 // Initialize Unistyles first - MUST be before expo-router/entry
 import './src/unistyles';
 
+// Suppress noisy library logs
+const originalLog = console.log;
+console.log = (...args) => {
+  if (typeof args[0] === 'string' && args[0].includes('[React Buoy] Using persistent file storage')) {
+    return;
+  }
+  originalLog(...args);
+};
+
 // Then load Expo Router
 import 'expo-router/entry';
