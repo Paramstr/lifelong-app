@@ -2,7 +2,8 @@ import { GlassView } from 'expo-glass-effect';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SymbolView } from 'expo-symbols';
 import React, { useMemo } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_PADDING = 16;
@@ -117,7 +118,7 @@ export const FamilyStressCard = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   card: {
     borderRadius: 24,
     padding: 20,
@@ -135,9 +136,8 @@ const styles = StyleSheet.create({
       alignItems: 'center',
   },
   subTitleLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
+    ...theme.typography.label,
+    color: theme.colors.text.secondary,
   },
   detailsButton: {
       flexDirection: 'row',
@@ -148,15 +148,12 @@ const styles = StyleSheet.create({
       borderRadius: 12,
   },
   detailsText: {
-      fontSize: 12,
-      fontWeight: '600',
-      color: '#333',
+      ...theme.typography.label,
+      color: theme.colors.text.primary,
   },
   summaryText: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#333',
-    letterSpacing: -0.5,
+    ...theme.typography.headline,
+    color: theme.colors.text.primary,
     marginBottom: 12,
   },
   barsContainer: {
@@ -185,8 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   percentage: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    ...theme.typography.title,
+    color: theme.colors.text.primary,
   },
-});
+}));

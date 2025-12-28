@@ -144,8 +144,7 @@ const styles = StyleSheet.create(theme => ({
   },
   headerTitle: {
     // SF Pro handled by system font defaults in unistyles theme
-    fontSize: theme.typography.headline.fontSize,
-    fontWeight: theme.typography.headline.fontWeight,
+    ...theme.typography.headline,
     color: theme.colors.text.primary,
   },
   inputContainer: {
@@ -166,7 +165,7 @@ const styles = StyleSheet.create(theme => ({
     borderRadius: theme.radius.xl,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    fontSize: theme.typography.body.fontSize,
+    ...theme.typography.body,
     color: theme.colors.text.primary,
   },
   content: {

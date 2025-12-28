@@ -339,23 +339,23 @@ const styles = StyleSheet.create(theme => ({
         marginBottom: 2,
     },
     usernameText: {
-        fontSize: theme.typography.caption.fontSize,
+        ...theme.typography.caption,
         fontWeight: '600',
         color: 'rgba(0, 0, 0, 0.7)',
     },
     timestampText: {
-        fontSize: theme.typography.xs.fontSize,
+        ...theme.typography.xs,
         color: 'rgba(0, 0, 0, 0.4)',
         fontWeight: '500',
     },
     titleText: {
-        fontSize: theme.typography.title.fontSize,
+        ...theme.typography.title,
         fontWeight: '700',
         color: '#000',
         marginBottom: 1,
     },
     subtitleText: {
-        fontSize: theme.typography.caption.fontSize,
+        ...theme.typography.caption,
         color: 'rgba(0, 0, 0, 0.5)',
         fontWeight: '500',
     },

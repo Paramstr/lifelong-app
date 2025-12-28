@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import { Text, View } from 'react-native';
 
 const MoreScreen = () => {
   return (
@@ -8,16 +9,17 @@ const MoreScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: theme.colors.background.primary,
   },
   text: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    ...theme.typography.headline,
+    color: theme.colors.text.primary,
   },
-});
+}));
 
 export default MoreScreen;

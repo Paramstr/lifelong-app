@@ -6,10 +6,10 @@ import React from 'react';
 import {
   Dimensions,
   Image as RNImage,
-  StyleSheet,
   Text,
   View
 } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import Animated, {
   SharedValue,
   useAnimatedScrollHandler,
@@ -224,10 +224,10 @@ export default function FamilyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.background.primary,
   },
   backgroundLayer: {
     position: 'absolute',
@@ -332,12 +332,9 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   name: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#1a1a1a',
+    ...theme.typography.display,
+    color: theme.colors.text.primary,
     marginBottom: 8,
-    letterSpacing: -0.5,
-    fontFamily: 'ui-rounded',
   },
   tagsRow: {
     flexDirection: 'row',
@@ -347,19 +344,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tag: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
-    fontFamily: 'ui-rounded',
+    ...theme.typography.body,
+    color: theme.colors.text.secondary,
   },
   bio: {
-    fontSize: 15,
+    ...theme.typography.body,
     lineHeight: 22,
-    color: '#444',
+    color: theme.colors.text.secondary,
     textAlign: 'center',
     marginBottom: 24,
     maxWidth: '90%',
-    fontFamily: 'ui-rounded',
   },
   statsRow: {
     flexDirection: 'row',
@@ -376,16 +370,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
-    fontFamily: 'ui-rounded',
+    ...theme.typography.headline,
+    color: theme.colors.text.primary,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#888',
+    ...theme.typography.label,
+    color: theme.colors.text.muted,
     marginTop: 2,
-    fontFamily: 'ui-rounded',
   },
   socialRow: {
       flexDirection: 'row',
@@ -411,11 +402,8 @@ const styles = StyleSheet.create({
       shadowRadius: 5,
   },
   socialLabel: {
-      fontSize: 12,
-      color: '#444',
-      fontWeight: '500',
-      fontFamily: 'ui-rounded',
+      ...theme.typography.label,
+      color: theme.colors.text.secondary,
   }
-
-});
+}));
 

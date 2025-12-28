@@ -180,12 +180,13 @@ const styles = StyleSheet.create(theme => ({
     stepText: {
         fontSize: 12,
         fontWeight: 'bold',
+        fontFamily: 'ui-rounded',
     },
     stepTextCompleted: {
         color: '#fff',
     },
     title: {
-        fontSize: theme.typography.body.fontSize,
+        ...theme.typography.body,
         fontWeight: '600',
         color: '#1a1a1a', // Darker black
     },
@@ -214,7 +215,7 @@ const styles = StyleSheet.create(theme => ({
         borderRadius: 100,
     },
     description: {
-        fontSize: theme.typography.body.fontSize,
+        ...theme.typography.body,
         color: '#444', // Dark grey
         lineHeight: 22,
         marginBottom: theme.spacing.md,
@@ -236,6 +237,7 @@ const styles = StyleSheet.create(theme => ({
         fontSize: 13,
         fontWeight: '500',
         color: '#666',
+        fontFamily: 'ui-rounded',
     }
 }));
 

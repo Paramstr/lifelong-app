@@ -196,14 +196,13 @@ const styles = StyleSheet.create((theme) => ({
   },
   dayLabel: {
     color: theme.colors.weekProgress.label,
-    fontSize: 11,
+    ...theme.typography.small,
     fontWeight: '600',
-    fontFamily: 'monospace',
     marginTop: 2,
   },
   todayLabel: {
     color: theme.colors.text.primary,
-    fontSize: 12,
+    ...theme.typography.label,
     fontWeight: '800',
   },
 }));

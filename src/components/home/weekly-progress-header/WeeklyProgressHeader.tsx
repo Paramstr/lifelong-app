@@ -144,7 +144,7 @@ const styles = StyleSheet.create((theme) => ({
     marginBottom: theme.spacing.md,
   },
   title: {
-    fontSize: theme.typography.title.fontSize,
+    ...theme.typography.title,
     fontWeight: theme.typography.title.fontWeight,
     color: theme.colors.text.primary,
     letterSpacing: -0.5,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create((theme) => ({
     minWidth: 10,
   },
   countText: {
-    fontSize: theme.typography.body.fontSize,
+    ...theme.typography.body,
     fontWeight: '600',
     color: theme.colors.text.secondary,
   },
@@ -183,7 +183,7 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: 'center',
   },
   dayNumber: {
-    fontSize: theme.typography.label.fontSize,
+    ...theme.typography.label,
     fontWeight: '700',
     color: theme.colors.text.muted,
   },
@@ -191,7 +191,7 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.brand.primary,
   },
   weekdayLabel: {
-    fontSize: theme.typography.xs.fontSize,
+    ...theme.typography.xs,
     fontWeight: '800',
     color: theme.colors.text.muted,
     marginTop: 4,

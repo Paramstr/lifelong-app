@@ -2,7 +2,8 @@ import { GlassView } from 'expo-glass-effect';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SymbolView } from 'expo-symbols';
 import React, { useState } from 'react';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -151,7 +152,7 @@ export const FamilySleepCard = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   card: {
     borderRadius: 24,
     padding: 20,
@@ -169,9 +170,8 @@ const styles = StyleSheet.create({
       alignItems: 'center',
   },
   subTitleLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
+    ...theme.typography.label,
+    color: theme.colors.text.secondary,
   },
   detailsButton: {
       flexDirection: 'row',
@@ -182,17 +182,13 @@ const styles = StyleSheet.create({
       borderRadius: 12,
   },
   detailsText: {
-      fontSize: 12,
-      fontWeight: '600',
-      color: '#333',
+      ...theme.typography.label,
+      color: theme.colors.text.primary,
   },
   summaryText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#222',
-    lineHeight: 26,
+    ...theme.typography.headline,
+    color: theme.colors.text.primary,
     marginBottom: 24,
-    letterSpacing: -0.4,
   },
   graphSection: {
       height: 110, // Increased for labels
@@ -231,9 +227,8 @@ const styles = StyleSheet.create({
       overflow: 'hidden',
   },
   dayLabel: {
-      fontSize: 11,
-      fontWeight: '500',
-      color: '#999',
+      ...theme.typography.xs,
+      color: theme.colors.text.muted,
   },
   footer: {
       flexDirection: 'row',
@@ -249,9 +244,9 @@ const styles = StyleSheet.create({
       gap: 12,
   },
   userName: {
-      fontSize: 16,
+      ...theme.typography.body,
       fontWeight: '600',
-      color: '#333',
+      color: theme.colors.text.primary,
   },
   arrows: {
       flexDirection: 'row',
@@ -272,8 +267,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
   },
   trendText: {
-      fontSize: 14,
-      fontWeight: '600',
+      ...theme.typography.label,
       color: '#2d9f48', // Green trend (overwritten by dynamic color)
   }
-});
+}));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 
 import { ExternalLink } from './ExternalLink';
 import { MonoText } from './StyledText';
@@ -46,7 +46,7 @@ export default function EditScreenInfo({ path }: { path: string }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   getStartedContainer: {
     alignItems: 'center',
     marginHorizontal: 50,
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   getStartedText: {
+    ...theme.typography.body,
     fontSize: 17,
     lineHeight: 24,
     textAlign: 'center',
@@ -73,5 +74,6 @@ const styles = StyleSheet.create({
   },
   helpLinkText: {
     textAlign: 'center',
+    ...theme.typography.body,
   },
-});
+}));

@@ -42,21 +42,20 @@ const styles = StyleSheet.create(theme => ({
     gap: 8,
   },
   timeText: {
-    fontSize: theme.typography.caption.fontSize,
+    ...theme.typography.caption,
     color: theme.colors.text.muted,
   },
   separator: {
-    fontSize: theme.typography.xs.fontSize,
+    ...theme.typography.xs,
     color: theme.colors.text.muted,
   },
   headerText: {
-    fontSize: theme.typography.caption.fontSize,
+    ...theme.typography.caption,
     color: theme.colors.text.muted,
   },
   thoughtText: {
-    fontSize: theme.typography.title.fontSize,
+    ...theme.typography.title,
     color: theme.colors.text.secondary,
-    lineHeight: theme.typography.title.lineHeight,
   },
   viewFullRow: {
     flexDirection: 'row',
@@ -66,7 +65,7 @@ const styles = StyleSheet.create(theme => ({
     marginTop: 2,
   },
   viewFullText: {
-    fontSize: theme.typography.small.fontSize,
+    ...theme.typography.small,
     color: theme.colors.text.muted,
   },
 }));

@@ -65,19 +65,19 @@ const styles = StyleSheet.create(theme => ({
     gap: 6,
   },
   timeText: {
-    fontSize: theme.typography.caption.fontSize,
+    ...theme.typography.caption,
     color: theme.colors.text.muted,
   },
   separator: {
-    fontSize: theme.typography.xs.fontSize,
+    ...theme.typography.xs,
     color: theme.colors.text.muted,
   },
   mealTypeText: {
-    fontSize: theme.typography.caption.fontSize,
+    ...theme.typography.caption,
     color: theme.colors.text.muted,
   },
   titleText: {
-    fontSize: theme.typography.title.fontSize,
+    ...theme.typography.title,
     fontWeight: '500',
     color: theme.colors.text.primary,
     letterSpacing: -0.3,
@@ -90,11 +90,11 @@ const styles = StyleSheet.create(theme => ({
     marginTop: 2,
   },
   macroItem: {
-    fontSize: theme.typography.small.fontSize,
+    ...theme.typography.small,
     color: theme.colors.text.secondary,
   },
   macroLabel: {
-    fontSize: theme.typography.xs.fontSize,
+    ...theme.typography.xs,
     color: theme.colors.text.muted,
   },
   imageContainer: {

@@ -340,6 +340,7 @@ const styles = StyleSheet.create(theme => ({
         color: '#000',
         fontWeight: '600',
         fontSize: 14,
+        fontFamily: 'ui-rounded',
     },
     headerContent: {
         marginBottom: 30,
@@ -358,21 +359,21 @@ const styles = StyleSheet.create(theme => ({
     },
     superTitle: {
         color: '#666',
-        fontSize: 12,
+        ...theme.typography.label,
         fontWeight: '600',
         letterSpacing: 1,
         marginBottom: 8,
         textTransform: 'uppercase',
     },
     heroTitle: {
-        fontSize: 34,
+        ...theme.typography.display,
         fontWeight: 'bold',
         color: '#1a1a1a',
         marginBottom: 12,
         letterSpacing: -0.5,
     },
     description: {
-        fontSize: 16,
+        ...theme.typography.body,
         color: '#444',
         lineHeight: 24,
         marginBottom: 20,
@@ -392,7 +393,7 @@ const styles = StyleSheet.create(theme => ({
     },
     chipText: {
         color: '#444',
-        fontSize: 12,
+        ...theme.typography.caption,
         fontWeight: '600',
     },
     stepsContainer: {
@@ -426,6 +427,7 @@ const styles = StyleSheet.create(theme => ({
         color: '#fff',
         fontSize: 17,
         fontWeight: '600',
+        fontFamily: 'ui-rounded',
     },
 }));
 

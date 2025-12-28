@@ -3,7 +3,8 @@ import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { memo } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import Animated, {
     Extrapolation,
     interpolate,
@@ -123,7 +124,7 @@ const CarouselItem = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
     overflow: 'hidden',
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   footerText: {
-    fontSize: 14,
+    ...theme.typography.label,
     color: '#d4d4d4',
     fontWeight: '600',
   },
@@ -183,6 +184,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
   },
-});
+}));
 
 export default memo(CarouselItem);

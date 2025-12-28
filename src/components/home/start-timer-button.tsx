@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, Platform, Dimensions, Pressable } from 'react-native';
+import { View, Text, Platform, Dimensions, Pressable } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { BlurView } from 'expo-blur';
 import { Blur, Canvas, Path, processTransform3d, Skia, usePathValue } from '@shopify/react-native-skia';
@@ -205,7 +206,7 @@ const StartTimerButton = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   container: {
     height: BUTTON_HEIGHT,
     width: BUTTON_WIDTH,
@@ -239,6 +240,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
+    ...theme.typography.title,
     color: 'white',
     fontSize: 18,
     fontWeight: '600',
@@ -254,6 +256,6 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-});
+}));
 
 export default memo(StartTimerButton);

@@ -4,7 +4,8 @@ import * as d3 from 'd3-shape';
 import { GlassView } from 'expo-glass-effect';
 import { SymbolView } from 'expo-symbols';
 import React, { useMemo } from 'react';
-import { Dimensions, Image as RNImage, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Image as RNImage, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
@@ -207,7 +208,7 @@ const AvatarMarker = ({ y, color, source, idx }: { y: number, color: string, idx
     );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(theme => ({
   card: {
     // backgroundColor: 'rgba(255,255,255,0.7)', // Glass view handles bg mostly, but regular needs a tint
     borderRadius: 24,
@@ -227,18 +228,13 @@ const styles = StyleSheet.create({
       alignItems: 'center',
   },
   subTitleLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-    fontFamily: 'ui-rounded',
+    ...theme.typography.label,
+    color: theme.colors.text.secondary,
   },
   summaryText: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#333',
-    letterSpacing: -0.5,
+    ...theme.typography.headline,
+    color: theme.colors.text.primary,
     marginBottom: 12,
-    fontFamily: 'ui-rounded',
   },
   graphContainer: {
     height: GRAPH_HEIGHT,
@@ -252,11 +248,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4, // Align with dots roughly
   },
   axisLabel: {
-    fontSize: 12,
-    color: '#aaa',
+    ...theme.typography.xs,
+    color: theme.colors.text.muted,
     width: 30, 
     textAlign: 'center',
-    fontFamily: 'ui-rounded',
   },
   avatarContainer: {
     position: 'absolute',
@@ -279,4 +274,4 @@ const styles = StyleSheet.create({
     height: 26,
     borderRadius: 13,
   }
-});
+}));
