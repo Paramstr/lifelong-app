@@ -11,7 +11,7 @@ const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 type NutrientType = 'Calories' | 'Proteins' | 'Carbs' | 'Fats';
 
 const NUTRIENT_CONFIG: Record<NutrientType, { label: string, unit: string, icon: string, color: string }> = {
-  'Calories': { label: 'Overall', unit: 'kcal', icon: 'flame.fill', color: '#FF9F0A' },
+  'Calories': { label: 'Calories', unit: 'kcal', icon: 'flame.fill', color: '#FF9F0A' },
   'Proteins': { label: 'Proteins', unit: 'g', icon: 'fish.fill', color: '#30D158' },
   'Carbs': { label: 'Carbs', unit: 'g', icon: 'leaf.fill', color: '#0A84FF' },
   'Fats': { label: 'Fats', unit: 'g', icon: 'drop.fill', color: '#BF5AF2' },
@@ -36,9 +36,9 @@ const MOCK_DATA = [
 // Forest Green to Sky Blue palette
 const GRADIENT_COLORS = [
     '#1B4332', // Deep Forest Green (Bottom)
-    '#2D6A4F', // Medium Green
-    '#48CAE4', // Ocean Blue
-    '#ADE8F4', // Sky Blue (Top)
+    '#2D6A4F', // Forest Green
+    '#5FA8D3', // Soft Steel Blue
+    '#9ccefaff', // Soft Sky Blue (Top)
 ];
 
 export const DailyNutritionGraph = () => {
@@ -99,7 +99,9 @@ export const DailyNutritionGraph = () => {
                                     ]}
                                 >
                                     <LinearGradient
-                                        colors={['rgba(255,255,255,0.2)', 'rgba(0,0,0,0.05)']}
+                                        colors={[segmentColor, 'rgba(255, 255, 255, 0.22)']}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 0, y: 1 }}
                                         style={StyleSheet.absoluteFill}
                                     />
                                 </View>
@@ -134,11 +136,11 @@ export const DailyNutritionGraph = () => {
 
             <View style={styles.headerControls}>
                 <View style={styles.nutrientInfo}>
-                    <SymbolView 
+                    {/* <SymbolView 
                         name={currentConfig.icon} 
                         tintColor={currentConfig.color} 
                         style={{ width: 18, height: 18 }} 
-                    />
+                    /> */}
                     <Text style={styles.nutrientLabel}>{currentConfig.label}</Text>
                 </View>
                 <View style={styles.arrows}>
@@ -205,7 +207,7 @@ const styles = StyleSheet.create(theme => ({
   },
   nutrientLabel: {
       fontSize: 17, 
-      fontWeight: '600',
+      fontWeight: '500',
       color: theme.colors.text.primary,
       letterSpacing: -0.5,
   },

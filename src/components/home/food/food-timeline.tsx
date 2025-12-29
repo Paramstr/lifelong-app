@@ -225,7 +225,7 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.muted,
   },
   inputContainer: {
-    marginTop: 13,
+    marginTop: 0,
     marginBottom: 24,
     paddingHorizontal: 8,
   },
@@ -234,10 +234,11 @@ const styles = StyleSheet.create(theme => ({
     flexWrap: 'wrap',
     gap: 16,
     paddingHorizontal: 8,
-    marginTop: 2,
+    marginTop: 6,
+    marginBottom: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    opacity: 0.6,
+    opacity: 0.8,
   },
   targetItem: {
     flexDirection: 'row',
