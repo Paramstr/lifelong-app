@@ -114,7 +114,7 @@ const HealthScreen = () => {
         contentStyle={styles.compactHeaderContent}
       >
         <View style={styles.compactHeader}>
-           <Text style={styles.compactHeaderTitle}>Records</Text>
+           <Text style={styles.compactHeaderTitle}>Health</Text>
         </View>
       </ProgressiveBlurHeader>
 
@@ -164,7 +164,7 @@ const HealthScreen = () => {
         ListHeaderComponent={
           <View style={[styles.largeHeader, { paddingTop: insets.top }]}>
             <View style={styles.headerRow}>
-              <Text style={styles.headerTitle}>Records</Text>
+              <Text style={styles.headerTitle}>Health</Text>
             </View>
           </View>
         }
