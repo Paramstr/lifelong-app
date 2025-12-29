@@ -21,6 +21,7 @@
     "@react-buoy/react-query": "^1.5.26",
     "@react-buoy/route-events": "^1.5.26",
     "@react-buoy/storage": "^1.5.26",
+    "@react-native-masked-view/masked-view": "0.3.2",
     "@react-navigation/native": "^7.1.8",
     "@shopify/react-native-skia": "^2.2.12",
     "clsx": "^2.1.1",

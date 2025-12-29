@@ -10,14 +10,15 @@ import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
 import { ImmersiveBackground } from '@/components/home/immersive-background';
 import { TIMELINE_ENTRIES } from '../data/timeline-data';
+import { EdgeBlurFade } from '@/components/shared/edge-blur-fade';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
 
   // Immersive Background Controls
   const BG_SCALE = 1.2;
-  const BG_TRANSLATE_X = 0;
-  const BG_TRANSLATE_Y = 0;
+  const BG_TRANSLATE_X = -120;
+  const BG_TRANSLATE_Y = -80;
 
   return (
     <View style={styles.container}>
@@ -26,6 +27,28 @@ const HomeScreen = () => {
         scale={BG_SCALE}
         translateX={BG_TRANSLATE_X}
         translateY={BG_TRANSLATE_Y}
+      />
+      <EdgeBlurFade
+        position="top"
+        height={insets.top + 300}
+        fadeColor="#ffffffff"
+        blurIntensity={36}
+        fadeFromOpacity={1}
+        fadeStart={0}
+        fadeEnd={0.9}
+        blurStart={0}
+        blurEnd={0.65}
+      />
+      <EdgeBlurFade
+        position="bottom"
+        height={insets.bottom + 600}
+        fadeColor="#ffffffff"
+        blurIntensity={34}
+        fadeFromOpacity={1}
+        fadeStart={0.05}
+        fadeEnd={0.6}
+        blurStart={0.1}
+        blurEnd={1}
       />
       {/* <SoftRadialGradient /> */}
 
@@ -97,34 +120,6 @@ const HomeScreen = () => {
         </View>
 
         <View style={styles.mb8} />
-
-        {/* <Text style={styles.sectionTitleNoMB}>Get More Done</Text>
-        <Text style={styles.sectionSubtitle}>Maximize your productivity while staying sane.</Text>
-        <View style={styles.carouselWrapperMB12}>
-          <Carousel
-            data={[
-              'L87Luf_JHtDk%yx@eUaOH[WByCx[',
-              'LOH]%h^N9^Iq}ts.oLaz=eR*ofxZ',
-              'LEA]]RrW0}Os%KM{WBxu11Ip|=xZ',
-              'LJOXU1-pxuoz~XIoRjWBxsNHfOoJ',
-            ]}
-          />
-        </View>
-
-        <Text style={styles.sectionTitleNoMB}>Sleep, Relax and Reset</Text>
-        <Text style={styles.sectionSubtitle}>Sleep better, rise refreshed.</Text>
-        <View style={styles.carouselWrapperMB10}>
-          <Carousel
-            data={[
-              'LKO2:N%2Tw=w]~RBVZRi};RPxuwH',
-              'L60MZWh2e7f,k]f5f5e.hyfmf5e-',
-              'LEHLh[WB2yk8pyoJadR*.7kCMdnj',
-              'LKN]Rv%2Tw=w]~RBVZRi};RPxuwH',
-              'LWD-8itmofRPKnWCV?kXM}RjkCoz',
-              'L25Xx[rV00%#Mw%M%2Mw00x]~qMd',
-            ]}
-          />
-        </View> */}
         </View>
       </ScrollView>
 

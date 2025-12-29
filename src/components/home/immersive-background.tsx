@@ -8,40 +8,51 @@ interface ImmersiveBackgroundProps {
   translateY?: number;
 }
 
-const { width, height } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export const ImmersiveBackground = ({ 
   source, 
-  scale = 0.5, 
+  scale = 1, 
   translateX = 0, 
   translateY = 0 
 }: ImmersiveBackgroundProps) => {
+  const { width: imgWidth, height: imgHeight } = Image.resolveAssetSource(source);
+  const aspectRatio = imgWidth / imgHeight;
+
+  // Calculate dimensions to ensure the image covers the screen
+  // while preserving its aspect ratio.
+  let targetWidth = screenWidth;
+  let targetHeight = screenWidth / aspectRatio;
+
+  if (targetHeight < screenHeight) {
+    targetHeight = screenHeight;
+    targetWidth = screenHeight * aspectRatio;
+  }
+
+  // Center the image initially
+  const initialLeft = (screenWidth - targetWidth) / 2;
+  const initialTop = (screenHeight - targetHeight) / 2;
+
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
-      <Image
-        source={source}
-        style={[
-          styles.image,
-          {
+      <View style={{ flex: 1, backgroundColor: 'white', overflow: 'hidden' }}>
+        <Image
+          source={source}
+          style={{
+            width: targetWidth,
+            height: targetHeight,
+            position: 'absolute',
+            left: initialLeft,
+            top: initialTop,
             transform: [
               { scale },
               { translateX },
               { translateY },
             ],
-          },
-        ]}
-        resizeMode="cover"
-      />
+          }}
+          resizeMode="cover"
+        />
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  image: {
-    width: width,
-    height: height,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-});
