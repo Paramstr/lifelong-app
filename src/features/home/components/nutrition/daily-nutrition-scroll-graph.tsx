@@ -18,6 +18,10 @@ const NUTRIENT_CONFIG: Record<NutrientType, { label: string, unit: string, icon:
 };
 
 const NUTRIENT_KEYS = Object.keys(NUTRIENT_CONFIG) as NutrientType[];
+const BAR_WIDTH = 44;
+const BAR_GAP = 20;
+const SNAP_INTERVAL = BAR_WIDTH + BAR_GAP;
+const FADE_EDGE = 0.08;
 
 // Expanded Mock Data (10 days) with realistic nutrition values
 const MOCK_DATA = [
@@ -133,20 +137,32 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
         maskElement={
           <LinearGradient
             colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-            locations={[0, 0.14, 0.9, 1]}
+            locations={[0, FADE_EDGE, 1 - FADE_EDGE, 1]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={StyleSheet.absoluteFill}
           />
         }
       >
-        <DebugLayout>
+        {/* <DebugLayout> */}
           <ScrollView
             ref={scrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
+            snapToInterval={SNAP_INTERVAL}
+            snapToAlignment="start"
+            decelerationRate="fast"
+            disableIntervalMomentum
             contentContainerStyle={styles.barsScrollContent}
             onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
+            onScrollEndDrag={(event) => {
+              const nextOffset = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL) * SNAP_INTERVAL;
+              scrollRef.current?.scrollTo({ x: nextOffset, animated: true });
+            }}
+            onMomentumScrollEnd={(event) => {
+              const nextOffset = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL) * SNAP_INTERVAL;
+              scrollRef.current?.scrollTo({ x: nextOffset, animated: true });
+            }}
           >
             <View style={styles.barsContainer}>
               {renderStandardLine()}
@@ -207,13 +223,13 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
               <View style={styles.trailingSpacer} />
             </View>
           </ScrollView>
-        </DebugLayout>
+        {/* </DebugLayout> */}
       </MaskedView>
     );
   };
 
   return (
-    <DebugLayout>
+    // <DebugLayout>
       <View style={styles.wrapper}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
@@ -241,7 +257,7 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
           </View>
         </View>
 
-        <DebugLayout>
+        {/* <DebugLayout> */}
           <View style={styles.graphSection}>
             {renderBars()}
             <View pointerEvents="none" style={styles.fixedTooltips}>
@@ -268,9 +284,9 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
               }).reverse()}
             </View>
           </View>
-        </DebugLayout>
+        {/* </DebugLayout> */}
       </View>
-    </DebugLayout>
+    
   );
 };
 
@@ -339,7 +355,7 @@ const styles = StyleSheet.create(theme => ({
     flexDirection: 'row',
     justifyContent: 'flex-start', 
     alignItems: 'flex-end',
-    gap: 20, 
+    gap: BAR_GAP, 
     paddingLeft: 8,
     height: '100%',
   },
@@ -353,7 +369,7 @@ const styles = StyleSheet.create(theme => ({
     gap: 8,
   },
   barWrapper: {
-    width: 44, 
+    width: BAR_WIDTH, 
     flex: 1, 
     justifyContent: 'flex-end',
     // No overflow hidden so label can sit on top if it slightly exceeds height
