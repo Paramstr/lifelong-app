@@ -33,24 +33,35 @@ const FoodTimeline: React.FC = () => {
   const entries = useFoodEntries();
   const router = useRouter();
 
-  const handleCamera = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+  const USE_MOCK_CAMERA = true;
 
-    if (status !== 'granted') {
-      alert("Camera access is required to take food photos.");
-      return;
+  const handleCamera = async () => {
+    if (USE_MOCK_CAMERA) {
+        // Bypass camera for design testing
+        const mockImage = require('../../../../assets/images/chicken-rice-bowl.png');
+        const newId = foodStore.addFood(mockImage, 'camera');
+        router.push(`/food/${newId}`);
+        return;
     }
 
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+    alert("You've refused to allow this appp to access your camera!");
+    return;
+    }
+    
+    // Note: MediaType.Images might need debugging if undefined
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      quality: 1,
+    mediaTypes: [MediaType.Images],
+    allowsEditing: true,
+    quality: 1,
     });
 
-    if (!result.canceled && result.assets?.length) {
-      foodStore.addFood(result.assets[0].uri, 'camera');
+    if (!result.canceled) {
+    foodStore.addFood(result.assets[0].uri, 'camera');
     }
-  };
+  }
 
   const macroTotals = useMemo(() => {
     return entries.reduce(
