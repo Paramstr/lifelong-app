@@ -6,7 +6,6 @@ import React, { useMemo } from 'react';
 import { ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import * as ImagePicker from 'expo-image-picker';
-import { MediaType } from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { foodStore, useFoodEntries } from '@/features/food/data/food-store';
 import MealCard from './meal-card';
@@ -34,38 +33,24 @@ const FoodTimeline: React.FC = () => {
   const entries = useFoodEntries();
   const router = useRouter();
 
-  const handleAddFood = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: [MediaType.Images],
+  const handleCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (status !== 'granted') {
+      alert("Camera access is required to take food photos.");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
       allowsEditing: true,
       quality: 1,
     });
 
-    if (!result.canceled) {
-      foodStore.addFood(result.assets[0].uri, 'gallery');
-      // "User is returned to Home immediately" - we are already here.
-      // Toast notification could go here.
+    if (!result.canceled && result.assets?.length) {
+      foodStore.addFood(result.assets[0].uri, 'camera');
     }
   };
-
-  const handleCamera = async () => {
-      const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-      
-      if (permissionResult.granted === false) {
-        alert("You've refused to allow this appp to access your camera!");
-        return;
-      }
-      
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: [MediaType.Images],
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        foodStore.addFood(result.assets[0].uri, 'camera');
-      }
-  }
 
   const macroTotals = useMemo(() => {
     return entries.reduce(
@@ -138,7 +123,7 @@ const FoodTimeline: React.FC = () => {
         </View>
 
         <View style={styles.inputContainer}>
-            <TouchableOpacity onPress={handleAddFood} activeOpacity={0.8}>
+            <TouchableOpacity onPress={handleCamera} activeOpacity={0.8}>
                 <AnimatedDashedBorder
                 borderRadius={theme.radius.xl}
                 strokeColor={theme.colors.text.muted}

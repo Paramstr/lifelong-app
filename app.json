@@ -15,7 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.param.lifelongapp"
+      "bundleIdentifier": "com.param.lifelongapp",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We use the camera to take food photos.",
+        "NSPhotoLibraryUsageDescription": "We save food photos to your library."
+      }
     },
     "android": {
       "adaptiveIcon": {
