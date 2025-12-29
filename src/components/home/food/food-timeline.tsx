@@ -39,22 +39,30 @@ const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
     });
   }, [entries]);
 
-  const totalCalories = useMemo(() => {
-    return entries.reduce((sum, entry) => {
-      if (entry.type !== 'meal' || !entry.calories) {
-        return sum;
-      }
-      const parsed = Number(entry.calories.replace(/[^\d.]/g, ''));
-      if (Number.isNaN(parsed)) {
-        return sum;
-      }
-      return sum + parsed;
-    }, 0);
-  }, [entries]);
+  const parseMacroValue = (value?: string) => {
+    if (!value) {
+      return 0;
+    }
+    const parsed = Number(value.replace(/[^\d.]/g, ''));
+    return Number.isNaN(parsed) ? 0 : parsed;
+  };
 
-  const caloriesSummary = totalCalories > 0
-    ? `${Math.round(totalCalories).toLocaleString()} cal`
-    : '0 cal';
+  const macroTotals = useMemo(() => {
+    return entries.reduce(
+      (totals, entry) => {
+        if (entry.type !== 'meal') {
+          return totals;
+        }
+        return {
+          calories: totals.calories + parseMacroValue(entry.calories),
+          protein: totals.protein + parseMacroValue(entry.protein),
+          carbs: totals.carbs + parseMacroValue(entry.carbs),
+          fat: totals.fat + parseMacroValue(entry.fat),
+        };
+      },
+      { calories: 0, protein: 0, carbs: 0, fat: 0 }
+    );
+  }, [entries]);
 
   return (
     <View style={styles.wrapper}>
@@ -89,25 +97,25 @@ const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
             <View style={styles.targetItem}>
                 <Text style={styles.targetText}>
                     <Text style={styles.targetLabel}>cal</Text>{' '}
-                    <Text style={styles.targetValue}>820</Text>/2000
+                    <Text style={styles.targetValue}>{Math.round(macroTotals.calories)}</Text>/2000
                 </Text>
             </View>
             <View style={styles.targetItem}>
                 <Text style={styles.targetText}>
                     <Text style={styles.targetLabel}>protein</Text>{' '}
-                    <Text style={styles.targetValue}>45</Text>/120
+                    <Text style={styles.targetValue}>{Math.round(macroTotals.protein)}</Text>/120
                 </Text>
             </View>
             <View style={styles.targetItem}>
                 <Text style={styles.targetText}>
                     <Text style={styles.targetLabel}>carbs</Text>{' '}
-                    <Text style={styles.targetValue}>90</Text>/250
+                    <Text style={styles.targetValue}>{Math.round(macroTotals.carbs)}</Text>/250
                 </Text>
             </View>
             <View style={styles.targetItem}>
                 <Text style={styles.targetText}>
                     <Text style={styles.targetLabel}>fat</Text>{' '}
-                    <Text style={styles.targetValue}>30</Text>/70
+                    <Text style={styles.targetValue}>{Math.round(macroTotals.fat)}</Text>/70
                 </Text>
             </View>
         </View>
@@ -231,13 +239,12 @@ const styles = StyleSheet.create(theme => ({
   },
   targetsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
+    flexWrap: 'nowrap',
+    justifyContent: 'space-between',
     paddingHorizontal: 8,
     marginTop: 6,
     marginBottom: 16,
     alignItems: 'center',
-    justifyContent: 'center',
     opacity: 0.8,
   },
   targetItem: {

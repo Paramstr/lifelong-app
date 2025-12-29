@@ -175,7 +175,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </Animated.View>
 
-          <DailyNutritionGraph />
+          <DailyNutritionGraph entries={TIMELINE_ENTRIES} />
           <View style={styles.cardGap} />
 
 
