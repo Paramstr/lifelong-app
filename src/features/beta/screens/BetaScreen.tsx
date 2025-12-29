@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
-import { RoadmapItem } from '../components/RoadmapItem';
-import { ChangelogItem } from '../components/ChangelogItem';
+import { RoadmapSection } from '../components/RoadmapSection';
 import { FeedbackSection } from '../components/FeedbackSection';
-import { ROADMAP_ITEMS, CHANGELOG_ITEMS, BETA_INFO } from '../data/beta-data';
+import { BETA_INFO } from '../data/beta-data';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProgressiveBlurHeader } from '@/components/shared/progressive-blur-header';
+import { DebugLayout } from '@/components/shared/DebugLayout';
 
 const BetaScreen = () => {
   const insets = useSafeAreaInsets();
@@ -21,22 +21,11 @@ const BetaScreen = () => {
     <View style={styles.container}>
       <ProgressiveBlurHeader
         scrollY={scrollY}
-        height={insets.top + 72}
+        height={insets.top + 60}
         insetsTop={insets.top}
         enableBlur={true}
-        blurMaxIntensity={60}
-        maskStops={[
-          { location: 0, opacity: 1 },
-          { location: 0.6, opacity: 1 },
-          { location: 1, opacity: 0 }
-        ]}
-        blurRange={[0, 80]}
-        backgroundRange={[0, 60]}
-        travelRange={[0, 80]}
-        travelTranslateY={[0, 32]}
-        contentRange={[30, 70]}
-        blurTint="light"
-        tintColors={['rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0.1)']}
+        blurMaxIntensity={80}
+        blurTint="regular"
         contentStyle={styles.compactHeaderContent}
       >
         <View style={styles.compactHeader}>
@@ -49,30 +38,29 @@ const BetaScreen = () => {
         scrollEventThrottle={16}
         contentInsetAdjustmentBehavior="never"
         contentContainerStyle={[styles.contentContainer, { paddingBottom: 100, paddingTop: insets.top + 20 }]}
+        showsVerticalScrollIndicator={false}
       >
+              
 
-        <View style={[styles.header]}>
+        <View style={styles.headerContainer}>
+          <View style={styles.titleColumn}>
+            <View style={styles.titleRow}>
+              <Text style={styles.appName}>Lifelong</Text>
+              <View style={styles.betaBadge}>
+                <Text style={styles.betaText}>BETA</Text>
+              </View>
+            </View>
+            
+          </View>
 
-          <Text style={styles.headerTitle}>Lifelong Beta</Text>
-          <Text style={styles.headerVersion}>v{BETA_INFO.version}</Text>
-
+          <TouchableOpacity style={styles.changelogButton}>
+             <Text style={styles.changelogText}>v{BETA_INFO.version} Changelog</Text>
+          </TouchableOpacity>
         </View>
 
-        <Text style={styles.description}>{BETA_INFO.description}</Text>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Roadmap</Text>
-          {ROADMAP_ITEMS.map(item => (
-            <RoadmapItem key={item.id} {...item} />
-          ))}
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Changelog</Text>
-          {CHANGELOG_ITEMS.map((item, index) => (
-            <ChangelogItem key={index} {...item} />
-          ))}
-        </View>
+        <RoadmapSection />
 
         <FeedbackSection />
       </Animated.ScrollView>
@@ -90,50 +78,62 @@ const styles = StyleSheet.create(theme => ({
   },
   compactHeaderContent: {
     paddingHorizontal: theme.spacing.lg,
+    paddingBottom: 10,
   },
   compactHeader: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
   compactHeaderTitle: {
     ...theme.typography.headline,
     color: theme.colors.text.primary,
     fontSize: 17,
   },
-  header: {
+  headerContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.md,
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing.md,
   },
-  headerTitle: {
+  titleColumn: {
+    flexDirection: 'column',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  appName: {
     ...theme.typography.display,
     fontSize: 32,
     color: theme.colors.text.primary,
+    lineHeight: 38,
   },
-  headerVersion: {
+  betaBadge: {
+    backgroundColor: theme.colors.text.primary,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 4,
+    marginTop: 4,
+  },
+  betaText: {
+    color: theme.colors.background.primary,
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  changelogButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: theme.colors.background.secondary,
+    borderRadius: theme.radius.full,
+    marginTop: 4,
+  },
+  changelogText: {
+    ...theme.typography.label,
     color: theme.colors.text.secondary,
-    fontSize: 16,
-    ...theme.typography.body,
-  },
-  section: {
-    marginTop: theme.spacing.xl,
-  },
-  sectionTitle: {
-    ...theme.typography.headline,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
-    marginLeft: theme.spacing.xs,
-  },
-  description: {
-    color: theme.colors.text.secondary,
-    fontSize: 16,
-    lineHeight: 22,
-    marginTop: theme.spacing.sm,
-    // paddingHorizontal: theme.spacing.sm,
-    ...theme.typography.body,
+    fontWeight: '600',
   },
 }));
 
