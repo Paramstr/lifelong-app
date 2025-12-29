@@ -1,5 +1,7 @@
 import { router } from 'expo-router';
+import { BlurView } from 'expo-blur';
 import { SymbolView } from 'expo-symbols';
+import { } from '@expo/ui/swift-ui';
 import React from 'react';
 import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,6 +9,7 @@ import { StyleSheet } from 'react-native-unistyles';
 import Animated, {
   Extrapolate,
   interpolate,
+  useAnimatedProps,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useDerivedValue,
@@ -19,6 +22,9 @@ import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
 import { ImmersiveBackground } from '@/components/home/immersive-background';
 import { TIMELINE_ENTRIES } from '../data/timeline-data';
 import { EdgeBlurFade } from '@/components/shared/edge-blur-fade';
+import { ProgressiveBlurHeader } from '@/components/shared/progressive-blur-header';
+
+const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
@@ -45,6 +51,20 @@ const HomeScreen = () => {
   const bottomBlurIntensity = useDerivedValue(() =>
     interpolate(scrollY.value, [0, 300], [34, 56], Extrapolate.CLAMP)
   );
+  const largeHeaderBlurProps = useAnimatedProps(() => ({
+    intensity: interpolate(scrollY.value, [0, 60], [0, 24], Extrapolate.CLAMP),
+  }));
+  const largeHeaderStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scrollY.value, [0, 60], [1, 0], Extrapolate.CLAMP),
+    transform: [
+      {
+        translateY: interpolate(scrollY.value, [0, 60], [0, -10], Extrapolate.CLAMP),
+      },
+      {
+        scale: interpolate(scrollY.value, [0, 60], [1, 0.96], Extrapolate.CLAMP),
+      },
+    ],
+  }));
 
   return (
     <View style={styles.container}>
@@ -62,13 +82,13 @@ const HomeScreen = () => {
       <EdgeBlurFade
         position="top"
         height={insets.top + 300}
-        fadeColor="#ffffffff"
+        fadeColor="#ffffff31"
         blurIntensity={topBlurIntensity}
         fadeFromOpacity={1}
         fadeStart={0}
         fadeEnd={0.9}
         blurStart={0}
-        blurEnd={0.65}
+        blurEnd={0.03}
       />
       <EdgeBlurFade
         position="bottom"
@@ -81,6 +101,38 @@ const HomeScreen = () => {
         blurStart={0.1}
         blurEnd={1}
       />
+      <ProgressiveBlurHeader
+        scrollY={scrollY}
+        height={insets.top + 72}
+        insetsTop={insets.top}
+        enableBlur={true}
+        blurMaxIntensity={60}
+        maskStops={[
+          { location: 0, opacity: 1 },
+          { location: 0.8, opacity: 1 },
+          { location: 1, opacity: 0 }
+        ]}
+        travelRange={[0, 160]}
+        travelTranslateY={[0, 32]}
+        blurTint="regular"
+        tintColors={['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 255, 0.1)']}
+        contentStyle={styles.compactHeaderContent}
+      >
+        <View style={styles.compactHeaderRow}>
+          <View style={styles.compactSpacer} />
+          <View style={styles.compactHeaderText}>
+            <Text style={styles.compactTitle}>Today</Text>
+            <Text style={styles.compactSubtitle}>Sunday, 28 Dec</Text>
+            <Text style={styles.compactTasks}>4 tasks</Text>
+          </View>
+          <TouchableOpacity>
+            <Image
+              source={require('../../../../assets/images/family/param_avatar.jpg')}
+              style={styles.compactAvatar}
+            />
+          </TouchableOpacity>
+        </View>
+      </ProgressiveBlurHeader>
       {/* <SoftRadialGradient /> */}
 
       <Animated.ScrollView
@@ -96,7 +148,12 @@ const HomeScreen = () => {
         
         <View style={styles.scrollContent}>
           {/* Header Bar */}
-          <View style={styles.topBar}>
+          <Animated.View style={[styles.topBar, largeHeaderStyle]}>
+            <AnimatedBlurView
+              animatedProps={largeHeaderBlurProps}
+              tint="light"
+              style={StyleSheet.absoluteFill}
+            />
             <View>
               <Text style={styles.bigTitle}>Today</Text>
               <View style={styles.subtitleRow}>
@@ -112,7 +169,7 @@ const HomeScreen = () => {
                 style={styles.avatar} 
               />
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
 
         {/* <UpcomingProtocolCard       
@@ -146,6 +203,7 @@ const HomeScreen = () => {
             'rgba(0, 0, 0, 0.25)' // Neutral Mist
           ]}
         /> */}
+
         <View style={styles.cardGap} />
         <View style={{marginTop:200}}>
           
@@ -175,6 +233,7 @@ const styles = StyleSheet.create(theme => ({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: theme.spacing.xl,
+    overflow: 'hidden',
   },
   rightIcons: {
     flexDirection: 'row',
@@ -301,6 +360,49 @@ const styles = StyleSheet.create(theme => ({
   },
   cardGap: {
     height: 8,
+  },
+  compactHeaderContent: {
+    paddingHorizontal: theme.spacing.lg - 4,
+  },
+  compactHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  compactSpacer: {
+    width: 32,
+  },
+  compactHeaderText: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  compactTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: theme.colors.text.primary,
+    fontFamily: 'ui-rounded',
+    textAlign: 'center',
+  },
+  compactSubtitle: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: '500',
+    color: theme.colors.text.secondary,
+    fontFamily: 'ui-rounded',
+    textAlign: 'center',
+  },
+  compactTasks: {
+    marginTop: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    color: theme.colors.brand.primary,
+    fontFamily: 'ui-rounded',
+    textAlign: 'center',
+  },
+  compactAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   mb12: {
     marginBottom: theme.spacing['4xl'],

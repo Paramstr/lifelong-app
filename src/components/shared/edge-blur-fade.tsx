@@ -13,25 +13,83 @@ type FadeStop = {
   opacity: number;
 };
 
+/**
+ * Props for the EdgeBlurFade component.
+ */
 type Props = {
+  /** 
+   * The position of the blur fade. 
+   * 'top' places it at the top of the container, 'bottom' at the bottom.
+   * Default: 'top'.
+   */
   position?: 'top' | 'bottom';
+  /** 
+   * The height of the fade area. 
+   * Default: 100.
+   */
   height?: number;
+  /** 
+   * The intensity of the blur. Can be a number or a Reanimated shared value.
+   * Default: 24.
+   */
   blurIntensity?: number | SharedValue<number>;
+  /** 
+   * The color to fade into (usually the background color). 
+   * Default: '#FFFFFF'.
+   */
   fadeColor?: string;
+  /** 
+   * The relative start position (0-1) of the solid fade color.
+   * Default: 0 for top, 0.15 for bottom.
+   */
   fadeStart?: number;
+  /** 
+   * The relative end position (0-1) where the fade becomes transparent.
+   * Default: 0.85 for top, 1 for bottom.
+   */
   fadeEnd?: number;
+  /** 
+   * The starting opacity of the fade color.
+   * Default: 0.9.
+   */
   fadeFromOpacity?: number;
+  /** 
+   * The ending opacity of the fade color.
+   * Default: 0.
+   */
   fadeToOpacity?: number;
+  /** 
+   * Custom stops for the fade gradient. If provided, overrides start/end/opacity props.
+   */
   fadeStops?: FadeStop[];
+  /** 
+   * Whether to mask the blur so it fades out as well.
+   * Default: true.
+   */
   progressiveBlur?: boolean;
+  /** 
+   * The relative start position (0-1) of the blur mask.
+   * Default: 0 for top, 0.2 for bottom.
+   */
   blurStart?: number;
+  /** 
+   * The relative end position (0-1) of the blur mask.
+   * Default: 0.8 for top, 1 for bottom.
+   */
   blurEnd?: number;
+  /** Custom container styles. */
   style?: ViewStyle;
+  /** Additional props to pass to the underlying BlurView. */
   blurViewProps?: BlurViewProps;
 };
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
+/**
+ * A component that creates a smooth fade-out effect at the edge of a scroll view 
+ * or container. It combines a gradient fade (color) with a progressive blur, 
+ * helping content disappear naturally.
+ */
 export const EdgeBlurFade: FC<Props> = ({
   position = 'top',
   height = 100,
