@@ -109,13 +109,16 @@ const HomeScreen = () => {
         blurMaxIntensity={60}
         maskStops={[
           { location: 0, opacity: 1 },
-          { location: 0.8, opacity: 1 },
+          { location: 0.5, opacity: 1 },
           { location: 1, opacity: 0 }
         ]}
-        travelRange={[0, 160]}
+        blurRange={[0, 80]}
+        backgroundRange={[0, 60]}
+        travelRange={[0, 80]}
         travelTranslateY={[0, 32]}
-        blurTint="regular"
-        tintColors={['rgba(255, 255, 255, 0.9)', 'rgba(255, 255, 255, 0.1)']}
+        contentRange={[30, 70]}
+        blurTint="light"
+        tintColors={['rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0.1)']}
         contentStyle={styles.compactHeaderContent}
       >
         <View style={styles.compactHeaderRow}>
