@@ -82,7 +82,7 @@ const HomeScreen = () => {
       </Animated.View>
       <EdgeBlurFade
         position="top"
-        height={insets.top + 300}
+        height={insets.top + 500}
         fadeColor="#ffffff31"
         blurIntensity={topBlurIntensity}
         fadeFromOpacity={1}
@@ -93,14 +93,14 @@ const HomeScreen = () => {
       />
       <EdgeBlurFade
         position="bottom"
-        height={insets.bottom + 500}
+        height={insets.bottom + 300}
         fadeColor="#ffffffff"
         blurIntensity={bottomBlurIntensity}
         fadeFromOpacity={1}
         fadeStart={0.05}
-        fadeEnd={0.5}
+        fadeEnd={0.9}
         blurStart={0.1}
-        blurEnd={1}
+        blurEnd={0.9}
       />
       <ProgressiveBlurHeader
         scrollY={scrollY}

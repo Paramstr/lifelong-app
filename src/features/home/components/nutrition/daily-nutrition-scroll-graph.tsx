@@ -1,9 +1,8 @@
 import { TimelineEntry } from '@/components/home/food/food-timeline';
-import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SymbolView } from 'expo-symbols';
 import React, { useMemo, useRef, useState } from 'react';
-import { Animated, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Svg, { Line, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
@@ -49,7 +48,6 @@ interface DailyNutritionScrollGraphProps {
 export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScrollGraphProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
-  const rightEdgeOpacity = useRef(new Animated.Value(0)).current;
   
   const displayData = useMemo(() => {
     const baseData = MOCK_DATA;
@@ -90,6 +88,7 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
   };
 
   const currentConfig = NUTRIENT_CONFIG[selectedNutrient];
+  const currentDayData = displayData[displayData.length - 1];
 
   const maxDailyValue = useMemo(() => {
     const dataMax = Math.max(...displayData.map(day => 
@@ -133,48 +132,21 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
         style={styles.barsMask}
         maskElement={
           <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)']}
-            locations={[0, 0.14, 1]}
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+            locations={[0, 0.14, 0.9, 1]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={StyleSheet.absoluteFill}
           />
         }
       >
+        <DebugLayout>
           <ScrollView
             ref={scrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.barsScrollContent}
             onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
-            onScrollBeginDrag={() => {
-              Animated.timing(rightEdgeOpacity, {
-                toValue: 1,
-                duration: 180,
-                useNativeDriver: true,
-              }).start();
-            }}
-            onScrollEndDrag={() => {
-              Animated.timing(rightEdgeOpacity, {
-                toValue: 0,
-                duration: 260,
-                useNativeDriver: true,
-              }).start();
-            }}
-            onMomentumScrollBegin={() => {
-              Animated.timing(rightEdgeOpacity, {
-                toValue: 1,
-                duration: 180,
-                useNativeDriver: true,
-              }).start();
-            }}
-            onMomentumScrollEnd={() => {
-              Animated.timing(rightEdgeOpacity, {
-                toValue: 0,
-                duration: 260,
-                useNativeDriver: true,
-              }).start();
-            }}
           >
             <View style={styles.barsContainer}>
               {renderStandardLine()}
@@ -220,32 +192,6 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
                           );
                         }).reverse()} 
                       </View>
-                      
-                      {/* Tooltips for Today */}
-                      {isCurrentDay && (
-                        <View style={styles.tooltipsContainer}>
-                          {dayData.meals.map((meal, mealIndex) => {
-                            const value = meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number;
-                            const heightPercentage = (value / (maxDailyValue * 1.15)) * 100;
-                            
-                            // Only show label if segment is significant enough
-                            if (heightPercentage < 2) return <View key={mealIndex} style={{ height: `${heightPercentage}%` }} />;
-
-                            return (
-                              <View 
-                                key={mealIndex}
-                                style={[
-                                  styles.tooltipSegment,
-                                  { height: `${heightPercentage}%` }
-                                ]}
-                              >
-                                <View style={styles.tooltipLine} />
-                                <Text style={styles.tooltipText}>{meal.time}</Text>
-                              </View>
-                            );
-                          }).reverse()}
-                        </View>
-                      )}
 
                       {/* Value Label positioned right on top of the bar */}
                       <View style={[styles.floatingLabel, { bottom: `${totalHeightPercent}%` }]}>
@@ -261,28 +207,13 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
               <View style={styles.trailingSpacer} />
             </View>
           </ScrollView>
-        <Animated.View pointerEvents="none" style={[styles.rightEdgeFade, { opacity: rightEdgeOpacity }]}>
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
-              <LinearGradient
-                colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)']}
-                locations={[0, 1]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={StyleSheet.absoluteFill}
-              />
-            }
-          >
-            <BlurView intensity={24} tint="light" style={StyleSheet.absoluteFill} />
-          </MaskedView>
-        </Animated.View>
+        </DebugLayout>
       </MaskedView>
     );
   };
 
   return (
-    // <DebugLayout>
+    <DebugLayout>
       <View style={styles.wrapper}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
@@ -310,12 +241,36 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
           </View>
         </View>
 
-        {/* <DebugLayout> */}
+        <DebugLayout>
           <View style={styles.graphSection}>
             {renderBars()}
+            <View pointerEvents="none" style={styles.fixedTooltips}>
+              {currentDayData.meals.map((meal, mealIndex) => {
+                const value = meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number;
+                const heightPercentage = (value / (maxDailyValue * 1.15)) * 100;
+
+                if (heightPercentage < 2) {
+                  return <View key={mealIndex} style={{ height: `${heightPercentage}%` }} />;
+                }
+
+                return (
+                  <View
+                    key={mealIndex}
+                    style={[
+                      styles.tooltipSegment,
+                      { height: `${heightPercentage}%` },
+                    ]}
+                  >
+                    <View style={styles.tooltipLine} />
+                    <Text style={styles.tooltipText}>{meal.time}</Text>
+                  </View>
+                );
+              }).reverse()}
+            </View>
           </View>
-        {/* </DebugLayout> */}
+        </DebugLayout>
       </View>
+    </DebugLayout>
   );
 };
 
@@ -372,6 +327,7 @@ const styles = StyleSheet.create(theme => ({
   graphSection: {
     height: 170, 
     paddingHorizontal: 0,
+    position: 'relative',
   },
   barsMask: {
     flex: 1,
@@ -386,13 +342,6 @@ const styles = StyleSheet.create(theme => ({
     gap: 20, 
     paddingLeft: 8,
     height: '100%',
-  },
-  rightEdgeFade: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: 0,
-    width: 56,
   },
   trailingSpacer: {
     width: 56,
@@ -440,14 +389,15 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.secondary,
     fontWeight: '500',
   },
-  tooltipsContainer: {
+  fixedTooltips: {
     position: 'absolute',
-    left: '100%',
-    marginLeft: 2,
+    right: 0,
+    top: 0,
     bottom: 0,
-    height: '100%',
+    width: 56,
     justifyContent: 'flex-end',
     gap: 3, // Matches stackContainer gap
+    paddingLeft: 4,
   },
   tooltipSegment: {
     justifyContent: 'flex-start',
