@@ -17,7 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import FoodTimeline from '@/components/home/food/food-timeline';
-import { DailyNutritionGraph } from '../components/nutrition/daily-nutrition-graph';
+import { DailyNutritionScrollGraph } from '../components/nutrition/daily-nutrition-scroll-graph';
 import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
 import { ImmersiveBackground } from '@/components/home/immersive-background';
@@ -34,7 +34,7 @@ const HomeScreen = () => {
   // Immersive Background Controls
   const BG_SCALE = 1.2;
   const BG_TRANSLATE_X = -180;
-  const BG_TRANSLATE_Y = -80;
+  const BG_TRANSLATE_Y = +140; //default -80
 
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -175,7 +175,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </Animated.View>
 
-          <DailyNutritionGraph entries={TIMELINE_ENTRIES} />
+          <DailyNutritionScrollGraph entries={TIMELINE_ENTRIES} />
           <View style={styles.cardGap} />
 
 
