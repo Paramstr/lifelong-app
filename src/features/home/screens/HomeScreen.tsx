@@ -17,6 +17,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import FoodTimeline from '@/components/home/food/food-timeline';
+import { DailyNutritionGraph } from '../components/nutrition/daily-nutrition-graph';
 import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
 import { WeeklyProgressHeader } from '@/components/home/weekly-progress-header';
 import { ImmersiveBackground } from '@/components/home/immersive-background';
@@ -174,6 +175,9 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </Animated.View>
 
+          <DailyNutritionGraph />
+          <View style={styles.cardGap} />
+
 
         {/* <UpcomingProtocolCard       
           title="Wrist Mobility"
@@ -208,7 +212,7 @@ const HomeScreen = () => {
         /> */}
 
         <View style={styles.cardGap} />
-        <View style={{marginTop:200}}>
+        <View style={{}}>
           
         <FoodTimeline entries={TIMELINE_ENTRIES} />
         </View>

@@ -1,0 +1,280 @@
+import { GlassView } from 'expo-glass-effect';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SymbolView } from 'expo-symbols';
+import React, { useState, useMemo } from 'react';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+type NutrientType = 'Calories' | 'Proteins' | 'Carbs' | 'Fats';
+
+const NUTRIENT_CONFIG: Record<NutrientType, { label: string, unit: string, icon: string, color: string }> = {
+  'Calories': { label: 'Overall', unit: 'kcal', icon: 'flame.fill', color: '#FF9F0A' },
+  'Proteins': { label: 'Proteins', unit: 'g', icon: 'fish.fill', color: '#30D158' },
+  'Carbs': { label: 'Carbs', unit: 'g', icon: 'leaf.fill', color: '#0A84FF' },
+  'Fats': { label: 'Fats', unit: 'g', icon: 'drop.fill', color: '#BF5AF2' },
+};
+
+const NUTRIENT_KEYS = Object.keys(NUTRIENT_CONFIG) as NutrientType[];
+
+// Expanded Mock Data (10 days) with realistic nutrition values
+const MOCK_DATA = [
+    { day: 'Wed', meals: [{ name: 'B', calories: 420, proteins: 25, carbs: 45, fats: 15 }, { name: 'L', calories: 750, proteins: 40, carbs: 80, fats: 28 }, { name: 'S', calories: 180, proteins: 10, carbs: 20, fats: 8 }, { name: 'D', calories: 600, proteins: 35, carbs: 60, fats: 22 }] },
+    { day: 'Thu', meals: [{ name: 'B', calories: 380, proteins: 20, carbs: 40, fats: 14 }, { name: 'L', calories: 680, proteins: 35, carbs: 70, fats: 25 }, { name: 'S', calories: 220, proteins: 12, carbs: 25, fats: 10 }, { name: 'D', calories: 550, proteins: 30, carbs: 55, fats: 20 }] },
+    { day: 'Fri', meals: [{ name: 'B', calories: 450, proteins: 28, carbs: 50, fats: 16 }, { name: 'L', calories: 800, proteins: 45, carbs: 85, fats: 30 }, { name: 'S', calories: 150, proteins: 8, carbs: 18, fats: 6 }, { name: 'D', calories: 700, proteins: 38, carbs: 70, fats: 25 }] },
+    { day: 'Sat', meals: [{ name: 'B', calories: 500, proteins: 30, carbs: 60, fats: 18 }, { name: 'L', calories: 850, proteins: 50, carbs: 90, fats: 32 }, { name: 'S', calories: 300, proteins: 15, carbs: 35, fats: 12 }, { name: 'D', calories: 800, proteins: 45, carbs: 80, fats: 28 }] },
+    { day: 'Sun', meals: [{ name: 'B', calories: 350, proteins: 20, carbs: 40, fats: 12 }, { name: 'L', calories: 600, proteins: 35, carbs: 65, fats: 22 }, { name: 'S', calories: 100, proteins: 5, carbs: 15, fats: 4 }, { name: 'D', calories: 500, proteins: 30, carbs: 50, fats: 18 }] },
+    { day: 'Mon', meals: [{ name: 'B', calories: 410, proteins: 24, carbs: 44, fats: 14 }, { name: 'L', calories: 720, proteins: 42, carbs: 75, fats: 26 }, { name: 'S', calories: 190, proteins: 11, carbs: 22, fats: 9 }, { name: 'D', calories: 580, proteins: 33, carbs: 58, fats: 21 }] },
+    { day: 'Tue', meals: [{ name: 'B', calories: 440, proteins: 26, carbs: 48, fats: 15 }, { name: 'L', calories: 760, proteins: 44, carbs: 82, fats: 29 }, { name: 'S', calories: 210, proteins: 13, carbs: 24, fats: 9 }, { name: 'D', calories: 620, proteins: 36, carbs: 62, fats: 23 }] },
+    { day: 'Wed', meals: [{ name: 'B', calories: 390, proteins: 22, carbs: 42, fats: 13 }, { name: 'L', calories: 690, proteins: 38, carbs: 72, fats: 24 }, { name: 'S', calories: 160, proteins: 9, carbs: 19, fats: 7 }, { name: 'D', calories: 570, proteins: 31, carbs: 56, fats: 20 }] },
+    { day: 'Thu', meals: [{ name: 'B', calories: 460, proteins: 29, carbs: 52, fats: 17 }, { name: 'L', calories: 780, proteins: 46, carbs: 84, fats: 28 }, { name: 'S', calories: 230, proteins: 14, carbs: 26, fats: 11 }, { name: 'D', calories: 650, proteins: 37, carbs: 65, fats: 24 }] },
+    { day: 'Fri', meals: [{ name: 'B', calories: 430, proteins: 25, carbs: 46, fats: 16 }, { name: 'L', calories: 740, proteins: 43, carbs: 79, fats: 27 }, { name: 'S', calories: 200, proteins: 12, carbs: 23, fats: 8 }, { name: 'D', calories: 610, proteins: 34, carbs: 60, fats: 22 }] },
+];
+
+// Forest Green to Sky Blue palette
+const GRADIENT_COLORS = [
+    '#1B4332', // Deep Forest Green (Bottom)
+    '#2D6A4F', // Medium Green
+    '#48CAE4', // Ocean Blue
+    '#ADE8F4', // Sky Blue (Top)
+];
+
+export const DailyNutritionGraph = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const displayData = MOCK_DATA.slice(-5);
+  
+  const selectedNutrient = NUTRIENT_KEYS[currentIndex];
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + NUTRIENT_KEYS.length) % NUTRIENT_KEYS.length);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % NUTRIENT_KEYS.length);
+  };
+
+  const currentConfig = NUTRIENT_CONFIG[selectedNutrient];
+
+  const maxDailyValue = useMemo(() => {
+    return Math.max(...displayData.map(day => 
+      day.meals.reduce((sum, meal) => sum + (meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number), 0)
+    ));
+  }, [selectedNutrient, displayData]);
+
+  const renderBars = () => {
+    return (
+      <View style={styles.barsContainer}>
+        {displayData.map((dayData, dayIndex) => {
+          const isCurrentDay = dayIndex === displayData.length - 1;
+          const totalDailyValue = dayData.meals.reduce((sum, meal) => sum + (meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number), 0);
+          const totalHeightPercent = (totalDailyValue / (maxDailyValue * 1.15)) * 100;
+
+          return (
+            <View 
+                key={dayIndex} 
+                style={[
+                    styles.barGroup,
+                    { opacity: isCurrentDay ? 1 : 0.6 } 
+                ]}
+            >
+                <View style={styles.barWrapper}>
+                    <View style={styles.stackContainer}>
+                        {dayData.meals.map((meal, mealIndex) => {
+                            const value = meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number;
+                            const heightPercentage = (value / (maxDailyValue * 1.15)) * 100;
+                            const colorIndex = Math.min(mealIndex, GRADIENT_COLORS.length - 1);
+                            const segmentColor = GRADIENT_COLORS[colorIndex];
+
+                            return (
+                                <View 
+                                    key={mealIndex}
+                                    style={[
+                                        styles.mealSegment,
+                                        { 
+                                            height: `${heightPercentage}%`,
+                                            backgroundColor: segmentColor,
+                                        }
+                                    ]}
+                                >
+                                    <LinearGradient
+                                        colors={['rgba(255,255,255,0.2)', 'rgba(0,0,0,0.05)']}
+                                        style={StyleSheet.absoluteFill}
+                                    />
+                                </View>
+                            );
+                        }).reverse()} 
+                    </View>
+                    
+                    {/* Value Label positioned right on top of the bar */}
+                    <View style={[styles.floatingLabel, { bottom: `${totalHeightPercent}%` }]}>
+                        <Text style={styles.valueLabel}>
+                            {Math.round(totalDailyValue)}
+                        </Text>
+                    </View>
+                </View>
+                <Text style={styles.dayLabel}>{dayData.day}</Text>
+            </View>
+          );
+        })}
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.wrapper}>
+        <GlassView style={styles.card} glassEffectStyle="regular">
+        
+        <View style={styles.header}>
+            <View style={styles.headerLeft}>
+                <Text style={styles.subTitleLabel}>Daily Nutrition</Text>
+                <SymbolView name="info.circle" tintColor="#999" style={{ width: 14, height: 14, marginLeft: 4 }} />
+            </View>
+
+            <View style={styles.headerControls}>
+                <View style={styles.nutrientInfo}>
+                    <SymbolView 
+                        name={currentConfig.icon} 
+                        tintColor={currentConfig.color} 
+                        style={{ width: 18, height: 18 }} 
+                    />
+                    <Text style={styles.nutrientLabel}>{currentConfig.label}</Text>
+                </View>
+                <View style={styles.arrows}>
+                    <TouchableOpacity onPress={handlePrev} hitSlop={10} style={styles.arrowButton}>
+                        <SymbolView name="chevron.left" tintColor="#666" style={{ width: 12, height: 12 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleNext} hitSlop={10} style={styles.arrowButton}>
+                        <SymbolView name="chevron.right" tintColor="#666" style={{ width: 12, height: 12 }} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+
+        <View style={styles.graphSection}>
+            {renderBars()}
+        </View>
+
+        </GlassView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create(theme => ({
+  wrapper: {
+    borderRadius: 24,
+    width: '100%',
+    shadowColor: theme.shadows.md.shadowColor,
+    shadowOffset: theme.shadows.md.shadowOffset,
+    shadowOpacity: theme.shadows.md.shadowOpacity,
+    shadowRadius: theme.shadows.md.shadowRadius,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#0000001a',
+    overflow: 'hidden',
+  },
+  card: {
+    padding: 20,
+    width: '100%',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24, 
+  },
+  headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+  },
+  subTitleLabel: {
+    ...theme.typography.label,
+    color: theme.colors.text.secondary,
+    fontWeight: '600',
+  },
+  headerControls: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+  },
+  nutrientInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+  },
+  nutrientLabel: {
+      fontSize: 17, 
+      fontWeight: '600',
+      color: theme.colors.text.primary,
+      letterSpacing: -0.5,
+  },
+  arrows: {
+      flexDirection: 'row',
+      backgroundColor: '#fff', 
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.05)',
+      height: 24, 
+      alignItems: 'center',
+  },
+  arrowButton: {
+      paddingHorizontal: 6,
+      height: '100%',
+      justifyContent: 'center',
+  },
+  graphSection: {
+      height: 170, 
+      paddingHorizontal: 0,
+  },
+  barsContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center', 
+      alignItems: 'flex-end',
+      gap: 12, 
+  },
+  barGroup: {
+      alignItems: 'center',
+      height: '100%',
+      justifyContent: 'flex-end',
+      gap: 8,
+  },
+  barWrapper: {
+      width: 44, 
+      flex: 1, 
+      justifyContent: 'flex-end',
+      // No overflow hidden so label can sit on top if it slightly exceeds height
+  },
+  stackContainer: {
+      width: '100%',
+      height: '100%',
+      justifyContent: 'flex-end', 
+      gap: 3, 
+      borderRadius: 8,
+      overflow: 'hidden',
+  },
+  mealSegment: {
+      width: '100%',
+      borderRadius: 4, 
+      overflow: 'hidden',
+  },
+  floatingLabel: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      marginBottom: 12, // Tiny gap from top segment
+  },
+  valueLabel: {
+      fontSize: 10,
+      fontWeight: '400',
+      color: theme.colors.text.primary,
+      textAlign: 'center',
+  },
+  dayLabel: {
+      ...theme.typography.xs,
+      color: theme.colors.text.secondary,
+      fontWeight: '500',
+  },
+}));
