@@ -214,7 +214,7 @@ const HomeScreen = () => {
         <View style={styles.cardGap} />
         <View style={{}}>
           
-        <FoodTimeline entries={TIMELINE_ENTRIES} />
+        <FoodTimeline />
         </View>
 
         <View style={styles.mb8} />

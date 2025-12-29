@@ -3,12 +3,17 @@ import { parseTime } from '@/utils/date-utils';
 import { SymbolView } from 'expo-symbols';
 import { GlassView } from 'expo-glass-effect';
 import React, { useMemo } from 'react';
-import { ImageSourcePropType, Text, TextInput, View } from 'react-native';
+import { ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
+import * as ImagePicker from 'expo-image-picker';
+import { MediaType } from 'expo-image-picker';
+import { useRouter } from 'expo-router';
+import { foodStore, useFoodEntries } from '@/features/food/data/food-store';
 import MealCard from './meal-card';
 import ThoughtCard from './thought-card';
 import TimelineItem from './timeline-item';
 
+// Legacy type for reference, but we map from FoodEntry now
 export type TimelineEntry = {
   id: string;
   time: string;
@@ -24,40 +29,53 @@ export type TimelineEntry = {
   thought?: string;
 };
 
-interface FoodTimelineProps {
-  entries: TimelineEntry[];
-}
-
-const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
+const FoodTimeline: React.FC = () => {
   const { theme } = useUnistyles();
+  const entries = useFoodEntries();
+  const router = useRouter();
 
-  const sortedEntries = useMemo(() => {
-    return [...entries].sort((a, b) => {
-      const timeA = parseTime(a.time);
-      const timeB = parseTime(b.time);
-      return timeB - timeA; // Descending: Latest to Earliest
+  const handleAddFood = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: [MediaType.Images],
+      allowsEditing: true,
+      quality: 1,
     });
-  }, [entries]);
 
-  const parseMacroValue = (value?: string) => {
-    if (!value) {
-      return 0;
+    if (!result.canceled) {
+      foodStore.addFood(result.assets[0].uri, 'gallery');
+      // "User is returned to Home immediately" - we are already here.
+      // Toast notification could go here.
     }
-    const parsed = Number(value.replace(/[^\d.]/g, ''));
-    return Number.isNaN(parsed) ? 0 : parsed;
   };
+
+  const handleCamera = async () => {
+      const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+      
+      if (permissionResult.granted === false) {
+        alert("You've refused to allow this appp to access your camera!");
+        return;
+      }
+      
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: [MediaType.Images],
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        foodStore.addFood(result.assets[0].uri, 'camera');
+      }
+  }
 
   const macroTotals = useMemo(() => {
     return entries.reduce(
       (totals, entry) => {
-        if (entry.type !== 'meal') {
-          return totals;
-        }
+        if (!entry.summary) return totals;
         return {
-          calories: totals.calories + parseMacroValue(entry.calories),
-          protein: totals.protein + parseMacroValue(entry.protein),
-          carbs: totals.carbs + parseMacroValue(entry.carbs),
-          fat: totals.fat + parseMacroValue(entry.fat),
+          calories: totals.calories + (entry.summary.calories || 0),
+          protein: totals.protein + (entry.summary.protein || 0),
+          carbs: totals.carbs + (entry.summary.carbs || 0),
+          fat: totals.fat + (entry.summary.fat || 0),
         };
       },
       { calories: 0, protein: 0, carbs: 0, fat: 0 }
@@ -70,7 +88,6 @@ const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
             style={styles.cardContainer}
             glassEffectStyle="regular"
             tintColor='rgba(255, 255, 255, 0.63)'
-
         >
         <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -121,54 +138,52 @@ const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
         </View>
 
         <View style={styles.inputContainer}>
-            <AnimatedDashedBorder
-            borderRadius={theme.radius.xl}
-            strokeColor={theme.colors.text.muted}
-            dashLength={8}
-            gapLength={4}
-            >
-            <View style={styles.inputWrapper}>
-                <TextInput 
-                    style={styles.input}
-                    placeholder="Add food"
-                    placeholderTextColor={theme.colors.text.muted}
-                />
-            </View>
-            </AnimatedDashedBorder>
+            <TouchableOpacity onPress={handleAddFood} activeOpacity={0.8}>
+                <AnimatedDashedBorder
+                borderRadius={theme.radius.xl}
+                strokeColor={theme.colors.text.muted}
+                dashLength={8}
+                gapLength={4}
+                >
+                <View style={styles.inputWrapper}>
+                    <Text style={styles.placeholderText}>Add food</Text>
+                    <SymbolView name="camera.fill" tintColor={theme.colors.text.muted} style={{ width: 20, height: 18 }} />
+                </View>
+                </AnimatedDashedBorder>
+            </TouchableOpacity>
         </View>
 
         <View style={styles.content}>
-            {sortedEntries.map((entry, index) => {
-            const total = sortedEntries.length;
+            {entries.map((entry, index) => {
+            const total = entries.length;
             const progress = total > 1 ? index / (total - 1) : 0;
             const lineOpacity = Math.max(0.2, 0.6 - progress * 0.8);
 
+            const timeString = new Date(entry.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
+
             return (
-            <TimelineItem 
-                key={entry.id} 
-                showLine={index !== sortedEntries.length - 1}
-                isLast={index === sortedEntries.length - 1}
-                lineOpacity={lineOpacity}
+            <TouchableOpacity 
+                key={entry.id}
+                onPress={() => router.push(`/food/${entry.id}`)}
+                activeOpacity={0.7}
             >
-                {entry.type === 'meal' ? (
-                <MealCard
-                    time={entry.time}
-                    mealType={entry.mealType || ''}
-                    title={entry.title || ''}
-                    calories={entry.calories || ''}
-                    carbs={entry.carbs || ''}
-                    protein={entry.protein || ''}
-                    fat={entry.fat || ''}
-                    fiber={entry.fiber || ''}
-                    image={entry.image!}
-                />
-                ) : (
-                <ThoughtCard
-                    time={entry.time}
-                    thought={entry.thought || ''}
-                />
-                )}
-            </TimelineItem>
+                <TimelineItem 
+                    showLine={index !== entries.length - 1}
+                    isLast={index === entries.length - 1}
+                    lineOpacity={lineOpacity}
+                >
+                    <MealCard
+                        time={timeString}
+                        mealType={entry.mealType || 'Meal'}
+                        title={entry.title || 'Processing...'}
+                        calories={entry.summary ? String(Math.round(entry.summary.calories)) : '-'}
+                        carbs={entry.summary ? String(Math.round(entry.summary.carbs)) : '-'}
+                        protein={entry.summary ? String(Math.round(entry.summary.protein)) : '-'}
+                        fat={entry.summary ? String(Math.round(entry.summary.fat)) : '-'}
+                        image={typeof entry.imageUri === 'string' ? { uri: entry.imageUri } : entry.imageUri}
+                    />
+                </TimelineItem>
+            </TouchableOpacity>
             );
             })}
         </View>
@@ -265,16 +280,17 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.primary,
   },
   inputWrapper: {
-     // No background here, just the border
-  },
-  input: {
-    backgroundColor: 'rgba(0,0,0,0.05)', // Very subtle fill
-    borderRadius: theme.radius.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     paddingVertical: 18,
-    paddingHorizontal: 16,
-    textAlign: 'center',
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderRadius: theme.radius.xl,
+  },
+  placeholderText: {
     ...theme.typography.body,
-    color: theme.colors.text.primary,
+    color: theme.colors.text.muted,
   },
   content: {
     // Content padding handled by container

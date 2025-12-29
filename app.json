@@ -41,6 +41,13 @@
           }
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you log your meals.",
+          "cameraPermission": "The app accesses your camera to let you log your meals."
+        }
+      ],
        "./plugins/withPodfileDeploymentTarget"
     ],
     "experiments": {

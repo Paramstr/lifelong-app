@@ -31,6 +31,15 @@ export default function RootLayout() {
             headerShown: false,
           }} 
         />
+        <Stack.Screen 
+          name="food/[id]" 
+          options={{ 
+            presentation: 'formSheet',
+            headerShown: false,
+            sheetAllowedDetents: [1.0],
+            sheetGrabberVisible: true,
+          }} 
+        />
       </Stack>
       {__DEV__ && (
         <>
