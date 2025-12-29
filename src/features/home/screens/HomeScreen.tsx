@@ -1,9 +1,17 @@
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Text, TouchableOpacity, View, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 import FoodTimeline from '@/components/home/food/food-timeline';
 import UpcomingProtocolCard from '@/components/home/upcoming-protocol-card';
@@ -14,25 +22,48 @@ import { EdgeBlurFade } from '@/components/shared/edge-blur-fade';
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
+  const scrollY = useSharedValue(0);
 
   // Immersive Background Controls
   const BG_SCALE = 1.2;
-  const BG_TRANSLATE_X = -120;
+  const BG_TRANSLATE_X = -180;
   const BG_TRANSLATE_Y = -80;
+
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const bgAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: -scrollY.value * 0.25 }],
+  }));
+
+  const topBlurIntensity = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [36, 60], Extrapolate.CLAMP)
+  );
+  const bottomBlurIntensity = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [34, 56], Extrapolate.CLAMP)
+  );
 
   return (
     <View style={styles.container}>
-      <ImmersiveBackground 
-        source={require('../../../../assets/images/Backgrounds/blue-mountains.png')}
-        scale={BG_SCALE}
-        translateX={BG_TRANSLATE_X}
-        translateY={BG_TRANSLATE_Y}
-      />
+      <Animated.View
+        style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }, bgAnimatedStyle]}
+        pointerEvents="none"
+      >
+        <ImmersiveBackground 
+          source={require('../../../../assets/images/Backgrounds/blue-mountains.png')}
+          scale={BG_SCALE}
+          translateX={BG_TRANSLATE_X}
+          translateY={BG_TRANSLATE_Y}
+        />
+      </Animated.View>
       <EdgeBlurFade
         position="top"
         height={insets.top + 300}
         fadeColor="#ffffffff"
-        blurIntensity={36}
+        blurIntensity={topBlurIntensity}
         fadeFromOpacity={1}
         fadeStart={0}
         fadeEnd={0.9}
@@ -41,18 +72,20 @@ const HomeScreen = () => {
       />
       <EdgeBlurFade
         position="bottom"
-        height={insets.bottom + 600}
+        height={insets.bottom + 500}
         fadeColor="#ffffffff"
-        blurIntensity={34}
+        blurIntensity={bottomBlurIntensity}
         fadeFromOpacity={1}
         fadeStart={0.05}
-        fadeEnd={0.6}
+        fadeEnd={0.5}
         blurStart={0.1}
         blurEnd={1}
       />
       {/* <SoftRadialGradient /> */}
 
-      <ScrollView
+      <Animated.ScrollView
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: insets.top,
@@ -121,7 +154,7 @@ const HomeScreen = () => {
 
         <View style={styles.mb8} />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
 
     </View>
   );

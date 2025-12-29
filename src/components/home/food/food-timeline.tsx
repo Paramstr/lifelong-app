@@ -43,8 +43,8 @@ const FoodTimeline: React.FC<FoodTimelineProps> = ({ entries }) => {
         <GlassView 
             style={styles.cardContainer}
             glassEffectStyle="regular"
-            tintColor='rgba(255, 255, 255, 0.52)'
-            
+            tintColor='rgba(255, 255, 255, 0.63)'
+
         >
         <View style={styles.header}>
             <View style={styles.headerLeft}>

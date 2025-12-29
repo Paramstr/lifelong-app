@@ -4,6 +4,7 @@ import React, { FC, useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { colorKit } from 'reanimated-color-picker';
 import MaskedView from '@react-native-masked-view/masked-view';
+import Animated, { type SharedValue, useAnimatedProps } from 'react-native-reanimated';
 
 import { easeGradient } from '@/utils/ease-gradient';
 
@@ -15,7 +16,7 @@ type FadeStop = {
 type Props = {
   position?: 'top' | 'bottom';
   height?: number;
-  blurIntensity?: number;
+  blurIntensity?: number | SharedValue<number>;
   fadeColor?: string;
   fadeStart?: number;
   fadeEnd?: number;
@@ -28,6 +29,8 @@ type Props = {
   style?: ViewStyle;
   blurViewProps?: BlurViewProps;
 };
+
+const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export const EdgeBlurFade: FC<Props> = ({
   position = 'top',
@@ -98,6 +101,16 @@ export const EdgeBlurFade: FC<Props> = ({
     };
   }, [position, resolvedBlurEnd, resolvedBlurStart]);
 
+  const isAnimatedIntensity =
+    typeof blurIntensity === 'object' &&
+    blurIntensity !== null &&
+    'value' in blurIntensity;
+  const resolvedIntensity = isAnimatedIntensity ? 0 : blurIntensity;
+  const { intensity: _ignoredIntensity, ...restBlurProps } = blurViewProps ?? {};
+  const animatedBlurProps = useAnimatedProps(() => ({
+    intensity: isAnimatedIntensity ? blurIntensity.value : resolvedIntensity,
+  }));
+
   return (
     <View
       pointerEvents="none"
@@ -119,17 +132,17 @@ export const EdgeBlurFade: FC<Props> = ({
             />
           }
         >
-          <BlurView
+          <AnimatedBlurView
             style={StyleSheet.absoluteFill}
-            intensity={blurViewProps?.intensity ?? blurIntensity}
-            {...blurViewProps}
+            animatedProps={animatedBlurProps}
+            {...restBlurProps}
           />
         </MaskedView>
       ) : (
-        <BlurView
+        <AnimatedBlurView
           style={StyleSheet.absoluteFill}
-          intensity={blurViewProps?.intensity ?? blurIntensity}
-          {...blurViewProps}
+          animatedProps={animatedBlurProps}
+          {...restBlurProps}
         />
       )}
       <LinearGradient
