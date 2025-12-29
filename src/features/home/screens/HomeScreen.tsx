@@ -109,7 +109,7 @@ const HomeScreen = () => {
         blurMaxIntensity={60}
         maskStops={[
           { location: 0, opacity: 1 },
-          { location: 0.5, opacity: 1 },
+          { location: 0.6, opacity: 1 },
           { location: 1, opacity: 0 }
         ]}
         blurRange={[0, 80]}

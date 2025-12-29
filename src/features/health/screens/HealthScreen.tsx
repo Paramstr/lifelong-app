@@ -5,9 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SymbolView } from 'expo-symbols';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 import HealthRecordCard, { RecordType } from '../components/HealthRecordCard';
 import AddRecordDropdown from '../components/AddRecordDropdown';
+import { ProgressiveBlurHeader } from '@/components/shared/progressive-blur-header';
 
 // Mock Data
 interface HealthRecord {
@@ -64,10 +65,17 @@ const MOCK_DATA: HealthRecord[] = [
   },
 ];
 
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+
 const HealthScreen = () => {
   const { theme } = useUnistyles();
   const insets = useSafeAreaInsets();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const scrollY = useSharedValue(0);
+
+  const onScroll = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
 
   const toggleDropdown = () => {
     setDropdownVisible((prev) => !prev);
@@ -83,10 +91,34 @@ const HealthScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top}]}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Records</Text>
-        <View style={styles.headerActions}>
+    <View style={styles.container}>
+      
+      <ProgressiveBlurHeader
+        scrollY={scrollY}
+        height={insets.top + 72}
+        insetsTop={insets.top}
+        enableBlur={true}
+        blurMaxIntensity={60}
+        maskStops={[
+          { location: 0, opacity: 1 },
+          { location: 0.6, opacity: 1 },
+          { location: 1, opacity: 0 }
+        ]}
+        blurRange={[0, 80]}
+        backgroundRange={[0, 60]}
+        travelRange={[0, 80]}
+        travelTranslateY={[0, 32]}
+        contentRange={[30, 70]}
+        blurTint="light"
+        tintColors={['rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0.1)']}
+        contentStyle={styles.compactHeaderContent}
+      >
+        <View style={styles.compactHeader}>
+           <Text style={styles.compactHeaderTitle}>Records</Text>
+        </View>
+      </ProgressiveBlurHeader>
+
+      <View style={[styles.fixedActions, { top: insets.top }]}>
           <TouchableOpacity style={styles.iconButton}>
             {Platform.OS === 'ios' ? (
               <SymbolView
@@ -111,13 +143,14 @@ const HealthScreen = () => {
               <Ionicons name="add" size={24} color="black" />
             )}
           </TouchableOpacity>
-        </View>
       </View>
 
-      <FlatList
+      <AnimatedFlatList
         data={MOCK_DATA}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+        keyExtractor={(item: any) => item.id}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        renderItem={({ item }: any) => (
           <HealthRecordCard
             title={item.title}
             subtitle={item.subtitle}
@@ -128,6 +161,13 @@ const HealthScreen = () => {
             itemCount={item.itemCount}
           />
         )}
+        ListHeaderComponent={
+          <View style={[styles.largeHeader, { paddingTop: insets.top }]}>
+            <View style={styles.headerRow}>
+              <Text style={styles.headerTitle}>Records</Text>
+            </View>
+          </View>
+        }
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         scrollEnabled={!isDropdownVisible} 
@@ -152,7 +192,7 @@ const HealthScreen = () => {
         visible={isDropdownVisible}
         onClose={closeDropdown}
         onSelect={handleSelectOption}
-        top={insets.top + 60}
+        top={insets.top + 72}
       />
     </View>
   );
@@ -163,26 +203,42 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     backgroundColor: theme.colors.background.primary,
   },
-  header: {
+  compactHeaderContent: {
+    paddingHorizontal: theme.spacing.lg,
+  },
+  compactHeader: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  compactHeaderTitle: {
+    ...theme.typography.headline,
+    color: theme.colors.text.primary,
+    fontSize: 17,
+  },
+  fixedActions: {
+    position: 'absolute',
+    right: 0,
+    height: 72,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-    zIndex: 1001, // Ensure header is above overlay if we want buttons to remain clickable, but overlay should probably cover everything except the dropdown. 
-    // Wait, if overlay covers everything, header buttons (including +) will be covered.
-    // If we want to toggle close by clicking +, we need to ensure it's above or the overlay handles it.
-    // The overlay has onPress={closeDropdown}, so clicking anywhere outside dropdown closes it.
+    gap: theme.spacing.md,
+    zIndex: 1002,
+  },
+  largeHeader: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+  },
+  headerRow: {
+    height: 72,
+    justifyContent: 'center',
+    paddingTop: 4,
   },
   headerTitle: {
-    ...theme.typography.display, // Large title
+    ...theme.typography.display,
     color: theme.colors.text.primary,
     fontSize: 32,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.md,
   },
   iconButton: {
     padding: theme.spacing.xs,
@@ -192,7 +248,7 @@ const styles = StyleSheet.create((theme) => ({
     paddingBottom: theme.spacing.xl,
   },
   overlay: {
-      backgroundColor: 'rgba(255, 255, 255, 0.4)', // White opacity as requested
+      backgroundColor: 'rgba(255, 255, 255, 0.4)',
   }
 }));
 

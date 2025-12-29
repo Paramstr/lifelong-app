@@ -1,21 +1,54 @@
 import React from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 import { RoadmapItem } from '../components/RoadmapItem';
 import { ChangelogItem } from '../components/ChangelogItem';
 import { FeedbackSection } from '../components/FeedbackSection';
 import { ROADMAP_ITEMS, CHANGELOG_ITEMS, BETA_INFO } from '../data/beta-data';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DebugLayout } from '@/components/shared/DebugLayout';
+import { ProgressiveBlurHeader } from '@/components/shared/progressive-blur-header';
 
 const BetaScreen = () => {
   const insets = useSafeAreaInsets();
+  const scrollY = useSharedValue(0);
+
+  const onScroll = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
   
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <ScrollView 
+    <View style={styles.container}>
+      <ProgressiveBlurHeader
+        scrollY={scrollY}
+        height={insets.top + 72}
+        insetsTop={insets.top}
+        enableBlur={true}
+        blurMaxIntensity={60}
+        maskStops={[
+          { location: 0, opacity: 1 },
+          { location: 0.6, opacity: 1 },
+          { location: 1, opacity: 0 }
+        ]}
+        blurRange={[0, 80]}
+        backgroundRange={[0, 60]}
+        travelRange={[0, 80]}
+        travelTranslateY={[0, 32]}
+        contentRange={[30, 70]}
+        blurTint="light"
+        tintColors={['rgba(255, 255, 255, 0.6)', 'rgba(255, 255, 255, 0.1)']}
+        contentStyle={styles.compactHeaderContent}
+      >
+        <View style={styles.compactHeader}>
+           <Text style={styles.compactHeaderTitle}>Lifelong Beta</Text>
+        </View>
+      </ProgressiveBlurHeader>
+
+      <Animated.ScrollView 
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         contentInsetAdjustmentBehavior="never"
-        contentContainerStyle={[styles.contentContainer, { paddingBottom: 100 }]}
+        contentContainerStyle={[styles.contentContainer, { paddingBottom: 100, paddingTop: insets.top + 20 }]}
       >
 
         <View style={[styles.header]}>
@@ -42,7 +75,7 @@ const BetaScreen = () => {
         </View>
 
         <FeedbackSection />
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 };
@@ -54,6 +87,19 @@ const styles = StyleSheet.create(theme => ({
   },
   contentContainer: {
     paddingHorizontal: theme.spacing.lg,
+  },
+  compactHeaderContent: {
+    paddingHorizontal: theme.spacing.lg,
+  },
+  compactHeader: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  compactHeaderTitle: {
+    ...theme.typography.headline,
+    color: theme.colors.text.primary,
+    fontSize: 17,
   },
   header: {
     flexDirection: 'row',
