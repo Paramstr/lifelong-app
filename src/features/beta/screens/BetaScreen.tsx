@@ -29,7 +29,12 @@ const BetaScreen = () => {
         contentStyle={styles.compactHeaderContent}
       >
         <View style={styles.compactHeader}>
-           <Text style={styles.compactHeaderTitle}>Lifelong Beta</Text>
+           <View style={styles.compactTitleRow}>
+              <Text style={styles.compactHeaderTitle}>Lifelong</Text>
+              <View style={styles.compactBetaBadge}>
+                <Text style={styles.compactBetaText}>BETA</Text>
+              </View>
+           </View>
         </View>
       </ProgressiveBlurHeader>
 
@@ -74,10 +79,10 @@ const styles = StyleSheet.create(theme => ({
     backgroundColor: theme.colors.background.primary,
   },
   contentContainer: {
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.md,
   },
   compactHeaderContent: {
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.md,
     paddingBottom: 10,
   },
   compactHeader: {
@@ -85,10 +90,28 @@ const styles = StyleSheet.create(theme => ({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
+  compactTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
   compactHeaderTitle: {
     ...theme.typography.headline,
     color: theme.colors.text.primary,
     fontSize: 17,
+  },
+  compactBetaBadge: {
+    backgroundColor: theme.colors.text.primary,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 3,
+    marginLeft: 4,
+    marginTop: 2,
+  },
+  compactBetaText: {
+    color: theme.colors.background.primary,
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 0.5,
   },
   headerContainer: {
     flexDirection: 'row',

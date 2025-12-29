@@ -204,7 +204,7 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.background.primary,
   },
   compactHeaderContent: {
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.md,
   },
   compactHeader: {
     flex: 1,
@@ -222,12 +222,12 @@ const styles = StyleSheet.create((theme) => ({
     height: 72,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.md,
     gap: theme.spacing.md,
     zIndex: 1002,
   },
   largeHeader: {
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.sm,
     paddingBottom: theme.spacing.md,
   },
   headerRow: {
