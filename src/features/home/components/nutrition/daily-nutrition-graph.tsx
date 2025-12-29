@@ -5,16 +5,17 @@ import React, { useState, useMemo } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Svg, { Line, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 type NutrientType = 'Calories' | 'Proteins' | 'Carbs' | 'Fats';
 
-const NUTRIENT_CONFIG: Record<NutrientType, { label: string, unit: string, icon: string, color: string }> = {
-  'Calories': { label: 'Calories', unit: 'kcal', icon: 'flame.fill', color: '#FF9F0A' },
-  'Proteins': { label: 'Proteins', unit: 'g', icon: 'fish.fill', color: '#30D158' },
-  'Carbs': { label: 'Carbs', unit: 'g', icon: 'leaf.fill', color: '#0A84FF' },
-  'Fats': { label: 'Fats', unit: 'g', icon: 'drop.fill', color: '#BF5AF2' },
+const NUTRIENT_CONFIG: Record<NutrientType, { label: string, unit: string, icon: string, color: string, standard: number }> = {
+  'Calories': { label: 'Overall', unit: 'kcal', icon: 'flame.fill', color: '#FF9F0A', standard: 2200 },
+  'Proteins': { label: 'Proteins', unit: 'g', icon: 'fish.fill', color: '#30D158', standard: 140 },
+  'Carbs': { label: 'Carbs', unit: 'g', icon: 'leaf.fill', color: '#0A84FF', standard: 275 },
+  'Fats': { label: 'Fats', unit: 'g', icon: 'drop.fill', color: '#BF5AF2', standard: 78 },
 };
 
 const NUTRIENT_KEYS = Object.keys(NUTRIENT_CONFIG) as NutrientType[];
@@ -58,14 +59,45 @@ export const DailyNutritionGraph = () => {
   const currentConfig = NUTRIENT_CONFIG[selectedNutrient];
 
   const maxDailyValue = useMemo(() => {
-    return Math.max(...displayData.map(day => 
+    const dataMax = Math.max(...displayData.map(day => 
       day.meals.reduce((sum, meal) => sum + (meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number), 0)
     ));
-  }, [selectedNutrient, displayData]);
+    return Math.max(dataMax, currentConfig.standard);
+  }, [selectedNutrient, displayData, currentConfig.standard]);
+
+  const renderStandardLine = () => {
+    const heightPercentage = (currentConfig.standard / (maxDailyValue * 1.15)) * 100;
+    const yPos = `${100 - heightPercentage}%`;
+
+    return (
+        <View style={[StyleSheet.absoluteFill, { zIndex: 0 }]} pointerEvents="none">
+            <Svg height="100%" width="100%">
+                <Defs>
+                    <SvgLinearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                        <Stop offset="0" stopColor="#000" stopOpacity="0" />
+                        <Stop offset="0.15" stopColor="#000" stopOpacity="0.4" />
+                        <Stop offset="0.85" stopColor="#000" stopOpacity="0.4" />
+                        <Stop offset="1" stopColor="#000" stopOpacity="0" />
+                    </SvgLinearGradient>
+                </Defs>
+                <Line
+                    x1="0"
+                    y1={yPos}
+                    x2="100%"
+                    y2={yPos}
+                    stroke="url(#lineGrad)"
+                    strokeWidth="1.5"
+                    strokeDasharray="4 4"
+                />
+            </Svg>
+        </View>
+    );
+  };
 
   const renderBars = () => {
     return (
       <View style={styles.barsContainer}>
+        {renderStandardLine()}
         {displayData.map((dayData, dayIndex) => {
           const isCurrentDay = dayIndex === displayData.length - 1;
           const totalDailyValue = dayData.meals.reduce((sum, meal) => sum + (meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number), 0);
