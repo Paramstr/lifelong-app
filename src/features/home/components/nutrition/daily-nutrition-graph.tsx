@@ -1,3 +1,4 @@
+import { TimelineEntry } from '@/components/home/food/food-timeline';
 import { GlassView } from 'expo-glass-effect';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SymbolView } from 'expo-symbols';
@@ -22,16 +23,16 @@ const NUTRIENT_KEYS = Object.keys(NUTRIENT_CONFIG) as NutrientType[];
 
 // Expanded Mock Data (10 days) with realistic nutrition values
 const MOCK_DATA = [
-    { day: 'Wed', meals: [{ name: 'B', calories: 420, proteins: 25, carbs: 45, fats: 15 }, { name: 'L', calories: 750, proteins: 40, carbs: 80, fats: 28 }, { name: 'S', calories: 180, proteins: 10, carbs: 20, fats: 8 }, { name: 'D', calories: 600, proteins: 35, carbs: 60, fats: 22 }] },
-    { day: 'Thu', meals: [{ name: 'B', calories: 380, proteins: 20, carbs: 40, fats: 14 }, { name: 'L', calories: 680, proteins: 35, carbs: 70, fats: 25 }, { name: 'S', calories: 220, proteins: 12, carbs: 25, fats: 10 }, { name: 'D', calories: 550, proteins: 30, carbs: 55, fats: 20 }] },
-    { day: 'Fri', meals: [{ name: 'B', calories: 450, proteins: 28, carbs: 50, fats: 16 }, { name: 'L', calories: 800, proteins: 45, carbs: 85, fats: 30 }, { name: 'S', calories: 150, proteins: 8, carbs: 18, fats: 6 }, { name: 'D', calories: 700, proteins: 38, carbs: 70, fats: 25 }] },
-    { day: 'Sat', meals: [{ name: 'B', calories: 500, proteins: 30, carbs: 60, fats: 18 }, { name: 'L', calories: 850, proteins: 50, carbs: 90, fats: 32 }, { name: 'S', calories: 300, proteins: 15, carbs: 35, fats: 12 }, { name: 'D', calories: 800, proteins: 45, carbs: 80, fats: 28 }] },
-    { day: 'Sun', meals: [{ name: 'B', calories: 350, proteins: 20, carbs: 40, fats: 12 }, { name: 'L', calories: 600, proteins: 35, carbs: 65, fats: 22 }, { name: 'S', calories: 100, proteins: 5, carbs: 15, fats: 4 }, { name: 'D', calories: 500, proteins: 30, carbs: 50, fats: 18 }] },
-    { day: 'Mon', meals: [{ name: 'B', calories: 410, proteins: 24, carbs: 44, fats: 14 }, { name: 'L', calories: 720, proteins: 42, carbs: 75, fats: 26 }, { name: 'S', calories: 190, proteins: 11, carbs: 22, fats: 9 }, { name: 'D', calories: 580, proteins: 33, carbs: 58, fats: 21 }] },
-    { day: 'Tue', meals: [{ name: 'B', calories: 440, proteins: 26, carbs: 48, fats: 15 }, { name: 'L', calories: 760, proteins: 44, carbs: 82, fats: 29 }, { name: 'S', calories: 210, proteins: 13, carbs: 24, fats: 9 }, { name: 'D', calories: 620, proteins: 36, carbs: 62, fats: 23 }] },
-    { day: 'Wed', meals: [{ name: 'B', calories: 390, proteins: 22, carbs: 42, fats: 13 }, { name: 'L', calories: 690, proteins: 38, carbs: 72, fats: 24 }, { name: 'S', calories: 160, proteins: 9, carbs: 19, fats: 7 }, { name: 'D', calories: 570, proteins: 31, carbs: 56, fats: 20 }] },
-    { day: 'Thu', meals: [{ name: 'B', calories: 460, proteins: 29, carbs: 52, fats: 17 }, { name: 'L', calories: 780, proteins: 46, carbs: 84, fats: 28 }, { name: 'S', calories: 230, proteins: 14, carbs: 26, fats: 11 }, { name: 'D', calories: 650, proteins: 37, carbs: 65, fats: 24 }] },
-    { day: 'Fri', meals: [{ name: 'B', calories: 430, proteins: 25, carbs: 46, fats: 16 }, { name: 'L', calories: 740, proteins: 43, carbs: 79, fats: 27 }, { name: 'S', calories: 200, proteins: 12, carbs: 23, fats: 8 }, { name: 'D', calories: 610, proteins: 34, carbs: 60, fats: 22 }] },
+    { day: 'Wed', meals: [{ name: 'B', calories: 420, proteins: 25, carbs: 45, fats: 15, time: '' }, { name: 'L', calories: 750, proteins: 40, carbs: 80, fats: 28, time: '' }, { name: 'S', calories: 180, proteins: 10, carbs: 20, fats: 8, time: '' }, { name: 'D', calories: 600, proteins: 35, carbs: 60, fats: 22, time: '' }] },
+    { day: 'Thu', meals: [{ name: 'B', calories: 380, proteins: 20, carbs: 40, fats: 14, time: '' }, { name: 'L', calories: 680, proteins: 35, carbs: 70, fats: 25, time: '' }, { name: 'S', calories: 220, proteins: 12, carbs: 25, fats: 10, time: '' }, { name: 'D', calories: 550, proteins: 30, carbs: 55, fats: 20, time: '' }] },
+    { day: 'Fri', meals: [{ name: 'B', calories: 450, proteins: 28, carbs: 50, fats: 16, time: '' }, { name: 'L', calories: 800, proteins: 45, carbs: 85, fats: 30, time: '' }, { name: 'S', calories: 150, proteins: 8, carbs: 18, fats: 6, time: '' }, { name: 'D', calories: 700, proteins: 38, carbs: 70, fats: 25, time: '' }] },
+    { day: 'Sat', meals: [{ name: 'B', calories: 500, proteins: 30, carbs: 60, fats: 18, time: '' }, { name: 'L', calories: 850, proteins: 50, carbs: 90, fats: 32, time: '' }, { name: 'S', calories: 300, proteins: 15, carbs: 35, fats: 12, time: '' }, { name: 'D', calories: 800, proteins: 45, carbs: 80, fats: 28, time: '' }] },
+    { day: 'Sun', meals: [{ name: 'B', calories: 350, proteins: 20, carbs: 40, fats: 12, time: '' }, { name: 'L', calories: 600, proteins: 35, carbs: 65, fats: 22, time: '' }, { name: 'S', calories: 100, proteins: 5, carbs: 15, fats: 4, time: '' }, { name: 'D', calories: 500, proteins: 30, carbs: 50, fats: 18, time: '' }] },
+    { day: 'Mon', meals: [{ name: 'B', calories: 410, proteins: 24, carbs: 44, fats: 14, time: '' }, { name: 'L', calories: 720, proteins: 42, carbs: 75, fats: 26, time: '' }, { name: 'S', calories: 190, proteins: 11, carbs: 22, fats: 9, time: '' }, { name: 'D', calories: 580, proteins: 33, carbs: 58, fats: 21, time: '' }] },
+    { day: 'Tue', meals: [{ name: 'B', calories: 440, proteins: 26, carbs: 48, fats: 15, time: '' }, { name: 'L', calories: 760, proteins: 44, carbs: 82, fats: 29, time: '' }, { name: 'S', calories: 210, proteins: 13, carbs: 24, fats: 9, time: '' }, { name: 'D', calories: 620, proteins: 36, carbs: 62, fats: 23, time: '' }] },
+    { day: 'Wed', meals: [{ name: 'B', calories: 390, proteins: 22, carbs: 42, fats: 13, time: '' }, { name: 'L', calories: 690, proteins: 38, carbs: 72, fats: 24, time: '' }, { name: 'S', calories: 160, proteins: 9, carbs: 19, fats: 7, time: '' }, { name: 'D', calories: 570, proteins: 31, carbs: 56, fats: 20, time: '' }] },
+    { day: 'Thu', meals: [{ name: 'B', calories: 460, proteins: 29, carbs: 52, fats: 17, time: '' }, { name: 'L', calories: 780, proteins: 46, carbs: 84, fats: 28, time: '' }, { name: 'S', calories: 230, proteins: 14, carbs: 26, fats: 11, time: '' }, { name: 'D', calories: 650, proteins: 37, carbs: 65, fats: 24, time: '' }] },
+    { day: 'Fri', meals: [{ name: 'B', calories: 430, proteins: 25, carbs: 46, fats: 16, time: '' }, { name: 'L', calories: 740, proteins: 43, carbs: 79, fats: 27, time: '' }, { name: 'S', calories: 200, proteins: 12, carbs: 23, fats: 8, time: '' }, { name: 'D', calories: 610, proteins: 34, carbs: 60, fats: 22, time: '' }] },
 ];
 
 // Forest Green to Sky Blue palette
@@ -42,10 +43,42 @@ const GRADIENT_COLORS = [
     '#9ccefaff', // Soft Sky Blue (Top)
 ];
 
-export const DailyNutritionGraph = () => {
+interface DailyNutritionGraphProps {
+  entries?: TimelineEntry[];
+}
+
+export const DailyNutritionGraph = ({ entries = [] }: DailyNutritionGraphProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const displayData = MOCK_DATA.slice(-5);
   
+  const displayData = useMemo(() => {
+    const baseData = MOCK_DATA.slice(-4);
+    
+    if (entries && entries.length > 0) {
+        // Parse timeline entries for today
+        const todayMeals = entries
+            .filter(e => e.type === 'meal')
+            .map(e => ({
+                name: e.mealType || 'Meal',
+                calories: parseFloat(e.calories?.replace(/[^\d.]/g, '') || '0'),
+                proteins: parseFloat(e.protein?.replace(/[^\d.]/g, '') || '0'),
+                carbs: parseFloat(e.carbs?.replace(/[^\d.]/g, '') || '0'),
+                fats: parseFloat(e.fat?.replace(/[^\d.]/g, '') || '0'),
+                time: e.time,
+            }));
+
+        // Replace the last day (Today) with real data
+        // Assuming the last item in MOCK_DATA slice is 'Today'
+        const todayData = {
+            day: 'Today',
+            meals: todayMeals
+        };
+        
+        return [...baseData.slice(0, -1), todayData];
+    }
+    
+    return baseData;
+  }, [entries]);
+
   const selectedNutrient = NUTRIENT_KEYS[currentIndex];
 
   const handlePrev = () => {
@@ -141,6 +174,32 @@ export const DailyNutritionGraph = () => {
                         }).reverse()} 
                     </View>
                     
+                    {/* Tooltips for Today */}
+                    {isCurrentDay && (
+                        <View style={styles.tooltipsContainer}>
+                            {dayData.meals.map((meal, mealIndex) => {
+                                const value = meal[selectedNutrient.toLowerCase() as keyof typeof meal.meals[0]] as number;
+                                const heightPercentage = (value / (maxDailyValue * 1.15)) * 100;
+                                
+                                // Only show label if segment is significant enough
+                                if (heightPercentage < 2) return <View key={mealIndex} style={{ height: `${heightPercentage}%` }} />;
+
+                                return (
+                                    <View 
+                                        key={mealIndex}
+                                        style={[
+                                            styles.tooltipSegment,
+                                            { height: `${heightPercentage}%` }
+                                        ]}
+                                    >
+                                        <View style={styles.tooltipLine} />
+                                        <Text style={styles.tooltipText}>{meal.time}</Text>
+                                    </View>
+                                );
+                            }).reverse()}
+                        </View>
+                    )}
+
                     {/* Value Label positioned right on top of the bar */}
                     <View style={[styles.floatingLabel, { bottom: `${totalHeightPercent}%` }]}>
                         <Text style={styles.valueLabel}>
@@ -266,7 +325,7 @@ const styles = StyleSheet.create(theme => ({
       flexDirection: 'row',
       justifyContent: 'center', 
       alignItems: 'flex-end',
-      gap: 12, 
+      gap: 20, 
   },
   barGroup: {
       alignItems: 'center',
@@ -308,6 +367,31 @@ const styles = StyleSheet.create(theme => ({
   },
   dayLabel: {
       ...theme.typography.xs,
+      color: theme.colors.text.secondary,
+      fontWeight: '500',
+  },
+  tooltipsContainer: {
+    position: 'absolute',
+    left: '100%',
+    marginLeft: 2,
+    bottom: 0,
+    height: '100%',
+    justifyContent: 'flex-end',
+    gap: 3, // Matches stackContainer gap
+  },
+  tooltipSegment: {
+      justifyContent: 'flex-start',
+      flexDirection: 'row',
+      alignItems: 'center',
+  },
+  tooltipLine: {
+      width: 8,
+      height: 1,
+      backgroundColor: '#00000015',
+      marginRight: 4,
+  },
+  tooltipText: {
+      fontSize: 9,
       color: theme.colors.text.secondary,
       fontWeight: '500',
   },
