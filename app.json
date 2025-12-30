@@ -16,6 +16,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.param.lifelongapp",
+      "appleTeamId": "FDU3WHH56Z",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.param.lifelongapp"
+        ]
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "We use the camera to take food photos.",
         "NSPhotoLibraryUsageDescription": "We save food photos to your library."
@@ -28,7 +34,10 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.param.lifelongapp"
+      "package": "com.param.lifelongapp",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -52,7 +61,13 @@
           "cameraPermission": "The app accesses your camera to let you log your meals."
         }
       ],
-       "./plugins/withPodfileDeploymentTarget"
+      "./plugins/withPodfileDeploymentTarget",
+      [
+        "@bacons/apple-targets",
+        {
+          "group": "group.com.param.lifelongapp"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

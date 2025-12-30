@@ -1,6 +1,5 @@
 ---
-trigger: always_on
-glob:
+trigger: manual
 description: Design Guidelines for the Lifelong app
 ---
 

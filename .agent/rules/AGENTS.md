@@ -1,3 +1,7 @@
+---
+trigger: manual
+---
+
 # Lifelong — Personal Longevity App
 
 @DESIGN.md
