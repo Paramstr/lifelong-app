@@ -9,12 +9,20 @@ Done ✅
 - Define Convex schema and data model types (food + analysis + auth).
 - Add Convex Auth server config + HTTP routes.
 - Document required env vars + setup steps.
+- Implement app-side auth UI and session handling.
+  - Added `/sign-in` screen with OAuth flow.
+  - Added Convex Auth provider in the app root.
+  - Added redirect allowlist for app scheme.
+  - Added Convex client + auth token storage.
 
 In Progress ✅
-- Implement app-side auth UI and session handling.
+- Auth testing (Google + Apple) on device/simulator.
+  - Verify redirect flow completes and session persists.
+  - Confirm correct deployment is used for dev.
 
 Next
 - Document dev environment + credentials for collaborators.
+- Document dev auth workflow in `/docs` (provider setup, env vars, testing).
 - Add seed/test data and basic data access patterns.
 - Add a README for the final Convex + Auth setup.
 
@@ -114,15 +122,16 @@ Next
   - Create Apple Services ID and private key in Apple Developer.
   - Configure the Services ID redirect URI from Convex Auth.
   - Store `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY` in `convex/.env.local`.
- - App flow:
-   - Use Convex Auth client helpers to trigger OAuth sign-in.
-   - On success, Convex creates/updates the user record tied to the provider id.
-- Todo for this project:
+- App flow:
+  - Use Convex Auth client helpers to trigger OAuth sign-in.
+  - On success, Convex creates/updates the user record tied to the provider id.
+ - Todo for this project:
   - Register Google OAuth app for dev and production.
   - Register Apple Services ID for dev and production.
   - Generate Apple client secret (JWT) and add provider secrets to `convex/.env.local`.
   - Add provider ids and redirect URLs to Convex Auth config.
   - Verify `CONVEX_SITE_URL` points to the correct deployment URL.
+  - Ensure Convex Auth redirect allowlist includes the app scheme (e.g., `lifelongapp://`).
 
 ## README Plan (Final Setup)
 - Include: setup steps, env vars, auth provider setup, dev workflow, and common pitfalls.

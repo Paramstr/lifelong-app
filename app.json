@@ -14,8 +14,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.paramsingh.lifelongapp",
+      "appleTeamId": "9ZQNRDQX22",
       "supportsTablet": true,
-      "bundleIdentifier": "com.param.lifelongapp",
       "infoPlist": {
         "NSCameraUsageDescription": "We use the camera to take food photos.",
         "NSPhotoLibraryUsageDescription": "We save food photos to your library."
@@ -52,7 +53,8 @@
           "cameraPermission": "The app accesses your camera to let you log your meals."
         }
       ],
-       "./plugins/withPodfileDeploymentTarget"
+      "./plugins/withPodfileDeploymentTarget",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

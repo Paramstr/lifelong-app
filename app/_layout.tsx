@@ -5,9 +5,12 @@ import { networkToolPreset } from '@react-buoy/network';
 import { reactQueryToolPreset, wifiTogglePreset } from '@react-buoy/react-query';
 import { routeEventsToolPreset } from '@react-buoy/route-events';
 import { storageToolPreset } from '@react-buoy/storage';
+import { ConvexAuthProvider } from '@convex-dev/auth/react';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { authTokenStorage } from '@/lib/convex-auth-storage';
+import { convex } from '@/lib/convex';
 
 export default function RootLayout() {
   const buoys = [
@@ -22,38 +25,40 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="protocol/[id]" 
-          options={{ 
-            presentation: 'fullScreenModal',
-            headerShown: false,
-          }} 
-        />
-        <Stack.Screen 
-          name="food/[id]" 
-          options={{ 
-            presentation: 'modal',
-            headerShown: false,
-            sheetAllowedDetents: [1.0],
-            sheetGrabberVisible: true,
-          }} 
-        />
-      </Stack>
-      {__DEV__ && (
-        <>
-          <FloatingDevTools
-            apps={buoys}
-            environment="local"
-            userRole="admin"
-            defaultFloatingTools={['env', 'environment', 'network', 'query-wifi-toggle', 'debug-borders']}
-            defaultDialTools={['env', 'network', 'storage', 'query', 'route-events', 'debug-borders']}
+      <ConvexAuthProvider client={convex} storage={authTokenStorage}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen 
+            name="protocol/[id]" 
+            options={{ 
+              presentation: 'fullScreenModal',
+              headerShown: false,
+            }} 
           />
-          {/* IMPORTANT: Render overlay at root level */}
-          <DebugBordersStandaloneOverlay />
-        </>
-      )}
+          <Stack.Screen 
+            name="food/[id]" 
+            options={{ 
+              presentation: 'modal',
+              headerShown: false,
+              sheetAllowedDetents: [1.0],
+              sheetGrabberVisible: true,
+            }} 
+          />
+        </Stack>
+        {__DEV__ && (
+          <>
+            <FloatingDevTools
+              apps={buoys}
+              environment="local"
+              userRole="admin"
+              defaultFloatingTools={['env', 'environment', 'network', 'query-wifi-toggle', 'debug-borders']}
+              defaultDialTools={['env', 'network', 'storage', 'query', 'route-events', 'debug-borders']}
+            />
+            {/* IMPORTANT: Render overlay at root level */}
+            <DebugBordersStandaloneOverlay />
+          </>
+        )}
+      </ConvexAuthProvider>
     </GestureHandlerRootView>
   );
 }

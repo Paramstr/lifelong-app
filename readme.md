@@ -55,10 +55,10 @@ npx expo run:ios --no-build-cache
      - `CONVEX_SITE_URL`
      - `JWT_PRIVATE_KEY`
      - `JWKS`
-     - `GOOGLE_CLIENT_ID`
-     - `GOOGLE_CLIENT_SECRET`
-     - `APPLE_CLIENT_ID`
-     - `APPLE_CLIENT_SECRET`
+     - `AUTH_GOOGLE_ID`
+     - `AUTH_GOOGLE_SECRET`
+     - `AUTH_APPLE_ID`
+     - `AUTH_APPLE_SECRET`
    - `.env` (client):
      - `EXPO_PUBLIC_CONVEX_URL`
 
@@ -71,6 +71,15 @@ npx expo run:ios --no-build-cache
 - `convex/auth.config.ts` is required by Convex Auth setup.
 - `convex/http.ts` registers Auth HTTP routes.
 - `convex/schema.ts` includes Convex Auth tables + app tables.
+
+### Auth Testing
+- Open the `sign-in` screen (route: `/sign-in`) to test Google/Apple OAuth.
+- Tokens are stored in memory for now; replace with SecureStore before production.
+- OAuth redirects are allowlisted in `convex/auth.ts` (app scheme must be permitted).
+
+### Auth Config Status
+- Dev ✅ `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_APPLE_ID`, `AUTH_APPLE_SECRET`
+- Prod ✅ `AUTH_APPLE_ID`, `AUTH_APPLE_SECRET`
 
 ### Running the App
 
