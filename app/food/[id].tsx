@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, Image, Text, View, Platform, TouchableOpacity, TextInput, LayoutAnimation } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native-unistyles';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { SymbolView } from 'expo-symbols';
 import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
+import { EdgeBlurFade } from '@/components/shared/edge-blur-fade';
 
 export default function FoodDetailsScreen() {
+  const { theme } = useUnistyles();
   const insets = useSafeAreaInsets();
   const [isEditing, setIsEditing] = useState(false);
   const [focusedMacro, setFocusedMacro] = useState<'calories' | 'protein' | 'carbs' | 'fat' | null>(null);
@@ -111,9 +114,25 @@ export default function FoodDetailsScreen() {
     );
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.handle} />
+    return (
+
+      <View style={styles.container}>
+
+        <EdgeBlurFade
+          position="top"
+          height={80}
+          blurIntensity={0}
+          fadeColor={theme.colors.background.primary}
+          fadeStops={[
+              { location: 0, opacity: 1 },
+              { location: 0.4, opacity: 0.9 },
+              { location: 1, opacity: 0 },
+          ]}
+          style={{ top: 0, zIndex: 10 }}
+
+        />
+
+        <View style={styles.handle} />
       <View style={styles.scrollWrapper}>
         <FlatList
           data={ingredients}
@@ -230,6 +249,17 @@ export default function FoodDetailsScreen() {
           )}
         />
       </View>
+      <EdgeBlurFade
+        position="bottom"
+        height={insets.bottom + 60}
+        blurIntensity={0}
+        fadeColor={theme.colors.background.primary}
+        fadeStops={[
+            { location: 0, opacity: 0 },
+            { location: 0.4, opacity: 0.8 },
+            { location: 1, opacity: 1 },
+        ]}
+      />
     </View>
   );
 }
@@ -247,7 +277,7 @@ const styles = StyleSheet.create(theme => ({
     alignSelf: 'center',
     top: 12,
     position: 'absolute',
-    zIndex: 10,
+    zIndex: 20,
   },
   scroll: {
     flex: 1,
@@ -473,5 +503,3 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.secondary,
   },
 }));
-
-

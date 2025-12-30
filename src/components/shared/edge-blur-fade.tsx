@@ -164,6 +164,8 @@ export const EdgeBlurFade: FC<Props> = ({
     blurIntensity !== null &&
     'value' in blurIntensity;
   const resolvedIntensity = isAnimatedIntensity ? 0 : blurIntensity;
+  const hasBlur = isAnimatedIntensity || resolvedIntensity > 0;
+
   const { intensity: _ignoredIntensity, ...restBlurProps } = blurViewProps ?? {};
   const animatedBlurProps = useAnimatedProps(() => ({
     intensity: isAnimatedIntensity ? blurIntensity.value : resolvedIntensity,
@@ -179,29 +181,31 @@ export const EdgeBlurFade: FC<Props> = ({
         style,
       ]}
     >
-      {progressiveBlur ? (
-        <MaskedView
-          style={StyleSheet.absoluteFill}
-          maskElement={
-            <LinearGradient
+      {hasBlur && (
+        progressiveBlur ? (
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                style={StyleSheet.absoluteFill}
+                colors={blurMaskColors}
+                locations={blurMaskLocations}
+              />
+            }
+          >
+            <AnimatedBlurView
               style={StyleSheet.absoluteFill}
-              colors={blurMaskColors}
-              locations={blurMaskLocations}
+              animatedProps={animatedBlurProps}
+              {...restBlurProps}
             />
-          }
-        >
+          </MaskedView>
+        ) : (
           <AnimatedBlurView
             style={StyleSheet.absoluteFill}
             animatedProps={animatedBlurProps}
             {...restBlurProps}
           />
-        </MaskedView>
-      ) : (
-        <AnimatedBlurView
-          style={StyleSheet.absoluteFill}
-          animatedProps={animatedBlurProps}
-          {...restBlurProps}
-        />
+        )
       )}
       <LinearGradient
         style={StyleSheet.absoluteFill}
