@@ -7,14 +7,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function FoodDetailsScreen() {
   const insets = useSafeAreaInsets();
   const ingredients = [
-    { id: '1', name: 'Cottage Cheese', calories: 55, protein: 7, carbs: 2, fat: 3, amount: '0.5 cu' },
-    { id: '2', name: 'Avocado', calories: 161, protein: 2, carbs: 9, fat: 15, amount: '0.5 wh' },
-    { id: '3', name: 'Cherry Tomatoes', calories: 30, protein: 1, carbs: 6, fat: 0, amount: '6 wh' },
-    { id: '4', name: 'Radish', calories: 14, protein: 0, carbs: 3, fat: 0, amount: '4 sl' },
-    { id: '5', name: 'Cucumber', calories: 12, protein: 1, carbs: 3, fat: 0, amount: '6 sl' },
-    { id: '6', name: 'Purple Cabbage', calories: 18, protein: 1, carbs: 4, fat: 0, amount: '0.5 cu' },
-    { id: '7', name: 'Microgreens', calories: 5, protein: 1, carbs: 1, fat: 0, amount: '0.25 cu' },
-    { id: '8', name: 'Sourdough Toast', calories: 120, protein: 4, carbs: 22, fat: 2, amount: '2 sl' },
+    { id: '1', name: 'Cottage Cheese', calories: 55, protein: 7, carbs: 2, fat: 3, amount: '0.5 cups' },
+    { id: '2', name: 'Avocado', calories: 161, protein: 2, carbs: 9, fat: 15, amount: '0.5 whole' },
+    { id: '3', name: 'Cherry Tomatoes', calories: 30, protein: 1, carbs: 6, fat: 0, amount: '6 whole' },
+    { id: '4', name: 'Radish', calories: 14, protein: 0, carbs: 3, fat: 0, amount: '4 slices' },
+    { id: '5', name: 'Cucumber', calories: 12, protein: 1, carbs: 3, fat: 0, amount: '6 slices' },
+    { id: '6', name: 'Purple Cabbage', calories: 18, protein: 1, carbs: 4, fat: 0, amount: '0.5 cups' },
+    { id: '7', name: 'Microgreens', calories: 5, protein: 1, carbs: 1, fat: 0, amount: '0.25 cups' },
+    { id: '8', name: 'Sourdough Toast', calories: 120, protein: 4, carbs: 22, fat: 2, amount: '2 slices' },
   ];
 
   return (
@@ -54,9 +54,10 @@ export default function FoodDetailsScreen() {
                 <Text style={styles.macroLabel}>fat</Text>
               </View>
 
+              
               <View style={styles.heroCard}>
                 <Image
-                  source={require('../../assets/images/food/bowl.jpg')}
+                  source={require('../../assets/images/food/bowl-2.jpg')}
                   style={styles.heroImage}
                   resizeMode="cover"
                 />
@@ -91,7 +92,6 @@ export default function FoodDetailsScreen() {
               </View>
             </View>
           )}
-          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
         />
       </View>
     </View>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.muted,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontFamily: 'ui-rounded',
     fontWeight: '700',
     color: theme.colors.text.primary,
@@ -162,11 +162,13 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.border.divider,
   },
   heroCard: {
-    borderRadius: 48,
+    borderRadius: 32,
     overflow: 'hidden',
     backgroundColor: theme.colors.background.secondary,
     marginBottom: 32,
     aspectRatio: 1,
+    width: '100%',
+    alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -181,13 +183,13 @@ const styles = StyleSheet.create(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
-    paddingBottom: 12,
+    marginBottom: 12,
+    paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.subtle,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'ui-rounded',
     fontWeight: '600',
     color: theme.colors.text.primary,
@@ -207,12 +209,13 @@ const styles = StyleSheet.create(theme => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: 8,
   },
+
   iconBadge: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#F1F5F9',
@@ -221,14 +224,14 @@ const styles = StyleSheet.create(theme => ({
   },
   rowInfo: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: 12,
   },
   rowTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: 'ui-rounded',
     fontWeight: '500',
     color: theme.colors.text.primary,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   rowMetaRow: {
     flexDirection: 'row',
@@ -236,41 +239,41 @@ const styles = StyleSheet.create(theme => ({
     gap: 8,
   },
   rowKcal: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'ui-rounded',
-    fontWeight: '800',
+    fontWeight: '700',
     color: theme.colors.text.primary,
   },
   rowMacros: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'ui-rounded',
     color: theme.colors.text.muted,
-    fontWeight: '500',
+    fontWeight: '400',
   },
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F8FAFC',
-    borderRadius: 20,
+    borderRadius: 16,
     paddingHorizontal: 4,
-    paddingVertical: 4,
+    paddingVertical: 2,
     borderWidth: 1,
     borderColor: '#F1F5F9',
   },
   stepperAction: {
-    fontSize: 18,
-    width: 28,
+    fontSize: 16,
+    width: 24,
     textAlign: 'center',
     color: theme.colors.text.muted,
     fontWeight: '400',
   },
   stepperValueContainer: {
     paddingHorizontal: 4,
-    minWidth: 40,
+    minWidth: 32,
     alignItems: 'center',
   },
   stepperValue: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'ui-rounded',
     fontWeight: '700',
     color: theme.colors.text.secondary,
