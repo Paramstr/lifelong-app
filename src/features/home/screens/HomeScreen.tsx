@@ -175,7 +175,11 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </Animated.View>
 
-          <DailyNutritionScrollGraph entries={TIMELINE_ENTRIES} />
+          <DailyNutritionScrollGraph 
+            entries={TIMELINE_ENTRIES} 
+            leftFadeStop={0.1}
+            rightFadeStops={[0.80, 0.88, 0.95, 1.0]}
+          />
           <View style={styles.cardGap} />
 
 

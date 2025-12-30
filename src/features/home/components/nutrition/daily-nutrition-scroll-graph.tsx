@@ -21,7 +21,10 @@ const NUTRIENT_KEYS = Object.keys(NUTRIENT_CONFIG) as NutrientType[];
 const BAR_WIDTH = 44;
 const BAR_GAP = 20;
 const SNAP_INTERVAL = BAR_WIDTH + BAR_GAP;
-const FADE_EDGE = 0.08;
+
+const LEFT_FADE_STOP = 0.02;
+// 4-point easing control: [Start(100%), Point2, Point3, End(0%)]
+const RIGHT_FADE_STOPS = [0.80, 0.88, 0.95, 1.0];
 
 // Expanded Mock Data (10 days) with realistic nutrition values
 const MOCK_DATA = [
@@ -46,10 +49,31 @@ const GRADIENT_COLORS = [
 ];
 
 interface DailyNutritionScrollGraphProps {
+  /** The nutrition timeline entries to visualize (usually from a store or data file) */
   entries?: TimelineEntry[];
+  /** 
+   * The point (0 to 1.0) where the left-side fade transition ends.
+   * Higher values create a wider fade-in effect from the left edge.
+   * @default 0.02
+   */
+  leftFadeStop?: number;
+  /** 
+   * A 4-point array of stops defining the easing curve for the right-side fade-out.
+   * [StartFade, EasePoint1, EasePoint2, FullyTransparent]
+   * - stop[0]: The point where content begins to fade (100% opacity).
+   * - stop[1]: Mid-point 1 (~70% opacity).
+   * - stop[2]: Mid-point 2 (~30% opacity).
+   * - stop[3]: The point where content becomes fully transparent (0% opacity).
+   * @default [0.80, 0.88, 0.95, 1.0]
+   */
+  rightFadeStops?: number[];
 }
 
-export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScrollGraphProps) => {
+export const DailyNutritionScrollGraph = ({ 
+  entries = [],
+  leftFadeStop = LEFT_FADE_STOP,
+  rightFadeStops = RIGHT_FADE_STOPS
+}: DailyNutritionScrollGraphProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
   
@@ -136,8 +160,14 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
         style={styles.barsMask}
         maskElement={
           <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)', 'rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-            locations={[0, FADE_EDGE, 1 - FADE_EDGE, 1]}
+            colors={[
+              'rgba(0,0,0,0)', 'rgba(0,0,0,1)', // Left
+              'rgba(0,0,0,1)', 'rgba(0,0,0,0.7)', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0)' // Right with Ease
+            ]}
+            locations={[
+              0, leftFadeStop,
+              rightFadeStops[0], rightFadeStops[1], rightFadeStops[2], rightFadeStops[3]
+            ]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={StyleSheet.absoluteFill}
@@ -152,17 +182,8 @@ export const DailyNutritionScrollGraph = ({ entries = [] }: DailyNutritionScroll
             snapToInterval={SNAP_INTERVAL}
             snapToAlignment="start"
             decelerationRate="fast"
-            disableIntervalMomentum
             contentContainerStyle={styles.barsScrollContent}
             onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
-            onScrollEndDrag={(event) => {
-              const nextOffset = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL) * SNAP_INTERVAL;
-              scrollRef.current?.scrollTo({ x: nextOffset, animated: true });
-            }}
-            onMomentumScrollEnd={(event) => {
-              const nextOffset = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL) * SNAP_INTERVAL;
-              scrollRef.current?.scrollTo({ x: nextOffset, animated: true });
-            }}
           >
             <View style={styles.barsContainer}>
               {renderStandardLine()}
