@@ -1,11 +1,22 @@
-import React from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, Image, Text, View, Platform, TouchableOpacity, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { SymbolView } from 'expo-symbols';
 
 export default function FoodDetailsScreen() {
   const insets = useSafeAreaInsets();
+  const [isEditing, setIsEditing] = useState(false);
+  const [macros, setMacros] = useState({
+    calories: '544',
+    protein: '26',
+    carbs: '54',
+    fat: '27',
+  });
+
+  const toggleEdit = () => setIsEditing(!isEditing);
+
   const ingredients = [
     { id: '1', name: 'Cottage Cheese', calories: 55, protein: 7, carbs: 2, fat: 3, amount: '0.5 cups' },
     { id: '2', name: 'Avocado', calories: 161, protein: 2, carbs: 9, fat: 15, amount: '0.5 whole' },
@@ -33,25 +44,86 @@ export default function FoodDetailsScreen() {
           ListHeaderComponent={
             <View>
               <View style={styles.metaRow}>
-                <Text style={styles.metaText}>8:10 AM</Text>
-                <Text style={styles.metaSeparator}>|</Text>
-                <Text style={styles.metaText}>Breakfast</Text>
+                <View style={styles.metaLeft}>
+                  <Text style={styles.metaText}>8:10 AM</Text>
+                  <Text style={styles.metaSeparator}>|</Text>
+                  <Text style={styles.metaText}>Breakfast</Text>
+                </View>
+
+                <TouchableOpacity style={styles.iconButton} onPress={toggleEdit}>
+                  <Text style={styles.iconButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
+                  {Platform.OS === 'ios' ? (
+                    <SymbolView
+                      name={isEditing ? "checkmark.circle" : "square.and.pencil"}
+                      size={16}
+                      tintColor="white"
+                      resizeMode="scaleAspectFit"
+                      style={isEditing ? { marginTop: 0 } : { marginTop: -2 }}
+                    />
+                  ) : (
+                    <Ionicons 
+                      name={isEditing ? "checkmark-circle-outline" : "create-outline"} 
+                      size={18} 
+                      color="white" 
+                      style={{ marginTop: -1 }}
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
 
               <Text style={styles.title}>Cottage Cheese & Avocado Plate</Text>
 
               <View style={styles.macroRow}>
-                <Text style={styles.macroValue}>544</Text>
-                <Text style={styles.macroLabel}>cal</Text>
-                <Text style={styles.macroSeparator}>|</Text>
-                <Text style={styles.macroValue}>26g</Text>
-                <Text style={styles.macroLabel}>protein</Text>
-                <Text style={styles.macroSeparator}>|</Text>
-                <Text style={styles.macroValue}>54g</Text>
-                <Text style={styles.macroLabel}>carbs</Text>
-                <Text style={styles.macroSeparator}>|</Text>
-                <Text style={styles.macroValue}>27g</Text>
-                <Text style={styles.macroLabel}>fat</Text>
+                {isEditing ? (
+                  <>
+                    <TextInput
+                      style={styles.macroInput}
+                      value={macros.calories}
+                      onChangeText={(v) => setMacros(prev => ({ ...prev, calories: v }))}
+                      keyboardType="numeric"
+                      autoFocus
+                    />
+                    <Text style={styles.macroLabel}>cal</Text>
+                    <Text style={styles.macroSeparator}>|</Text>
+                    <TextInput
+                      style={styles.macroInput}
+                      value={macros.protein}
+                      onChangeText={(v) => setMacros(prev => ({ ...prev, protein: v }))}
+                      keyboardType="numeric"
+                    />
+                    <Text style={styles.macroLabel}>protein</Text>
+                    <Text style={styles.macroSeparator}>|</Text>
+                    <TextInput
+                      style={styles.macroInput}
+                      value={macros.carbs}
+                      onChangeText={(v) => setMacros(prev => ({ ...prev, carbs: v }))}
+                      keyboardType="numeric"
+                    />
+                    <Text style={styles.macroLabel}>carbs</Text>
+                    <Text style={styles.macroSeparator}>|</Text>
+                    <TextInput
+                      style={styles.macroInput}
+                      value={macros.fat}
+                      onChangeText={(v) => setMacros(prev => ({ ...prev, fat: v }))}
+                      keyboardType="numeric"
+                    />
+                    <Text style={styles.macroLabel}>fat</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.macroValue}>{macros.calories}</Text>
+                    <Text style={styles.macroLabel}>cal</Text>
+                    <Text style={styles.macroSeparator}>|</Text>
+                    <Text style={styles.macroValue}>{macros.protein}g</Text>
+                    <Text style={styles.macroLabel}>protein</Text>
+                    <Text style={styles.macroSeparator}>|</Text>
+                    <Text style={styles.macroValue}>{macros.carbs}g</Text>
+                    <Text style={styles.macroLabel}>carbs</Text>
+                    <Text style={styles.macroSeparator}>|</Text>
+                    <Text style={styles.macroValue}>{macros.fat}g</Text>
+                    <Text style={styles.macroLabel}>fat</Text>
+                  </>
+                )}
               </View>
 
               
@@ -115,8 +187,13 @@ const styles = StyleSheet.create(theme => ({
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  metaLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   metaText: {
     fontSize: 12,
@@ -129,6 +206,22 @@ const styles = StyleSheet.create(theme => ({
   metaSeparator: {
     fontSize: 12,
     color: theme.colors.text.muted,
+  },
+  iconButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 24,
+    backgroundColor: '#000000',
+  },
+  iconButtonText: {
+    fontSize: 14,
+    fontFamily: 'ui-rounded',
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   title: {
     fontSize: 24,
@@ -149,6 +242,18 @@ const styles = StyleSheet.create(theme => ({
     fontFamily: 'ui-rounded',
     fontWeight: '500',
     color: theme.colors.text.primary,
+  },
+  macroInput: {
+    fontSize: 15,
+    fontFamily: 'ui-rounded',
+    fontWeight: '600',
+    color: theme.colors.text.primary,
+    backgroundColor: theme.colors.background.secondary,
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    minWidth: 40,
+    textAlign: 'center',
   },
   macroLabel: {
     fontSize: 14,
