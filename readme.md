@@ -45,6 +45,33 @@ npx expo run:ios --no-build-cache
    export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
    ```
 
+### Convex + Auth Setup
+1. Start the Convex dev backend:
+   ```bash
+   npx convex dev
+   ```
+2. Ensure required env vars are set:
+   - `convex/.env.local` (server-only):
+     - `CONVEX_SITE_URL`
+     - `JWT_PRIVATE_KEY`
+     - `JWKS`
+     - `GOOGLE_CLIENT_ID`
+     - `GOOGLE_CLIENT_SECRET`
+     - `APPLE_CLIENT_ID`
+     - `APPLE_CLIENT_SECRET`
+   - `.env` (client):
+     - `EXPO_PUBLIC_CONVEX_URL`
+
+3. OAuth provider setup:
+   - Google: create OAuth client and add Convex Auth redirect URL.
+   - Apple: generate the client secret (JWT) and add Convex Auth redirect URL.
+
+### Convex Auth Files
+- `convex/auth.ts` configures Google + Apple providers.
+- `convex/auth.config.ts` is required by Convex Auth setup.
+- `convex/http.ts` registers Auth HTTP routes.
+- `convex/schema.ts` includes Convex Auth tables + app tables.
+
 ### Running the App
 
 #### 1. Development Build (Fast Iteration) 🚀
