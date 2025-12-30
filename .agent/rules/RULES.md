@@ -1,8 +1,8 @@
 ---
-trigger: always_on
-glob:
+trigger: manual
 description: Lifelong app Details
 ---
+
 # Lifelong — Personal Longevity App
 
 @DESIGN.md
