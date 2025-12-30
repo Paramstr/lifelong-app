@@ -34,7 +34,7 @@ export default function RootLayout() {
         <Stack.Screen 
           name="food/[id]" 
           options={{ 
-            presentation: 'formSheet',
+            presentation: 'modal',
             headerShown: false,
             sheetAllowedDetents: [1.0],
             sheetGrabberVisible: true,
