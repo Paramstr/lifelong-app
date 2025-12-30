@@ -21,7 +21,7 @@ export default function FoodDetailsScreen() {
   const contentOpacity = useSharedValue(1);
   
   useEffect(() => {
-    contentOpacity.value = withTiming(isEditing ? 0.4 : 1, { duration: 300 });
+    contentOpacity.value = withTiming(isEditing ? 0.1 : 1, { duration: 300 });
     if (isEditing && !focusedMacro) {
         setFocusedMacro('calories');
     }
@@ -95,6 +95,7 @@ export default function FoodDetailsScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.handle} />
       <View style={styles.scrollWrapper}>
         <FlatList
           data={ingredients}
@@ -104,38 +105,38 @@ export default function FoodDetailsScreen() {
           style={styles.scroll}
           contentContainerStyle={[
             styles.content,
-            { paddingTop: 60, paddingBottom: insets.bottom + 32 },
+            { paddingTop: 40, paddingBottom: insets.bottom + 32 },
           ]}
           ListHeaderComponent={
             <View>
+              <TouchableOpacity style={styles.iconButtonAbsolute} onPress={toggleEdit} activeOpacity={0.8}>
+                <Animated.View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Text style={styles.iconButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
+                  {Platform.OS === 'ios' ? (
+                      <SymbolView
+                      name={isEditing ? "checkmark.circle" : "square.and.pencil"}
+                      size={16}
+                      tintColor="white"
+                      resizeMode="scaleAspectFit"
+                      style={{ marginTop: -1 }}
+                      />
+                  ) : (
+                      <Ionicons 
+                      name={isEditing ? "checkmark-circle-outline" : "create-outline"} 
+                      size={18} 
+                      color="white" 
+                      style={{ marginTop: -1 }}
+                      />
+                  )}
+                </Animated.View>
+              </TouchableOpacity>
+
               <View style={styles.metaRow}>
                 <View style={styles.metaLeft}>
                   <Text style={styles.metaText}>8:10 AM</Text>
                   <Text style={styles.metaSeparator}>|</Text>
                   <Text style={styles.metaText}>Breakfast</Text>
                 </View>
-
-                <TouchableOpacity style={styles.iconButton} onPress={toggleEdit} activeOpacity={0.8}>
-                  <Animated.View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <Text style={styles.iconButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
-                    {Platform.OS === 'ios' ? (
-                        <SymbolView
-                        name={isEditing ? "checkmark.circle" : "square.and.pencil"}
-                        size={16}
-                        tintColor="white"
-                        resizeMode="scaleAspectFit"
-                        style={{ marginTop: -1 }}
-                        />
-                    ) : (
-                        <Ionicons 
-                        name={isEditing ? "checkmark-circle-outline" : "create-outline"} 
-                        size={18} 
-                        color="white" 
-                        style={{ marginTop: -1 }}
-                        />
-                    )}
-                  </Animated.View>
-                </TouchableOpacity>
               </View>
 
               <Text style={styles.title}>Cottage Cheese & Avocado Plate</Text>
@@ -199,6 +200,16 @@ const styles = StyleSheet.create(theme => ({
     flex: 1,
     backgroundColor: theme.colors.background.primary,
   },
+  handle: {
+    width: 36,
+    height: 5,
+    backgroundColor: theme.colors.border.divider,
+    borderRadius: 2.5,
+    alignSelf: 'center',
+    top: 12,
+    position: 'absolute',
+    zIndex: 10,
+  },
   scroll: {
     flex: 1,
   },
@@ -231,7 +242,8 @@ const styles = StyleSheet.create(theme => ({
     fontSize: 12,
     color: theme.colors.text.muted,
   },
-  iconButton: {
+  iconButtonAbsolute: {
+    alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -240,6 +252,7 @@ const styles = StyleSheet.create(theme => ({
     paddingHorizontal: 14,
     borderRadius: 24,
     backgroundColor: '#000000',
+    marginBottom: 8,
   },
   iconButtonText: {
     fontSize: 14,
