@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { FlatList, Image, Text, View, Platform, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { FlatList, Image, Text, View, Platform, TouchableOpacity, TextInput, LayoutAnimation } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native-unistyles';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { SymbolView } from 'expo-symbols';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
 
 export default function FoodDetailsScreen() {
   const insets = useSafeAreaInsets();
   const [isEditing, setIsEditing] = useState(false);
+  const [focusedMacro, setFocusedMacro] = useState<'calories' | 'protein' | 'carbs' | 'fat' | null>(null);
   const [macros, setMacros] = useState({
     calories: '544',
     protein: '26',
@@ -15,7 +17,29 @@ export default function FoodDetailsScreen() {
     fat: '27',
   });
 
-  const toggleEdit = () => setIsEditing(!isEditing);
+  // Animation values
+  const contentOpacity = useSharedValue(1);
+  
+  useEffect(() => {
+    contentOpacity.value = withTiming(isEditing ? 0.4 : 1, { duration: 300 });
+    if (isEditing && !focusedMacro) {
+        setFocusedMacro('calories');
+    }
+  }, [isEditing]);
+
+  const toggleEdit = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsEditing(!isEditing);
+    if (!isEditing) {
+        setFocusedMacro('calories'); 
+    } else {
+        setFocusedMacro(null);
+    }
+  };
+
+  const animatedContentStyle = useAnimatedStyle(() => ({
+    opacity: contentOpacity.value,
+  }));
 
   const ingredients = [
     { id: '1', name: 'Cottage Cheese', calories: 55, protein: 7, carbs: 2, fat: 3, amount: '0.5 cups' },
@@ -27,6 +51,47 @@ export default function FoodDetailsScreen() {
     { id: '7', name: 'Microgreens', calories: 5, protein: 1, carbs: 1, fat: 0, amount: '0.25 cups' },
     { id: '8', name: 'Sourdough Toast', calories: 120, protein: 4, carbs: 22, fat: 2, amount: '2 slices' },
   ];
+
+  const renderMacroInput = (key: keyof typeof macros, label: string) => {
+    const isFocused = focusedMacro === key;
+    const isOtherFocused = isEditing && focusedMacro && focusedMacro !== key;
+    
+    const containerStyle = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(isOtherFocused ? 0.3 : 1, { duration: 200 }),
+        };
+    });
+
+    return (
+        <Animated.View style={[containerStyle]}>
+            <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                    if (isEditing) setFocusedMacro(key);
+                }}
+                style={[
+                    styles.macroInputContainer,
+                    isFocused && styles.macroInputContainerFocused
+                ]}
+            >
+                {isEditing ? (
+                    <TextInput
+                        style={styles.macroInput}
+                        value={macros[key]}
+                        onChangeText={(v) => setMacros(prev => ({ ...prev, [key]: v }))}
+                        keyboardType="numeric"
+                        onFocus={() => setFocusedMacro(key)}
+                        selectionColor="black"
+                        showSoftInputOnFocus={true}
+                    />
+                ) : (
+                    <Text style={styles.macroValue}>{macros[key]}{key !== 'calories' ? 'g' : ''}</Text>
+                )}
+                <Text style={styles.macroLabel}>{label}</Text>
+            </TouchableOpacity>
+        </Animated.View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -50,99 +115,58 @@ export default function FoodDetailsScreen() {
                   <Text style={styles.metaText}>Breakfast</Text>
                 </View>
 
-                <TouchableOpacity style={styles.iconButton} onPress={toggleEdit}>
-                  <Text style={styles.iconButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
-                  {Platform.OS === 'ios' ? (
-                    <SymbolView
-                      name={isEditing ? "checkmark.circle" : "square.and.pencil"}
-                      size={16}
-                      tintColor="white"
-                      resizeMode="scaleAspectFit"
-                      style={isEditing ? { marginTop: 0 } : { marginTop: -2 }}
-                    />
-                  ) : (
-                    <Ionicons 
-                      name={isEditing ? "checkmark-circle-outline" : "create-outline"} 
-                      size={18} 
-                      color="white" 
-                      style={{ marginTop: -1 }}
-                    />
-                  )}
+                <TouchableOpacity style={styles.iconButton} onPress={toggleEdit} activeOpacity={0.8}>
+                  <Animated.View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Text style={styles.iconButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
+                    {Platform.OS === 'ios' ? (
+                        <SymbolView
+                        name={isEditing ? "checkmark.circle" : "square.and.pencil"}
+                        size={16}
+                        tintColor="white"
+                        resizeMode="scaleAspectFit"
+                        style={{ marginTop: -1 }}
+                        />
+                    ) : (
+                        <Ionicons 
+                        name={isEditing ? "checkmark-circle-outline" : "create-outline"} 
+                        size={18} 
+                        color="white" 
+                        style={{ marginTop: -1 }}
+                        />
+                    )}
+                  </Animated.View>
                 </TouchableOpacity>
               </View>
 
               <Text style={styles.title}>Cottage Cheese & Avocado Plate</Text>
 
               <View style={styles.macroRow}>
-                {isEditing ? (
-                  <>
-                    <TextInput
-                      style={styles.macroInput}
-                      value={macros.calories}
-                      onChangeText={(v) => setMacros(prev => ({ ...prev, calories: v }))}
-                      keyboardType="numeric"
-                      autoFocus
-                    />
-                    <Text style={styles.macroLabel}>cal</Text>
-                    <Text style={styles.macroSeparator}>|</Text>
-                    <TextInput
-                      style={styles.macroInput}
-                      value={macros.protein}
-                      onChangeText={(v) => setMacros(prev => ({ ...prev, protein: v }))}
-                      keyboardType="numeric"
-                    />
-                    <Text style={styles.macroLabel}>protein</Text>
-                    <Text style={styles.macroSeparator}>|</Text>
-                    <TextInput
-                      style={styles.macroInput}
-                      value={macros.carbs}
-                      onChangeText={(v) => setMacros(prev => ({ ...prev, carbs: v }))}
-                      keyboardType="numeric"
-                    />
-                    <Text style={styles.macroLabel}>carbs</Text>
-                    <Text style={styles.macroSeparator}>|</Text>
-                    <TextInput
-                      style={styles.macroInput}
-                      value={macros.fat}
-                      onChangeText={(v) => setMacros(prev => ({ ...prev, fat: v }))}
-                      keyboardType="numeric"
-                    />
-                    <Text style={styles.macroLabel}>fat</Text>
-                  </>
-                ) : (
-                  <>
-                    <Text style={styles.macroValue}>{macros.calories}</Text>
-                    <Text style={styles.macroLabel}>cal</Text>
-                    <Text style={styles.macroSeparator}>|</Text>
-                    <Text style={styles.macroValue}>{macros.protein}g</Text>
-                    <Text style={styles.macroLabel}>protein</Text>
-                    <Text style={styles.macroSeparator}>|</Text>
-                    <Text style={styles.macroValue}>{macros.carbs}g</Text>
-                    <Text style={styles.macroLabel}>carbs</Text>
-                    <Text style={styles.macroSeparator}>|</Text>
-                    <Text style={styles.macroValue}>{macros.fat}g</Text>
-                    <Text style={styles.macroLabel}>fat</Text>
-                  </>
-                )}
+                {renderMacroInput('calories', 'cal')}
+                <Text style={styles.macroSeparator}>|</Text>
+                {renderMacroInput('protein', 'protein')}
+                <Text style={styles.macroSeparator}>|</Text>
+                {renderMacroInput('carbs', 'carbs')}
+                <Text style={styles.macroSeparator}>|</Text>
+                {renderMacroInput('fat', 'fat')}
               </View>
 
               
-              <View style={styles.heroCard}>
+              <Animated.View style={[styles.heroCard, animatedContentStyle]}>
                 <Image
                   source={require('../../assets/images/food/bowl-2.jpg')}
                   style={styles.heroImage}
                   resizeMode="cover"
                 />
-              </View>
+              </Animated.View>
 
-              <View style={styles.sectionHeader}>
+              <Animated.View style={[styles.sectionHeader, animatedContentStyle]}>
                 <Text style={styles.sectionTitle}>Ingredients</Text>
                 <Text style={styles.sectionCount}>{ingredients.length}</Text>
-              </View>
+              </Animated.View>
             </View>
           }
           renderItem={({ item }) => (
-            <View style={styles.row}>
+            <Animated.View style={[styles.row, animatedContentStyle]}>
               <View style={styles.iconBadge}>
                 <MaterialCommunityIcons name="bowl-mix-outline" size={20} color="#94A3B8" />
               </View>
@@ -162,7 +186,7 @@ export default function FoodDetailsScreen() {
                 </View>
                 <Text style={styles.stepperAction}>+</Text>
               </View>
-            </View>
+            </Animated.View>
           )}
         />
       </View>
@@ -237,22 +261,25 @@ const styles = StyleSheet.create(theme => ({
     gap: 6,
     marginBottom: 28,
   },
-  macroValue: {
-    fontSize: 15,
-    fontFamily: 'ui-rounded',
-    fontWeight: '500',
-    color: theme.colors.text.primary,
+  macroInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 2,
+    paddingBottom: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: 'transparent',
+  },
+  macroInputContainerFocused: {
+    borderBottomColor: theme.colors.text.primary,
   },
   macroInput: {
     fontSize: 15,
     fontFamily: 'ui-rounded',
-    fontWeight: '600',
+    fontWeight: '500',
     color: theme.colors.text.primary,
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    minWidth: 40,
+    padding: 0,
+    margin: 0,
+    minWidth: 20,
     textAlign: 'center',
   },
   macroLabel: {
