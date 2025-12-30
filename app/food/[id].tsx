@@ -229,7 +229,7 @@ const styles = StyleSheet.create(theme => ({
   rowTitle: {
     fontSize: 16,
     fontFamily: 'ui-rounded',
-    fontWeight: '500',
+    fontWeight: '400',
     color: theme.colors.text.primary,
     marginBottom: 2,
   },
@@ -239,15 +239,15 @@ const styles = StyleSheet.create(theme => ({
     gap: 8,
   },
   rowKcal: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'ui-rounded',
-    fontWeight: '700',
+    fontWeight: '600',
     color: theme.colors.text.primary,
   },
   rowMacros: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'ui-rounded',
-    color: theme.colors.text.muted,
+    color: theme.colors.text.secondary,
     fontWeight: '400',
   },
   stepper: {
