@@ -19,8 +19,10 @@ export default function FoodDetailsScreen() {
 
   // Animation values
   const contentOpacity = useSharedValue(1);
+  const editTransition = useSharedValue(0);
   
   useEffect(() => {
+    editTransition.value = withTiming(isEditing ? 1 : 0, { duration: 250 });
     contentOpacity.value = withTiming(isEditing ? 0.1 : 1, { duration: 300 });
     if (isEditing && !focusedMacro) {
         setFocusedMacro('calories');
@@ -39,6 +41,22 @@ export default function FoodDetailsScreen() {
 
   const animatedContentStyle = useAnimatedStyle(() => ({
     opacity: contentOpacity.value,
+  }));
+
+  const editButtonStyle = useAnimatedStyle(() => ({
+    opacity: 1 - editTransition.value,
+    transform: [
+      { translateY: editTransition.value * -10 },
+      { scale: 1 - editTransition.value * 0.1 }
+    ],
+  }));
+
+  const doneButtonStyle = useAnimatedStyle(() => ({
+    opacity: editTransition.value,
+    transform: [
+      { translateY: (1 - editTransition.value) * 10 },
+      { scale: 0.9 + editTransition.value * 0.1 }
+    ],
   }));
 
   const ingredients = [
@@ -110,25 +128,46 @@ export default function FoodDetailsScreen() {
           ListHeaderComponent={
             <View>
               <TouchableOpacity style={styles.iconButtonAbsolute} onPress={toggleEdit} activeOpacity={0.8}>
-                <Animated.View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style={styles.iconButtonText}>{isEditing ? 'Done' : 'Edit'}</Text>
-                  {Platform.OS === 'ios' ? (
-                      <SymbolView
-                      name={isEditing ? "checkmark.circle" : "square.and.pencil"}
-                      size={16}
-                      tintColor="white"
-                      resizeMode="scaleAspectFit"
-                      style={{ marginTop: -1 }}
-                      />
-                  ) : (
-                      <Ionicons 
-                      name={isEditing ? "checkmark-circle-outline" : "create-outline"} 
-                      size={18} 
-                      color="white" 
-                      style={{ marginTop: -1 }}
-                      />
-                  )}
-                </Animated.View>
+                <View style={styles.iconButtonInner}>
+                  <Animated.View style={[styles.iconButtonContent, editButtonStyle]} pointerEvents={isEditing ? 'none' : 'auto'}>
+                    <Text style={styles.iconButtonText}>Edit</Text>
+                    {Platform.OS === 'ios' ? (
+                        <SymbolView
+                        name="square.and.pencil"
+                        size={16}
+                        tintColor="white"
+                        resizeMode="scaleAspectFit"
+                        style={{ marginTop: -1 }}
+                        />
+                    ) : (
+                        <Ionicons 
+                        name="create-outline" 
+                        size={18} 
+                        color="white" 
+                        style={{ marginTop: -1 }}
+                        />
+                    )}
+                  </Animated.View>
+                  <Animated.View style={[styles.iconButtonContent, doneButtonStyle]} pointerEvents={isEditing ? 'auto' : 'none'}>
+                    <Text style={styles.iconButtonText}>Done</Text>
+                    {Platform.OS === 'ios' ? (
+                        <SymbolView
+                        name="checkmark.circle"
+                        size={16}
+                        tintColor="white"
+                        resizeMode="scaleAspectFit"
+                        style={{ marginTop: -1 }}
+                        />
+                    ) : (
+                        <Ionicons 
+                        name="checkmark-circle-outline" 
+                        size={18} 
+                        color="white" 
+                        style={{ marginTop: -1 }}
+                        />
+                    )}
+                  </Animated.View>
+                </View>
               </TouchableOpacity>
 
               <View style={styles.metaRow}>
@@ -244,15 +283,25 @@ const styles = StyleSheet.create(theme => ({
   },
   iconButtonAbsolute: {
     alignSelf: 'flex-end',
+    borderRadius: 24,
+    backgroundColor: '#000000',
+    marginBottom: 8,
+    overflow: 'hidden',
+  },
+  iconButtonInner: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    height: 36,
+    minWidth: 84,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 24,
-    backgroundColor: '#000000',
-    marginBottom: 8,
+    position: 'absolute',
   },
   iconButtonText: {
     fontSize: 14,
