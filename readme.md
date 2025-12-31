@@ -57,29 +57,41 @@ npx expo run:ios --no-build-cache
      - `JWKS`
      - `AUTH_GOOGLE_ID`
      - `AUTH_GOOGLE_SECRET`
-     - `AUTH_APPLE_ID`
-     - `AUTH_APPLE_SECRET`
+     - `AUTH_APPLE_BUNDLE_ID`
    - `.env` (client):
      - `EXPO_PUBLIC_CONVEX_URL`
 
 3. OAuth provider setup:
    - Google: create OAuth client and add Convex Auth redirect URL.
-   - Apple: generate the client secret (JWT) and add Convex Auth redirect URL.
+   - Apple (native): enable Sign in with Apple for the iOS App ID.
+
+### Native Apple Sign-In (Expo)
+1. Install the native module:
+   ```bash
+   npx expo install expo-apple-authentication
+   ```
+2. Ensure `app.json` has:
+   - `ios.usesAppleSignIn: true`
+   - `expo-apple-authentication` in the `plugins` array
+3. Rebuild the dev client after the native change:
+   ```bash
+   npm run ios:clean
+   ```
+4. Set `AUTH_APPLE_BUNDLE_ID` to the iOS bundle identifier (e.g., `com.paramsingh.lifelongapp`).
 
 ### Convex Auth Files
-- `convex/auth.ts` configures Google + Apple providers.
+- `convex/auth.ts` configures Google OAuth + native Apple credentials provider.
 - `convex/auth.config.ts` is required by Convex Auth setup.
 - `convex/http.ts` registers Auth HTTP routes.
 - `convex/schema.ts` includes Convex Auth tables + app tables.
 
 ### Auth Testing
-- Open the `sign-in` screen (route: `/sign-in`) to test Google/Apple OAuth.
+- Open the `sign-in` screen (route: `/sign-in`) to test Google OAuth + native Apple sign-in.
 - Tokens are stored in memory for now; replace with SecureStore before production.
 - OAuth redirects are allowlisted in `convex/auth.ts` (app scheme must be permitted).
 
 ### Auth Config Status
-- Dev ✅ `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_APPLE_ID`, `AUTH_APPLE_SECRET`
-- Prod ✅ `AUTH_APPLE_ID`, `AUTH_APPLE_SECRET`
+- Dev ✅ `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_APPLE_BUNDLE_ID`
 
 ### Running the App
 

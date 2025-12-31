@@ -16,6 +16,7 @@
     "ios": {
       "bundleIdentifier": "com.paramsingh.lifelongapp",
       "appleTeamId": "9ZQNRDQX22",
+      "usesAppleSignIn": true,
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "We use the camera to take food photos.",
@@ -54,6 +55,7 @@
         }
       ],
       "./plugins/withPodfileDeploymentTarget",
+      "expo-apple-authentication",
       "expo-web-browser"
     ],
     "experiments": {

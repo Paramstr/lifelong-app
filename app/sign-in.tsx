@@ -1,8 +1,9 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useConvexAuth } from "convex/react";
 import { makeRedirectUri } from "expo-auth-session";
+import * as AppleAuthentication from "expo-apple-authentication";
 import * as WebBrowser from "expo-web-browser";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -19,10 +20,29 @@ export default function SignInScreen() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { signIn, signOut } = useAuthActions();
   const [isWorking, setIsWorking] = useState(false);
+  const [isAppleAvailable, setIsAppleAvailable] = useState(false);
   const redirectTo = useMemo(() => makeRedirectUri(), []);
 
+  useEffect(() => {
+    let isMounted = true;
+    AppleAuthentication.isAvailableAsync()
+      .then(isAvailable => {
+        if (isMounted) {
+          setIsAppleAvailable(isAvailable);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setIsAppleAvailable(false);
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const startOAuth = useCallback(
-    async (provider: "google" | "apple") => {
+    async (provider: "google") => {
       setIsWorking(true);
       try {
         const result = await signIn(provider, { redirectTo });
@@ -50,6 +70,50 @@ export default function SignInScreen() {
     [redirectTo, signIn],
   );
 
+  const startAppleNative = useCallback(async () => {
+    if (isWorking || isLoading) {
+      return;
+    }
+    setIsWorking(true);
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (!credential.identityToken) {
+        throw new Error("Apple identity token is missing.");
+      }
+
+      const fullName = [
+        credential.fullName?.givenName,
+        credential.fullName?.familyName,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      await signIn("appleNative", {
+        identityToken: credential.identityToken,
+        email: credential.email ?? undefined,
+        fullName: fullName || undefined,
+      });
+    } catch (error) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "code" in error &&
+        (error as { code?: string }).code === "ERR_REQUEST_CANCELED"
+      ) {
+        return;
+      }
+      throw error;
+    } finally {
+      setIsWorking(false);
+    }
+  }, [isLoading, isWorking, signIn]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign in</Text>
@@ -66,14 +130,23 @@ export default function SignInScreen() {
         >
           <Text style={styles.primaryButtonText}>Continue with Google</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={() => startOAuth("apple")}
-          disabled={isWorking || isLoading}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.secondaryButtonText}>Continue with Apple</Text>
-        </TouchableOpacity>
+        {isAppleAvailable ? (
+          <AppleAuthentication.AppleAuthenticationButton
+            buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+            buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+            cornerRadius={14}
+            style={styles.appleButton}
+            onPress={startAppleNative}
+          />
+        ) : (
+          <TouchableOpacity
+            style={styles.appleFallbackButton}
+            disabled
+            activeOpacity={0.8}
+          >
+            <Text style={styles.appleFallbackText}>Continue with Apple</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.ghostButton}
           onPress={() => signOut()}
@@ -131,14 +204,19 @@ const styles = StyleSheet.create(theme => ({
     fontSize: 15,
     textAlign: "center",
   },
-  secondaryButton: {
+  appleButton: {
+    width: "100%",
+    height: 44,
+  },
+  appleFallbackButton: {
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 14,
-    backgroundColor: theme.colors.text.primary,
+    backgroundColor: "#111827",
+    opacity: 0.6,
   },
-  secondaryButtonText: {
-    color: theme.colors.background.primary,
+  appleFallbackText: {
+    color: "#fff",
     fontWeight: "600",
     fontSize: 15,
     textAlign: "center",
