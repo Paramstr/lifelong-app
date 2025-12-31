@@ -35,7 +35,14 @@ export default function RootLayout() {
             <Stack.Screen
               name="sign-in"
               options={{
-                presentation: "modal",
+                presentation: "fullScreenModal",
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="profile"
+              options={{
+                presentation: "fullScreenModal",
                 headerShown: false,
               }}
             />

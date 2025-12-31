@@ -12,16 +12,40 @@ import {
   View,
 } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import Svg, { Path } from "react-native-svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 WebBrowser.maybeCompleteAuthSession();
+
+const GoogleIcon = () => (
+  <Svg width={18} height={18} viewBox="0 0 48 48">
+    <Path
+      fill="#EA4335"
+      d="M24 9.5c3.54 0 6.01 1.53 7.39 2.82l5.43-5.43C33.86 4.04 29.37 2 24 2 14.73 2 6.79 7.37 3.05 15.09l6.64 5.16C11.17 13.03 17.06 9.5 24 9.5z"
+    />
+    <Path
+      fill="#4285F4"
+      d="M46.14 24.46c0-1.64-.15-3.2-.44-4.71H24v9h12.5c-.54 2.9-2.16 5.36-4.61 7.04l7.05 5.48c4.12-3.8 6.5-9.4 6.5-16.81z"
+    />
+    <Path
+      fill="#FBBC05"
+      d="M9.69 28.25c-.48-1.4-.76-2.89-.76-4.25 0-1.36.28-2.85.76-4.25l-6.64-5.16C1.74 17.91 1 20.91 1 24c0 3.09.74 6.09 2.05 8.91l6.64-5.16z"
+    />
+    <Path
+      fill="#34A853"
+      d="M24 46c5.37 0 9.86-1.77 13.14-4.82l-7.05-5.48c-1.96 1.32-4.47 2.09-6.09 2.09-6.94 0-12.83-4.53-14.9-10.75l-6.64 5.16C6.79 40.63 14.73 46 24 46z"
+    />
+  </Svg>
+);
 
 export default function SignInScreen() {
   const { theme } = useUnistyles();
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const { signIn, signOut } = useAuthActions();
+  const { signIn } = useAuthActions();
   const [isWorking, setIsWorking] = useState(false);
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
   const redirectTo = useMemo(() => makeRedirectUri(), []);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     let isMounted = true;
@@ -116,57 +140,56 @@ export default function SignInScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign in</Text>
-      <Text style={styles.subhead}>
-        Use Google or Apple to test Convex Auth.
-      </Text>
-
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={() => startOAuth("google")}
-          disabled={isWorking || isLoading}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.primaryButtonText}>Continue with Google</Text>
-        </TouchableOpacity>
-        {isAppleAvailable ? (
-          <AppleAuthentication.AppleAuthenticationButton
-            buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
-            buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-            cornerRadius={14}
-            style={styles.appleButton}
-            onPress={startAppleNative}
-          />
-        ) : (
-          <TouchableOpacity
-            style={styles.appleFallbackButton}
-            disabled
-            activeOpacity={0.8}
-          >
-            <Text style={styles.appleFallbackText}>Continue with Apple</Text>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          style={styles.ghostButton}
-          onPress={() => signOut()}
-          disabled={isWorking || isLoading || !isAuthenticated}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.ghostButtonText}>Sign out</Text>
-        </TouchableOpacity>
+      <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
+        <View style={styles.titleRow}>
+          <Text style={styles.appName}>Lifelong</Text>
+          <View style={styles.betaBadge}>
+            <Text style={styles.betaText}>BETA</Text>
+          </View>
+        </View>
+        <Text style={styles.title}>Sign in</Text>
       </View>
 
-      {(isWorking || isLoading) && (
-        <View style={styles.loadingRow}>
-          <ActivityIndicator color={theme.colors.text.primary} />
-          <Text style={styles.loadingText}>Working...</Text>
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 24 }]}>
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={() => startOAuth("google")}
+            disabled={isWorking || isLoading}
+            activeOpacity={0.8}
+          >
+            <View style={styles.googleIcon}>
+              <GoogleIcon />
+            </View>
+            <Text style={styles.googleButtonText}>Continue with Google</Text>
+          </TouchableOpacity>
+          {isAppleAvailable ? (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={14}
+              style={styles.appleButton}
+              onPress={startAppleNative}
+            />
+          ) : (
+            <TouchableOpacity
+              style={styles.appleFallbackButton}
+              disabled
+              activeOpacity={0.8}
+            >
+              <Text style={styles.appleFallbackText}>Continue with Apple</Text>
+            </TouchableOpacity>
+          )}
         </View>
-      )}
 
-      <Text style={styles.stateText}>
-        {isAuthenticated ? "Authenticated" : "Not signed in"}
-      </Text>
+        {(isWorking || isLoading) && (
+          <View style={styles.loadingRow}>
+            <ActivityIndicator color={theme.colors.text.primary} />
+            <Text style={styles.loadingText}>Working...</Text>
+          </View>
+        )}
+
+      </View>
     </View>
   );
 }
@@ -175,34 +198,74 @@ const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 80,
     backgroundColor: theme.colors.background.primary,
   },
+  header: {
+    paddingBottom: 18,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  appName: {
+    ...theme.typography.display,
+    fontSize: 32,
+    color: theme.colors.text.primary,
+    lineHeight: 38,
+  },
+  betaBadge: {
+    backgroundColor: theme.colors.text.primary,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 4,
+    marginTop: 4,
+  },
+  betaText: {
+    color: theme.colors.background.primary,
+    fontSize: 9,
+    fontWeight: "900",
+    letterSpacing: 0.5,
+  },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "600",
     color: theme.colors.text.primary,
+    marginTop: 18,
   },
   subhead: {
     marginTop: 8,
     fontSize: 15,
     color: theme.colors.text.muted,
   },
+  footer: {
+    marginTop: "auto",
+  },
   actions: {
-    marginTop: 24,
     gap: 12,
   },
-  primaryButton: {
-    paddingVertical: 14,
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 14,
-    backgroundColor: theme.colors.brand.primary,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#dadce0",
   },
-  primaryButtonText: {
-    color: "#fff",
+  googleIcon: {
+    width: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  googleButtonText: {
+    color: "#1f1f1f",
     fontWeight: "600",
     fontSize: 15,
-    textAlign: "center",
   },
   appleButton: {
     width: "100%",
@@ -221,19 +284,6 @@ const styles = StyleSheet.create(theme => ({
     fontSize: 15,
     textAlign: "center",
   },
-  ghostButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: theme.colors.text.muted,
-  },
-  ghostButtonText: {
-    color: theme.colors.text.primary,
-    fontWeight: "600",
-    fontSize: 14,
-    textAlign: "center",
-  },
   loadingRow: {
     marginTop: 18,
     flexDirection: "row",
@@ -241,10 +291,6 @@ const styles = StyleSheet.create(theme => ({
     gap: 10,
   },
   loadingText: {
-    color: theme.colors.text.muted,
-  },
-  stateText: {
-    marginTop: 16,
     color: theme.colors.text.muted,
   },
 }));
