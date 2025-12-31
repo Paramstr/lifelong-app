@@ -161,37 +161,39 @@ export default function SignInScreen() {
             <Text style={styles.betaText}>BETA</Text>
           </View>
         </View>
-        <Text style={styles.title}>Sign in</Text>
+        <Text style={styles.tagline}>A New Zealand Health Company</Text>
       </View>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 24 }]}>
         <View style={styles.actions}>
           <TouchableOpacity
-            style={styles.googleButton}
+            style={styles.providerButton}
             onPress={() => startOAuth("google")}
             disabled={isWorking || isLoading}
             activeOpacity={0.8}
           >
-            <View style={styles.googleIcon}>
+            <View style={styles.providerIcon}>
               <GoogleIcon />
             </View>
-            <Text style={styles.googleButtonText}>Continue with Google</Text>
+            <Text style={styles.providerButtonText}>Continue with Google</Text>
           </TouchableOpacity>
           {isAppleAvailable ? (
             <AppleAuthentication.AppleAuthenticationButton
               buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
-              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-              cornerRadius={14}
+              buttonStyle={
+                AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+              }
+              cornerRadius={26}
               style={styles.appleButton}
               onPress={startAppleNative}
             />
           ) : (
             <TouchableOpacity
-              style={styles.appleFallbackButton}
+              style={[styles.providerButton, styles.appleFallbackButton]}
               disabled
               activeOpacity={0.8}
             >
-              <Text style={styles.appleFallbackText}>Continue with Apple</Text>
+              <Text style={styles.providerButtonText}>Continue with Apple</Text>
             </TouchableOpacity>
           )}
           {devBypassEnabled && (
@@ -226,10 +228,12 @@ const styles = StyleSheet.create(theme => ({
   },
   header: {
     paddingBottom: 18,
+    alignItems: "center",
   },
   titleRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
   },
   appName: {
     ...theme.typography.display,
@@ -251,11 +255,13 @@ const styles = StyleSheet.create(theme => ({
     fontWeight: "900",
     letterSpacing: 0.5,
   },
-  title: {
-    fontSize: 24,
+  tagline: {
+    marginTop: 10,
+    fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.text.primary,
-    marginTop: 18,
+    color: theme.colors.text.muted,
+    letterSpacing: 0.4,
+    textAlign: "center",
   },
   subhead: {
     marginTop: 8,
@@ -268,28 +274,29 @@ const styles = StyleSheet.create(theme => ({
   actions: {
     gap: 12,
   },
-  googleButton: {
+  providerButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 14,
+    gap: 4,
+    height: 52,
+    paddingHorizontal: 20,
+    borderRadius: 26,
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#dadce0",
   },
-  googleIcon: {
-    width: 20,
-    height: 20,
+  providerIcon: {
+    width: 22,
+    height: 22,
     alignItems: "center",
     justifyContent: "center",
   },
-  googleButtonText: {
+  providerButtonText: {
     color: "#1f1f1f",
-    fontWeight: "600",
-    fontSize: 15,
+    fontWeight: "500",
+    fontSize: 20,
+    fontFamily: "SF Pro Rounded",
   },
   devButton: {
     paddingVertical: 12,
@@ -307,20 +314,10 @@ const styles = StyleSheet.create(theme => ({
   },
   appleButton: {
     width: "100%",
-    height: 44,
+    height: 52,
   },
   appleFallbackButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    backgroundColor: "#111827",
     opacity: 0.6,
-  },
-  appleFallbackText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 15,
-    textAlign: "center",
   },
   loadingRow: {
     marginTop: 18,
