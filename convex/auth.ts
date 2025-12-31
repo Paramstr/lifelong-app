@@ -13,6 +13,40 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
     }),
     ConvexCredentials({
+      id: "dev",
+      authorize: async (credentials, ctx) => {
+        if (process.env.DEV_AUTH_BYPASS !== "true") {
+          throw new Error("Dev auth bypass is disabled.");
+        }
+
+        const expectedToken = process.env.DEV_AUTH_TOKEN;
+        const providedToken =
+          typeof credentials.token === "string" ? credentials.token : undefined;
+        if (expectedToken && expectedToken !== providedToken) {
+          throw new Error("Invalid dev auth token.");
+        }
+
+        const email = process.env.DEV_AUTH_EMAIL ?? "dev@lifelong.app";
+        const name = process.env.DEV_AUTH_NAME ?? "Lifelong Dev";
+        const now = Date.now();
+
+        const { user } = await createAccount(ctx, {
+          provider: "dev",
+          account: { id: email },
+          profile: {
+            createdAt: now,
+            email,
+            emailVerificationTime: now,
+            name,
+            displayName: name,
+          },
+          shouldLinkViaEmail: true,
+        });
+
+        return { userId: user._id };
+      },
+    }),
+    ConvexCredentials({
       id: "appleNative",
       authorize: async (credentials, ctx) => {
         const identityToken = credentials.identityToken;

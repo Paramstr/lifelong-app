@@ -46,6 +46,8 @@ export default function SignInScreen() {
   const [isAppleAvailable, setIsAppleAvailable] = useState(false);
   const redirectTo = useMemo(() => makeRedirectUri(), []);
   const insets = useSafeAreaInsets();
+  const devBypassEnabled = process.env.EXPO_PUBLIC_DEV_AUTH_BYPASS === "true";
+  const devAuthToken = process.env.EXPO_PUBLIC_DEV_AUTH_TOKEN;
 
   useEffect(() => {
     let isMounted = true;
@@ -138,6 +140,18 @@ export default function SignInScreen() {
     }
   }, [isLoading, isWorking, signIn]);
 
+  const startDevSignIn = useCallback(async () => {
+    if (isWorking || isLoading) {
+      return;
+    }
+    setIsWorking(true);
+    try {
+      await signIn("dev", devAuthToken ? { token: devAuthToken } : {});
+    } finally {
+      setIsWorking(false);
+    }
+  }, [devAuthToken, isLoading, isWorking, signIn]);
+
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + 24 }]}>
@@ -178,6 +192,16 @@ export default function SignInScreen() {
               activeOpacity={0.8}
             >
               <Text style={styles.appleFallbackText}>Continue with Apple</Text>
+            </TouchableOpacity>
+          )}
+          {devBypassEnabled && (
+            <TouchableOpacity
+              style={styles.devButton}
+              onPress={startDevSignIn}
+              disabled={isWorking || isLoading}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.devButtonText}>Continue with Dev Account</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -266,6 +290,20 @@ const styles = StyleSheet.create(theme => ({
     color: "#1f1f1f",
     fontWeight: "600",
     fontSize: 15,
+  },
+  devButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: theme.colors.text.muted,
+  },
+  devButtonText: {
+    color: theme.colors.text.primary,
+    fontWeight: "600",
+    fontSize: 14,
+    textAlign: "center",
   },
   appleButton: {
     width: "100%",
