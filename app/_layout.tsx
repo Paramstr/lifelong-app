@@ -32,6 +32,13 @@ export default function RootLayout() {
         <AuthGate>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="sign-in"
+              options={{
+                presentation: "modal",
+                headerShown: false,
+              }}
+            />
             <Stack.Screen 
               name="protocol/[id]" 
               options={{ 

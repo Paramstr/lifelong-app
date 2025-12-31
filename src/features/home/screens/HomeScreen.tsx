@@ -129,7 +129,7 @@ const HomeScreen = () => {
             <Text style={styles.compactSubtitle}>Sunday, 28 Dec</Text>
             <Text style={styles.compactTasks}>4 tasks</Text>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/sign-in')}>
             <Image
               source={require('../../../../assets/images/family/param_avatar.jpg')}
               style={styles.compactAvatar}
@@ -167,7 +167,7 @@ const HomeScreen = () => {
               </View>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/sign-in')}>
               <Image 
                 source={require('../../../../assets/images/family/param_avatar.jpg')} 
                 style={styles.avatar} 
