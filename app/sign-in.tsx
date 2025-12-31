@@ -1,4 +1,5 @@
-import { useAuth, useAuthActions } from "@convex-dev/auth/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useConvexAuth } from "convex/react";
 import { makeRedirectUri } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useMemo, useState } from "react";
@@ -15,7 +16,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function SignInScreen() {
   const { theme } = useUnistyles();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const { signIn, signOut } = useAuthActions();
   const [isWorking, setIsWorking] = useState(false);
   const redirectTo = useMemo(() => makeRedirectUri(), []);
