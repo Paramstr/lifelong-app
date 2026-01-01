@@ -1,6 +1,7 @@
  "use node";
 
 import { createStep, createWorkflow } from "@mastra/core/workflows";
+import type { ModelMessage } from "ai-v5";
 import { z } from "zod";
 import { foodScanAgent } from "../agents/food_scan_agent";
 import { foodScanSchema } from "../food_scan_schema";
@@ -23,14 +24,24 @@ const analyzeStep = createStep({
   inputSchema,
   outputSchema: foodScanSchema,
   execute: async ({ inputData }) => {
-    const prompt = [
-      "Analyze the food in this image and estimate nutrition.",
-      "",
-      "Image:",
-      inputData.imageUrl,
-    ].join("\n");
+    const messages: ModelMessage[] = [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "Analyze the food in this image and estimate nutrition.",
+          },
+          {
+            type: "image",
+            image: new URL(inputData.imageUrl),
+            mediaType: inputData.imageMimeType ?? "image/jpeg",
+          },
+        ],
+      },
+    ];
 
-    const result = await foodScanAgent.generate(prompt, {
+    const result = await foodScanAgent.generate(messages, {
       output: foodScanSchema,
     });
 

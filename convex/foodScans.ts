@@ -182,4 +182,22 @@ export const updateFromAnalysis = mutation({
   },
 });
 
+export const deleteFoodScan = mutation({
+  args: { scanId: v.id("foodScans") },
+  handler: async (ctx, args) => {
+    const userId = await requireUserId(ctx);
+    const scan = await ctx.db.get(args.scanId);
+    if (!scan || scan.userId !== userId) {
+      throw new Error("Scan not found.");
+    }
+
+    const analyses = await ctx.db
+      .query("foodAnalyses")
+      .withIndex("by_scan_id", (q) => q.eq("scanId", args.scanId))
+      .collect();
+
+    await Promise.all(analyses.map((analysis) => ctx.db.delete(analysis._id)));
+    await ctx.db.delete(args.scanId);
+  },
+});
 // analyzeFoodScan action lives in convex/foodScansNode.ts (Node runtime).

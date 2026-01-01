@@ -7,15 +7,19 @@ import { SymbolView } from 'expo-symbols';
 import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { EdgeBlurFade } from '@/components/shared/edge-blur-fade';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useFoodEntry } from '@/features/food/data/food-store';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 export default function FoodDetailsScreen() {
   const { theme } = useUnistyles();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
+  const router = useRouter();
   const scanId = typeof params.id === "string" ? params.id : params.id?.[0];
   const entry = useFoodEntry(scanId);
+  const deleteFoodScan = useMutation(api.foodScans.deleteFoodScan);
   const [isEditing, setIsEditing] = useState(false);
   const [focusedMacro, setFocusedMacro] = useState<'calories' | 'protein' | 'carbs' | 'fat' | null>(null);
   const [macros, setMacros] = useState({
@@ -156,7 +160,7 @@ export default function FoodDetailsScreen() {
 
         <EdgeBlurFade
           position="top"
-          height={80}
+          height={60}
           blurIntensity={0}
           fadeColor={theme.colors.background.primary}
           fadeStops={[
@@ -182,48 +186,66 @@ export default function FoodDetailsScreen() {
           ]}
           ListHeaderComponent={
             <View>
-              <TouchableOpacity style={styles.iconButtonAbsolute} onPress={toggleEdit} activeOpacity={0.8}>
-                <View style={styles.iconButtonInner}>
-                  <Animated.View style={[styles.iconButtonContent, editButtonStyle]} pointerEvents={isEditing ? 'none' : 'auto'}>
-                    <Text style={styles.iconButtonText}>Edit</Text>
-                    {Platform.OS === 'ios' ? (
-                        <SymbolView
-                        name="square.and.pencil"
-                        size={16}
-                        tintColor="white"
-                        resizeMode="scaleAspectFit"
-                        style={{ marginTop: -1 }}
-                        />
-                    ) : (
-                        <Ionicons 
-                        name="create-outline" 
-                        size={18} 
-                        color="white" 
-                        style={{ marginTop: -1 }}
-                        />
-                    )}
-                  </Animated.View>
-                  <Animated.View style={[styles.iconButtonContent, doneButtonStyle]} pointerEvents={isEditing ? 'auto' : 'none'}>
-                    <Text style={styles.iconButtonText}>Done</Text>
-                    {Platform.OS === 'ios' ? (
-                        <SymbolView
-                        name="checkmark.circle"
-                        size={16}
-                        tintColor="white"
-                        resizeMode="scaleAspectFit"
-                        style={{ marginTop: -1 }}
-                        />
-                    ) : (
-                        <Ionicons 
-                        name="checkmark-circle-outline" 
-                        size={18} 
-                        color="white" 
-                        style={{ marginTop: -1 }}
-                        />
-                    )}
-                  </Animated.View>
-                </View>
-              </TouchableOpacity>
+              <View style={styles.headerActions}>
+                {isEditing && entry && scanId && (
+                  <TouchableOpacity
+                    style={styles.deleteAction}
+                    activeOpacity={0.8}
+                    onPress={async () => {
+                      try {
+                        await deleteFoodScan({ scanId });
+                        router.back();
+                      } catch (error) {
+                        console.warn("Failed to delete food scan.", error);
+                      }
+                    }}
+                  >
+                    <Text style={styles.deleteActionText}>Delete</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity style={styles.iconButtonAbsolute} onPress={toggleEdit} activeOpacity={0.8}>
+                  <View style={styles.iconButtonInner}>
+                    <Animated.View style={[styles.iconButtonContent, editButtonStyle]} pointerEvents={isEditing ? 'none' : 'auto'}>
+                      <Text style={styles.iconButtonText}>Edit</Text>
+                      {Platform.OS === 'ios' ? (
+                          <SymbolView
+                          name="square.and.pencil"
+                          size={16}
+                          tintColor="white"
+                          resizeMode="scaleAspectFit"
+                          style={{ marginTop: -1 }}
+                          />
+                      ) : (
+                          <Ionicons 
+                          name="create-outline" 
+                          size={18} 
+                          color="white" 
+                          style={{ marginTop: -1 }}
+                          />
+                      )}
+                    </Animated.View>
+                    <Animated.View style={[styles.iconButtonContent, doneButtonStyle]} pointerEvents={isEditing ? 'auto' : 'none'}>
+                      <Text style={styles.iconButtonText}>Done</Text>
+                      {Platform.OS === 'ios' ? (
+                          <SymbolView
+                          name="checkmark.circle"
+                          size={16}
+                          tintColor="white"
+                          resizeMode="scaleAspectFit"
+                          style={{ marginTop: -1 }}
+                          />
+                      ) : (
+                          <Ionicons 
+                          name="checkmark-circle-outline" 
+                          size={18} 
+                          color="white" 
+                          style={{ marginTop: -1 }}
+                          />
+                      )}
+                    </Animated.View>
+                  </View>
+                </TouchableOpacity>
+              </View>
 
               <View style={styles.metaRow}>
                 <View style={styles.metaLeft}>
@@ -351,8 +373,14 @@ const styles = StyleSheet.create(theme => ({
     alignSelf: 'flex-end',
     borderRadius: 24,
     backgroundColor: '#000000',
-    marginBottom: 8,
     overflow: 'hidden',
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 8,
+    marginBottom: 8,
   },
   iconButtonInner: {
     paddingVertical: 8,
@@ -382,6 +410,23 @@ const styles = StyleSheet.create(theme => ({
     color: theme.colors.text.primary,
     marginBottom: 12,
     letterSpacing: -0.5,
+  },
+  deleteAction: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 18,
+    backgroundColor: theme.colors.semantic.errorSoft,
+    minHeight: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  deleteActionText: {
+    fontSize: 12,
+    fontFamily: "ui-rounded",
+    fontWeight: "600",
+    color: theme.colors.semantic.error,
+    letterSpacing: 0.3,
+    textTransform: "uppercase",
   },
   macroRow: {
     flexDirection: 'row',

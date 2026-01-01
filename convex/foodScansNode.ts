@@ -8,6 +8,7 @@ import { mastra } from "./mastra";
 export const analyzeFoodScan = action({
   args: { scanId: v.id("foodScans") },
   handler: async (ctx, args) => {
+    const startedAt = Date.now();
     const scan = await ctx.runQuery(api.foodScans.getById, {
       scanId: args.scanId,
     });
@@ -20,12 +21,13 @@ export const analyzeFoodScan = action({
       (scan.storageId ? await ctx.storage.getUrl(scan.storageId) : null);
 
     if (!imageUrl) {
+      const elapsedMs = Date.now() - startedAt;
       await ctx.runMutation(api.foodScans.updateFromAnalysis, {
         scanId: args.scanId,
         status: "failed",
-        rawResponse: { error: "Missing image URL for analysis." },
+        rawResponse: { error: "Missing image URL for analysis.", elapsedMs },
       });
-      return { status: "failed" as const };
+      return { status: "failed" as const, elapsedMs };
     }
 
     try {
@@ -42,6 +44,7 @@ export const analyzeFoodScan = action({
       }
 
       const output = workflowResult.result;
+      const elapsedMs = Date.now() - startedAt;
 
       const analysis = {
         title: output.title ?? undefined,
@@ -55,18 +58,21 @@ export const analyzeFoodScan = action({
         scanId: args.scanId,
         status: "completed",
         analysis,
-        rawResponse: output,
+        rawResponse: { output, elapsedMs },
       });
 
-      return { status: "completed" as const, analysis };
+      console.info("Food scan completed.", { scanId: args.scanId, elapsedMs });
+      return { status: "completed" as const, analysis, elapsedMs };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      const elapsedMs = Date.now() - startedAt;
       await ctx.runMutation(api.foodScans.updateFromAnalysis, {
         scanId: args.scanId,
         status: "failed",
-        rawResponse: { error: message },
+        rawResponse: { error: message, elapsedMs },
       });
-      return { status: "failed" as const, error: message };
+      console.warn("Food scan failed.", { scanId: args.scanId, elapsedMs, error: message });
+      return { status: "failed" as const, error: message, elapsedMs };
     }
   },
 });

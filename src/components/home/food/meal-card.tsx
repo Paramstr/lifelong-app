@@ -10,7 +10,7 @@ interface MealCardProps {
   carbs: string;
   protein: string;
   fat: string;
-  image: ImageSourcePropType;
+  image?: ImageSourcePropType;
 }
 
 const MealCard: React.FC<MealCardProps> = ({
@@ -39,9 +39,11 @@ const MealCard: React.FC<MealCardProps> = ({
           <Text style={styles.macroItem}><Text style={styles.macroLabel}>fat</Text> {fat}</Text>
         </View>
       </View>
-      <View style={styles.imageContainer}>
-        <Image source={image} style={styles.mealImage} />
-      </View>
+      {image && (
+        <View style={styles.imageContainer}>
+          <Image source={image} style={styles.mealImage} />
+        </View>
+      )}
     </View>
   );
 };

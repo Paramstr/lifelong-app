@@ -37,7 +37,6 @@ const FoodTimeline: React.FC = () => {
   const USE_MOCK_CAMERA = true;
   const mockImageUrl =
     "https://i.pinimg.com/736x/dd/2f/44/dd2f44d6e76c625df5b261cedc4043b9.jpg";
-  const fallbackImage = require('../../../../assets/images/chicken-rice-bowl.png');
 
   const handleCamera = async () => {
     if (USE_MOCK_CAMERA) {
@@ -47,8 +46,13 @@ const FoodTimeline: React.FC = () => {
           imageUrl: mockImageUrl,
           source: "camera",
         });
-        void analyzeFoodScan({ scanId });
         router.push(`/food/${scanId}`);
+        const result = await analyzeFoodScan({ scanId });
+        if (result?.status === "failed") {
+          console.warn("Food scan failed.", result);
+        } else {
+          console.info("Food scan completed.", result);
+        }
       } catch (error) {
         console.warn("Failed to create food scan.", error);
       }
@@ -74,7 +78,12 @@ const FoodTimeline: React.FC = () => {
         imageUrl: result.assets[0].uri,
         source: "camera",
       });
-      void analyzeFoodScan({ scanId });
+      const resultData = await analyzeFoodScan({ scanId });
+      if (resultData?.status === "failed") {
+        console.warn("Food scan failed.", resultData);
+      } else {
+        console.info("Food scan completed.", resultData);
+      }
     } catch (error) {
       console.warn("Failed to create food scan.", error);
     }
@@ -175,6 +184,10 @@ const FoodTimeline: React.FC = () => {
 
             const timeString = new Date(entry.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase();
 
+            const isStaleProcessing =
+              entry.status === "processing" &&
+              Date.now() - entry.createdAt > 60 * 1000;
+
             return (
             <TouchableOpacity 
                 key={entry.id}
@@ -194,12 +207,28 @@ const FoodTimeline: React.FC = () => {
                         carbs={entry.summary ? String(Math.round(entry.summary.carbs)) : '-'}
                         protein={entry.summary ? String(Math.round(entry.summary.protein)) : '-'}
                         fat={entry.summary ? String(Math.round(entry.summary.fat)) : '-'}
-                        image={
-                          entry.imageUri
-                            ? { uri: entry.imageUri }
-                            : fallbackImage
-                        }
+                        image={entry.imageUri ? { uri: entry.imageUri } : undefined}
                     />
+                    {isStaleProcessing && (
+                      <TouchableOpacity
+                        style={styles.retryButton}
+                        onPress={async () => {
+                          try {
+                            const result = await analyzeFoodScan({
+                              scanId: entry.id,
+                            });
+                            if (result?.status === "failed") {
+                              console.warn("Food scan retry failed.", result);
+                            }
+                          } catch (error) {
+                            console.warn("Failed to retry food scan.", error);
+                          }
+                        }}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.retryText}>Retry analysis</Text>
+                      </TouchableOpacity>
+                    )}
                 </TimelineItem>
             </TouchableOpacity>
             );
@@ -223,6 +252,20 @@ const styles = StyleSheet.create(theme => ({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: '#0000001a',
+  },
+  retryButton: {
+    marginTop: 8,
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+  },
+  retryText: {
+    fontSize: 12,
+    fontFamily: "ui-rounded",
+    color: theme.colors.text.secondary,
+    letterSpacing: 0.2,
   },
   cardContainer: {
     paddingVertical: 20,
