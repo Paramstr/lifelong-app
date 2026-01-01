@@ -1,13 +1,11 @@
-import { Mastra } from "@mastra/core/mastra";
-import { LibSQLStore } from "@mastra/libsql";
-import { foodScanAgent } from "./agents/food-scan-agent";
-import { foodScanWorkflow } from "./workflows/food-scan-workflow";
+"use node";
 
-const storageUrl = process.env.MASTRA_DB_URL ?? "file:./mastra.db";
+import { Mastra } from "@mastra/core/mastra";
+import { foodScanAgent } from "./agents/food_scan_agent";
+import { foodScanWorkflow } from "./workflows/food_scan_workflow";
 
 export const mastra = new Mastra({
   agents: { foodScanAgent },
   workflows: { foodScanWorkflow },
-  storage: new LibSQLStore({ url: storageUrl }),
   telemetry: { enabled: false },
 });

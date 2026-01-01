@@ -1,6 +1,7 @@
-import { action, mutation, query } from "convex/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 const macroSummary = v.object({
   calories: v.number(),
@@ -34,11 +35,11 @@ const ingredient = v.object({
 });
 
 async function requireUserId(ctx: { auth: { getUserIdentity: () => Promise<any> } }) {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) {
     throw new Error("Authentication required.");
   }
-  return identity.subject as Id<"users">;
+  return userId as Id<"users">;
 }
 
 export const listForUser = query({

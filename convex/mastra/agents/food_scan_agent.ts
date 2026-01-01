@@ -1,3 +1,5 @@
+ "use node";
+
 import { Agent } from "@mastra/core/agent";
 
 export const foodScanAgent = new Agent({

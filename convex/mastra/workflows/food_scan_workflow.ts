@@ -1,8 +1,10 @@
+ "use node";
+
 import { createStep, createWorkflow } from "@mastra/core/workflows";
 import { z } from "zod";
-import { foodScanAgent } from "../agents/food-scan-agent";
-import { foodScanSchema } from "../food-scan-schema";
-import { normalizeFoodScanOutput } from "../normalize-food-scan";
+import { foodScanAgent } from "../agents/food_scan_agent";
+import { foodScanSchema } from "../food_scan_schema";
+import { normalizeFoodScanOutput } from "../normalize_food_scan";
 
 const inputSchema = z.object({
   imageUrl: z.string().url(),
@@ -21,24 +23,14 @@ const analyzeStep = createStep({
   inputSchema,
   outputSchema: foodScanSchema,
   execute: async ({ inputData }) => {
-    const messages = [
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: "Analyze the food in this image and estimate nutrition.",
-          },
-          {
-            type: "image",
-            image: inputData.imageUrl,
-            mimeType: inputData.imageMimeType ?? "image/jpeg",
-          },
-        ],
-      },
-    ];
+    const prompt = [
+      "Analyze the food in this image and estimate nutrition.",
+      "",
+      "Image:",
+      inputData.imageUrl,
+    ].join("\n");
 
-    const result = await foodScanAgent.generate(messages, {
+    const result = await foodScanAgent.generate(prompt, {
       output: foodScanSchema,
     });
 

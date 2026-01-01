@@ -1,17 +1,19 @@
-import type { FoodScanOutput } from "./food-scan-schema";
+import type { FoodScanOutput } from "./food_scan_schema";
 
 const clampNumber = (value: number, min = 0, max = Number.POSITIVE_INFINITY) =>
   Math.min(max, Math.max(min, Number.isFinite(value) ? value : 0));
 
 export function normalizeFoodScanOutput(raw: FoodScanOutput): FoodScanOutput {
-  const ingredients = raw.ingredients.map((ingredient) => ({
-    ...ingredient,
-    quantity: clampNumber(ingredient.quantity),
-    calories: clampNumber(ingredient.calories),
-    protein: clampNumber(ingredient.protein),
-    carbs: clampNumber(ingredient.carbs),
-    fat: clampNumber(ingredient.fat),
-  }));
+  const ingredients: FoodScanOutput["ingredients"] = raw.ingredients.map(
+    (ingredient) => ({
+      ...ingredient,
+      quantity: clampNumber(ingredient.quantity),
+      calories: clampNumber(ingredient.calories),
+      protein: clampNumber(ingredient.protein),
+      carbs: clampNumber(ingredient.carbs),
+      fat: clampNumber(ingredient.fat),
+    }),
+  );
 
   const summaryFromIngredients = ingredients.reduce(
     (totals, ingredient) => ({

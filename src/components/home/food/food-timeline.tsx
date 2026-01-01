@@ -36,7 +36,7 @@ const FoodTimeline: React.FC = () => {
 
   const USE_MOCK_CAMERA = true;
   const mockImageUrl =
-    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80";
+    "https://i.pinimg.com/736x/dd/2f/44/dd2f44d6e76c625df5b261cedc4043b9.jpg";
   const fallbackImage = require('../../../../assets/images/chicken-rice-bowl.png');
 
   const handleCamera = async () => {
