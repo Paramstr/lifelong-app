@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Platform, StyleSheet as RNStyleSheet, Pressable } from 'react-native';
-import { StyleSheet, useUnistyles } from 'react-native-unistyles';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SymbolView } from 'expo-symbols';
-import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import Animated, { FadeIn, FadeOut, useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
-import HealthRecordCard, { RecordType } from '../components/HealthRecordCard';
-import AddRecordDropdown from '../components/AddRecordDropdown';
 import { ProgressiveBlurHeader } from '@/components/shared/progressive-blur-header';
+import { Ionicons } from '@expo/vector-icons';
+import { SymbolView } from 'expo-symbols';
+import React, { useState } from 'react';
+import { FlatList, Platform, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
+import HealthRecordCard, { RecordType } from '../components/HealthRecordCard';
+import { HealthInputOverlay } from '../components/add-flow/health-input-overlay';
 
 // Mock Data
 interface HealthRecord {
@@ -92,7 +91,7 @@ const HealthScreen = () => {
 
   return (
     <View style={styles.container}>
-      
+
       <ProgressiveBlurHeader
         scrollY={scrollY}
         height={insets.top + 72}
@@ -114,35 +113,35 @@ const HealthScreen = () => {
         contentStyle={styles.compactHeaderContent}
       >
         <View style={styles.compactHeader}>
-           <Text style={styles.compactHeaderTitle}>Health</Text>
+          <Text style={styles.compactHeaderTitle}>Health</Text>
         </View>
       </ProgressiveBlurHeader>
 
       <View style={[styles.fixedActions, { top: insets.top }]}>
-          <TouchableOpacity style={styles.iconButton}>
-            {Platform.OS === 'ios' ? (
-              <SymbolView
-                name="square.and.pencil"
-                size={22}
-                tintColor="black"
-                resizeMode="scaleAspectFit"
-              />
-            ) : (
-              <Ionicons name="create-outline" size={24} color="black" />
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={toggleDropdown}>
-            {Platform.OS === 'ios' ? (
-              <SymbolView
-                name="plus"
-                size={22}
-                tintColor="black"
-                resizeMode="scaleAspectFit"
-              />
-            ) : (
-              <Ionicons name="add" size={24} color="black" />
-            )}
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          {Platform.OS === 'ios' ? (
+            <SymbolView
+              name="square.and.pencil"
+              size={22}
+              tintColor="black"
+              resizeMode="scaleAspectFit"
+            />
+          ) : (
+            <Ionicons name="create-outline" size={24} color="black" />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton} onPress={toggleDropdown}>
+          {Platform.OS === 'ios' ? (
+            <SymbolView
+              name="plus"
+              size={22}
+              tintColor="black"
+              resizeMode="scaleAspectFit"
+            />
+          ) : (
+            <Ionicons name="add" size={24} color="black" />
+          )}
+        </TouchableOpacity>
       </View>
 
       <AnimatedFlatList
@@ -170,30 +169,16 @@ const HealthScreen = () => {
         }
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        scrollEnabled={!isDropdownVisible} 
+        scrollEnabled={!isDropdownVisible}
       />
 
-      {isDropdownVisible && (
-        <Animated.View 
-            entering={FadeIn.duration(200)} 
-            exiting={FadeOut.duration(200)} 
-            style={RNStyleSheet.absoluteFill}
-        >
-             <BlurView
-                intensity={20}
-                style={RNStyleSheet.absoluteFill}
-                tint="default"
-            />
-            <Pressable style={[RNStyleSheet.absoluteFill, styles.overlay]} onPress={closeDropdown} />
-        </Animated.View>
-      )}
-
-      <AddRecordDropdown
+      {/* New Input Overlay handling background and logic */}
+      <HealthInputOverlay
         visible={isDropdownVisible}
         onClose={closeDropdown}
-        onSelect={handleSelectOption}
-        top={insets.top + 72}
+        topInset={insets.top}
       />
+
     </View>
   );
 };
@@ -247,9 +232,6 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.spacing.md,
     paddingBottom: theme.spacing.xl,
   },
-  overlay: {
-      backgroundColor: 'rgba(255, 255, 255, 0.4)',
-  }
 }));
 
 export default HealthScreen;
