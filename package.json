@@ -15,6 +15,8 @@
     "@convex-dev/auth": "^0.0.90",
     "@expo/ui": "~0.2.0-beta.9",
     "@expo/vector-icons": "^15.0.3",
+    "@mastra/core": "^0.24.9",
+    "@mastra/libsql": "^0.16.4",
     "@react-buoy/core": "^1.5.26",
     "@react-buoy/debug-borders": "^1.5.26",
     "@react-buoy/env": "^1.5.26",
