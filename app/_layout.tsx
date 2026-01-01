@@ -1,3 +1,6 @@
+import { convex } from '@/lib/convex';
+import { authTokenStorage } from '@/lib/convex-auth-storage';
+import { ConvexAuthProvider } from '@convex-dev/auth/react';
 import { FloatingDevTools } from '@react-buoy/core';
 import { DebugBordersStandaloneOverlay, debugBordersToolPreset } from '@react-buoy/debug-borders';
 import { envToolPreset } from '@react-buoy/env';
@@ -5,14 +8,11 @@ import { networkToolPreset } from '@react-buoy/network';
 import { reactQueryToolPreset, wifiTogglePreset } from '@react-buoy/react-query';
 import { routeEventsToolPreset } from '@react-buoy/route-events';
 import { storageToolPreset } from '@react-buoy/storage';
-import { ConvexAuthProvider } from '@convex-dev/auth/react';
+import { useConvexAuth } from 'convex/react';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useConvexAuth } from 'convex/react';
-import { authTokenStorage } from '@/lib/convex-auth-storage';
-import { convex } from '@/lib/convex';
 import SignInScreen from './sign-in';
 
 export default function RootLayout() {
@@ -46,21 +46,21 @@ export default function RootLayout() {
                 headerShown: false,
               }}
             />
-            <Stack.Screen 
-              name="protocol/[id]" 
-              options={{ 
+            <Stack.Screen
+              name="protocol/[id]"
+              options={{
                 presentation: 'fullScreenModal',
                 headerShown: false,
-              }} 
+              }}
             />
-            <Stack.Screen 
-              name="food/[id]" 
-              options={{ 
+            <Stack.Screen
+              name="food/[id]"
+              options={{
                 presentation: 'modal',
                 headerShown: false,
                 sheetAllowedDetents: [1.0],
                 sheetGrabberVisible: true,
-              }} 
+              }}
             />
           </Stack>
           {__DEV__ && (
@@ -82,8 +82,14 @@ export default function RootLayout() {
   );
 }
 
+
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
+  const offlineMode = process.env.EXPO_PUBLIC_OFFLINE_MODE === 'true';
+
+  if (offlineMode) {
+    return <>{children}</>;
+  }
 
   if (isLoading) {
     return (
