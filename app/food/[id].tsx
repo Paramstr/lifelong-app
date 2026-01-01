@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { FlatList, Image, Text, View, Platform, TouchableOpacity, TextInput, LayoutAnimation } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
@@ -7,10 +7,15 @@ import { SymbolView } from 'expo-symbols';
 import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { EdgeBlurFade } from '@/components/shared/edge-blur-fade';
+import { useLocalSearchParams } from 'expo-router';
+import { useFoodEntry } from '@/features/food/data/food-store';
 
 export default function FoodDetailsScreen() {
   const { theme } = useUnistyles();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams();
+  const scanId = typeof params.id === "string" ? params.id : params.id?.[0];
+  const entry = useFoodEntry(scanId);
   const [isEditing, setIsEditing] = useState(false);
   const [focusedMacro, setFocusedMacro] = useState<'calories' | 'protein' | 'carbs' | 'fat' | null>(null);
   const [macros, setMacros] = useState({
@@ -62,16 +67,47 @@ export default function FoodDetailsScreen() {
     ],
   }));
 
-  const ingredients = [
-    { id: '1', name: 'Cottage Cheese', calories: 55, protein: 7, carbs: 2, fat: 3, amount: '0.5 cups' },
-    { id: '2', name: 'Avocado', calories: 161, protein: 2, carbs: 9, fat: 15, amount: '0.5 whole' },
-    { id: '3', name: 'Cherry Tomatoes', calories: 30, protein: 1, carbs: 6, fat: 0, amount: '6 whole' },
-    { id: '4', name: 'Radish', calories: 14, protein: 0, carbs: 3, fat: 0, amount: '4 slices' },
-    { id: '5', name: 'Cucumber', calories: 12, protein: 1, carbs: 3, fat: 0, amount: '6 slices' },
-    { id: '6', name: 'Purple Cabbage', calories: 18, protein: 1, carbs: 4, fat: 0, amount: '0.5 cups' },
-    { id: '7', name: 'Microgreens', calories: 5, protein: 1, carbs: 1, fat: 0, amount: '0.25 cups' },
-    { id: '8', name: 'Sourdough Toast', calories: 120, protein: 4, carbs: 22, fat: 2, amount: '2 slices' },
-  ];
+  useEffect(() => {
+    if (!entry?.summary) {
+      setMacros({
+        calories: "0",
+        protein: "0",
+        carbs: "0",
+        fat: "0",
+      });
+      return;
+    }
+    setMacros({
+      calories: `${Math.round(entry.summary.calories)}`,
+      protein: `${Math.round(entry.summary.protein)}`,
+      carbs: `${Math.round(entry.summary.carbs)}`,
+      fat: `${Math.round(entry.summary.fat)}`,
+    });
+  }, [entry?.summary?.calories, entry?.summary?.protein, entry?.summary?.carbs, entry?.summary?.fat]);
+
+  const ingredients = useMemo(() => {
+    if (!entry?.ingredients?.length) return [];
+    return entry.ingredients.map((ingredient) => ({
+      id: ingredient.id,
+      name: ingredient.name,
+      calories: Math.round(ingredient.calories),
+      protein: Math.round(ingredient.protein),
+      carbs: Math.round(ingredient.carbs),
+      fat: Math.round(ingredient.fat),
+      amount: `${ingredient.quantity} ${ingredient.unit}`,
+    }));
+  }, [entry?.ingredients]);
+
+  const createdAtLabel = entry
+    ? new Date(entry.createdAt).toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : "--:--";
+
+  const heroSource = entry?.imageUri
+    ? { uri: entry.imageUri }
+    : require('../../assets/images/food/bowl-2.jpg');
 
   const renderMacroInput = (key: keyof typeof macros, label: string) => {
     const isFocused = focusedMacro === key;
@@ -191,13 +227,13 @@ export default function FoodDetailsScreen() {
 
               <View style={styles.metaRow}>
                 <View style={styles.metaLeft}>
-                  <Text style={styles.metaText}>8:10 AM</Text>
+                  <Text style={styles.metaText}>{createdAtLabel}</Text>
                   <Text style={styles.metaSeparator}>|</Text>
-                  <Text style={styles.metaText}>Breakfast</Text>
+                  <Text style={styles.metaText}>{entry?.mealType ?? 'Meal'}</Text>
                 </View>
               </View>
 
-              <Text style={styles.title}>Cottage Cheese & Avocado Plate</Text>
+              <Text style={styles.title}>{entry?.title ?? 'Processing...'}</Text>
 
               <View style={styles.macroRow}>
                 {renderMacroInput('calories', 'cal')}
@@ -212,7 +248,7 @@ export default function FoodDetailsScreen() {
               
               <Animated.View style={[styles.heroCard, animatedContentStyle]}>
                 <Image
-                  source={require('../../assets/images/food/bowl-2.jpg')}
+                  source={heroSource}
                   style={styles.heroImage}
                   resizeMode="cover"
                 />

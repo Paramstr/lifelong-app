@@ -7,7 +7,7 @@ import { ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { foodStore, useFoodEntries } from '@/features/food/data/food-store';
+import { useFoodEntries, useFoodScanActions } from '@/features/food/data/food-store';
 import MealCard from './meal-card';
 import ThoughtCard from './thought-card';
 import TimelineItem from './timeline-item';
@@ -31,17 +31,28 @@ export type TimelineEntry = {
 const FoodTimeline: React.FC = () => {
   const { theme } = useUnistyles();
   const entries = useFoodEntries();
+  const { createFoodScan, analyzeFoodScan } = useFoodScanActions();
   const router = useRouter();
 
   const USE_MOCK_CAMERA = true;
+  const mockImageUrl =
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80";
+  const fallbackImage = require('../../../../assets/images/chicken-rice-bowl.png');
 
   const handleCamera = async () => {
     if (USE_MOCK_CAMERA) {
-        // Bypass camera for design testing
-        const mockImage = require('../../../../assets/images/chicken-rice-bowl.png');
-        const newId = foodStore.addFood(mockImage, 'camera');
-        router.push(`/food/${newId}`);
-        return;
+      // Bypass camera for design testing
+      try {
+        const scanId = await createFoodScan({
+          imageUrl: mockImageUrl,
+          source: "camera",
+        });
+        void analyzeFoodScan({ scanId });
+        router.push(`/food/${scanId}`);
+      } catch (error) {
+        console.warn("Failed to create food scan.", error);
+      }
+      return;
     }
 
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -51,15 +62,22 @@ const FoodTimeline: React.FC = () => {
     return;
     }
     
-    // Note: MediaType.Images might need debugging if undefined
     const result = await ImagePicker.launchCameraAsync({
-    mediaTypes: [MediaType.Images],
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
     quality: 1,
     });
 
     if (!result.canceled) {
-    foodStore.addFood(result.assets[0].uri, 'camera');
+    try {
+      const scanId = await createFoodScan({
+        imageUrl: result.assets[0].uri,
+        source: "camera",
+      });
+      void analyzeFoodScan({ scanId });
+    } catch (error) {
+      console.warn("Failed to create food scan.", error);
+    }
     }
   }
 
@@ -176,7 +194,11 @@ const FoodTimeline: React.FC = () => {
                         carbs={entry.summary ? String(Math.round(entry.summary.carbs)) : '-'}
                         protein={entry.summary ? String(Math.round(entry.summary.protein)) : '-'}
                         fat={entry.summary ? String(Math.round(entry.summary.fat)) : '-'}
-                        image={typeof entry.imageUri === 'string' ? { uri: entry.imageUri } : entry.imageUri}
+                        image={
+                          entry.imageUri
+                            ? { uri: entry.imageUri }
+                            : fallbackImage
+                        }
                     />
                 </TimelineItem>
             </TouchableOpacity>
