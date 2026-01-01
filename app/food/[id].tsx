@@ -109,9 +109,7 @@ export default function FoodDetailsScreen() {
       })
     : "--:--";
 
-  const heroSource = entry?.imageUri
-    ? { uri: entry.imageUri }
-    : require('../../assets/images/food/bowl-2.jpg');
+  const heroSource = entry?.imageUri ? { uri: entry.imageUri } : undefined;
 
   const renderMacroInput = (key: keyof typeof macros, label: string) => {
     const isFocused = focusedMacro === key;
@@ -268,13 +266,15 @@ export default function FoodDetailsScreen() {
               </View>
 
               
-              <Animated.View style={[styles.heroCard, animatedContentStyle]}>
-                <Image
-                  source={heroSource}
-                  style={styles.heroImage}
-                  resizeMode="cover"
-                />
-              </Animated.View>
+              {heroSource && (
+                <Animated.View style={[styles.heroCard, animatedContentStyle]}>
+                  <Image
+                    source={heroSource}
+                    style={styles.heroImage}
+                    resizeMode="cover"
+                  />
+                </Animated.View>
+              )}
 
               <Animated.View style={[styles.sectionHeader, animatedContentStyle]}>
                 <Text style={styles.sectionTitle}>Ingredients</Text>

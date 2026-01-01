@@ -187,6 +187,12 @@ const FoodTimeline: React.FC = () => {
             const isStaleProcessing =
               entry.status === "processing" &&
               Date.now() - entry.createdAt > 60 * 1000;
+            const isFailed = entry.status === "failed";
+            const statusLabel = isFailed
+              ? "Failed"
+              : entry.status === "processing"
+                ? "Processing..."
+                : entry.title ?? "Meal";
 
             return (
             <TouchableOpacity 
@@ -202,16 +208,19 @@ const FoodTimeline: React.FC = () => {
                     <MealCard
                         time={timeString}
                         mealType={entry.mealType || 'Meal'}
-                        title={entry.title || 'Processing...'}
+                        title={statusLabel}
                         calories={entry.summary ? String(Math.round(entry.summary.calories)) : '-'}
                         carbs={entry.summary ? String(Math.round(entry.summary.carbs)) : '-'}
                         protein={entry.summary ? String(Math.round(entry.summary.protein)) : '-'}
                         fat={entry.summary ? String(Math.round(entry.summary.fat)) : '-'}
                         image={entry.imageUri ? { uri: entry.imageUri } : undefined}
                     />
-                    {isStaleProcessing && (
+                    {(isStaleProcessing || isFailed) && (
                       <TouchableOpacity
-                        style={styles.retryButton}
+                        style={[
+                          styles.retryButton,
+                          isFailed ? styles.retryButtonFailed : null,
+                        ]}
                         onPress={async () => {
                           try {
                             const result = await analyzeFoodScan({
@@ -226,7 +235,14 @@ const FoodTimeline: React.FC = () => {
                         }}
                         activeOpacity={0.8}
                       >
-                        <Text style={styles.retryText}>Retry analysis</Text>
+                        <Text
+                          style={[
+                            styles.retryText,
+                            isFailed ? styles.retryTextFailed : null,
+                          ]}
+                        >
+                          Retry
+                        </Text>
                       </TouchableOpacity>
                     )}
                 </TimelineItem>
@@ -261,11 +277,20 @@ const styles = StyleSheet.create(theme => ({
     borderRadius: 12,
     backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
+  retryButtonFailed: {
+    backgroundColor: theme.colors.semantic.error,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.25)",
+  },
   retryText: {
     fontSize: 12,
     fontFamily: "ui-rounded",
     color: theme.colors.text.secondary,
     letterSpacing: 0.2,
+  },
+  retryTextFailed: {
+    color: theme.colors.text.inverse,
+    fontWeight: "700",
   },
   cardContainer: {
     paddingVertical: 20,

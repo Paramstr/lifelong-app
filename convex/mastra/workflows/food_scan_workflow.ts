@@ -43,6 +43,14 @@ const analyzeStep = createStep({
 
     const result = await foodScanAgent.generate(messages, {
       output: foodScanSchema,
+      providerOptions: {
+        google: {
+          thinkingConfig: {
+            thinkingLevel: "low",
+            includeThoughts: false,
+          },
+        },
+      },
     });
 
     return result.object;

@@ -12,5 +12,5 @@ export const foodScanAgent = new Agent({
     "All numeric values must be numbers, not strings.",
     "Respond with JSON only when asked for structured output.",
   ].join("\n"),
-  model: "openai/gpt-4.1-mini",
+  model: "google/gemini-3-flash-preview",
 });
