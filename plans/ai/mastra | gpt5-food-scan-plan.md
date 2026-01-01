@@ -1,5 +1,16 @@
 # GPT-5 Food Scan Workflow (Mastra)
 
+## Linear TODOs (Move to Top)
+- [ ] Decide Mastra file location (`convex/mastra/` vs `src/mastra/`).
+- [ ] Choose storage provider and configure persistence.
+- [ ] Define Zod schema + strict prompt for structured output.
+- [ ] Implement workflow steps + wire to Convex actions.
+- [ ] Verify the app shows data from Convex end-to-end.
+- [ ] Add observability (Studio + hosted traces) after core functionality is complete.
+
+## Sequencing Note
+Core functionality comes first: build the food analysis workflow, integrate Convex, and ensure data renders in the app. Observability (Studio + hosted dashboard on Vercel / Mastra Cloud) is explicitly deferred until the end of the plan.
+
 ## Goal
 Build a deterministic, observable food photo analysis pipeline using Mastra workflows + agents, integrated into the existing Convex-backed data model.
 
@@ -60,7 +71,7 @@ Create a dedicated food scan agent (from `agents/overview.mdx`):
 - Use `structuredOutput` with Zod for type-safe JSON.
 - Include the image as `{ type: "image", image: "...", mimeType: "image/jpeg" }` in the content array.
 
-## Storage + Observability
+## Storage + Observability (Defer to End)
 Configure Mastra storage (from `server-db/storage.mdx`) so workflows can be resumed and traces persist across restarts:
 - Local dev: `LibSQLStore({ url: "file:./mastra.db" })`
 - Prod: `PostgreSQLStore` or equivalent
@@ -68,6 +79,7 @@ Configure Mastra storage (from `server-db/storage.mdx`) so workflows can be resu
 Observability plan:
 - Enable Mastra tracing/logging for workflow steps + model calls.
 - Decide exporter: Mastra Cloud vs OTEL/Langfuse/Braintrust.
+Note: Observability setup is intentionally last, after core workflow + Convex integration is working.
 
 ## Single-Pass GPT-5 Structured Output
 Use a single pass with strict schema. Use Zod `structuredOutput` to guarantee shape, and run post-parse validation for business rules.
@@ -83,14 +95,23 @@ Rules:
 - Composite dishes: keep ingredient list short unless clearly visible.
 - Hard errors: mark `foodScans.status = failed` and store error for retry.
 
-## Linear TODOs
-- [ ] Decide Mastra file location (`convex/mastra/` vs `src/mastra/`).
-- [ ] Choose storage provider and configure persistence.
-- [ ] Choose observability exporter (Mastra Cloud vs OTEL).
-- [ ] Define Zod schema + strict prompt for structured output.
-- [ ] Implement workflow steps + wire to Convex actions.
-- [ ] Verify traces and step outputs in Mastra Studio/Cloud.
-
 ## Open Questions
 - Single-pass GPT-5 vs two-pass (vision detection then nutrition estimation)?
 - Preferred production exporter (Mastra Cloud vs OTEL/Langfuse/Braintrust)?
+
+## End-of-Plan: Studio + Vercel + Hosted Traces (Do Last)
+Goal: run Studio locally for development, and host the Mastra server on Vercel with traces visible in a hosted dashboard.
+
+Local Studio (dev-only):
+- Run `mastra dev` or `npm run dev` to launch Studio locally.
+- Use Studio to test agents/workflows and validate traces after core functionality is stable.
+
+Hosted on Vercel (after core workflow + Convex integration):
+- Deploy the Mastra server to Vercel as a standard Node service.
+- Ensure env vars are set for your model provider and storage.
+
+Hosted traces/observability:
+- Use Mastra Cloud for hosted tracing (recommended for easiest setup).
+- Set `MASTRA_CLOUD_ACCESS_TOKEN` and enable `observability.default`.
+- Keep `DefaultExporter` if you want Studio traces locally and `CloudExporter` for hosted traces.
+- Confirm traces appear under Mastra Cloud Dashboard -> Observability -> Traces.
