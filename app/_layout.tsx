@@ -8,13 +8,14 @@ import { networkToolPreset } from '@react-buoy/network';
 import { reactQueryToolPreset, wifiTogglePreset } from '@react-buoy/react-query';
 import { routeEventsToolPreset } from '@react-buoy/route-events';
 import { storageToolPreset } from '@react-buoy/storage';
-import { useConvexAuth } from 'convex/react';
-import { Stack, usePathname } from 'expo-router';
+import { useConvexAuth, useQuery } from 'convex/react';
+import { Redirect, Stack, usePathname, useSegments } from 'expo-router';
 import { PostHogProvider, usePostHog } from 'posthog-react-native';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import SignInScreen from './sign-in';
+import { api } from '../convex/_generated/api';
 
 export default function RootLayout() {
   const buoys = [
@@ -50,6 +51,13 @@ export default function RootLayout() {
                 options={{
                   presentation: "fullScreenModal",
                   headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="onboarding"
+                options={{
+                  headerShown: false,
+                  gestureEnabled: false,
                 }}
               />
               <Stack.Screen
@@ -114,6 +122,13 @@ function PostHogRouteTracker() {
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const isOfflineMode = process.env.EXPO_PUBLIC_OFFLINE_MODE === 'true';
+  const forceOnboarding = process.env.EXPO_PUBLIC_FORCE_ONBOARDING === 'true';
+  
+  // Use try-catch or optional chaining for query in case api is not generated yet? 
+  // It should be fine.
+  const onboardingData = useQuery(api.onboarding.getOnboardingData);
+  const segments = useSegments();
+  const isOnboardingRoute = segments[0] === 'onboarding';
 
   if (isOfflineMode) {
     return <>{children}</>;
@@ -127,8 +142,31 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // Force onboarding flow logic
+  if (forceOnboarding) {
+      // If we are not in onboarding, go there.
+      // This handles unauthenticated state (landing/sign-in inside onboarding)
+      // and authenticated state (forcing walk-through).
+      if (!isOnboardingRoute) {
+          return <Redirect href="/onboarding" />;
+      }
+      // If we are in onboarding, just render children (which contains the Stack)
+      return <>{children}</>;
+  }
+
   if (!isAuthenticated) {
     return <SignInScreen />;
+  }
+  
+  // Authenticated check for completion
+  if (onboardingData === undefined) {
+      // Data loading
+      return null; 
+  }
+
+  const isCompleted = !!onboardingData?.completedAt;
+  if (!isCompleted && !isOnboardingRoute) {
+      return <Redirect href="/onboarding" />;
   }
 
   return <>{children}</>;

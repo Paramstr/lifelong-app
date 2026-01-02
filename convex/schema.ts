@@ -138,4 +138,38 @@ export default defineSchema({
   })
     .index("by_user_id", ["userId"])
     .index("by_user_id_created_at", ["userId", "createdAt"]),
+
+  /** Onboarding data linked to the user. */
+  onboarding: defineTable({
+    userId: v.id("users"),
+    // Demographics
+    fullName: v.optional(v.string()),
+    age: v.optional(v.number()),
+    gender: v.optional(v.string()),
+    weight: v.optional(v.number()),
+    weightUnit: v.optional(v.string()),
+
+    // Ancestry
+    ancestryOrigins: v.optional(v.array(v.string())),
+    ancestryInfluence: v.optional(v.string()),
+
+    // Dietary
+    allergies: v.optional(v.array(v.string())),
+    customAllergies: v.optional(v.array(v.string())),
+    sensitivities: v.optional(v.string()),
+    dietaryBaseline: v.optional(v.string()),
+    nutritionContext: v.optional(v.string()),
+
+    // Synthesis
+    nutritionTargets: v.optional(
+      v.object({
+        calories: v.optional(v.number()),
+        protein: v.optional(v.number()),
+      })
+    ),
+
+    // Meta
+    completedAt: v.optional(v.number()),
+    step: v.number(),
+  }).index("by_user_id", ["userId"]),
 });

@@ -17,6 +17,7 @@ import type * as mastra_food_scan_schema from "../mastra/food_scan_schema.js";
 import type * as mastra_index from "../mastra/index.js";
 import type * as mastra_normalize_food_scan from "../mastra/normalize_food_scan.js";
 import type * as mastra_workflows_food_scan_workflow from "../mastra/workflows/food_scan_workflow.js";
+import type * as onboarding from "../onboarding.js";
 
 import type {
   ApiFromModules,
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   "mastra/index": typeof mastra_index;
   "mastra/normalize_food_scan": typeof mastra_normalize_food_scan;
   "mastra/workflows/food_scan_workflow": typeof mastra_workflows_food_scan_workflow;
+  onboarding: typeof onboarding;
 }>;
 
 /**
