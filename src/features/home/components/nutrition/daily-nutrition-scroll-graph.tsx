@@ -252,32 +252,6 @@ export const DailyNutritionScrollGraph = ({
   return (
     // <DebugLayout>
       <View style={styles.wrapper}>
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <Text style={styles.subTitleLabel}>Daily Nutrition</Text>
-            <SymbolView name="info.circle" tintColor="#999" style={{ width: 14, height: 14, marginLeft: 4 }} />
-          </View>
-
-          <View style={styles.headerControls}>
-            <View style={styles.nutrientInfo}>
-              {/* <SymbolView 
-                  name={currentConfig.icon} 
-                  tintColor={currentConfig.color} 
-                  style={{ width: 18, height: 18 }} 
-              /> */}
-              <Text style={styles.nutrientLabel}>{currentConfig.label}</Text>
-            </View>
-            <View style={styles.arrows}>
-              <TouchableOpacity onPress={handlePrev} hitSlop={10} style={styles.arrowButton}>
-                <SymbolView name="chevron.left" tintColor="#666" style={{ width: 12, height: 12 }} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleNext} hitSlop={10} style={styles.arrowButton}>
-                <SymbolView name="chevron.right" tintColor="#666" style={{ width: 12, height: 12 }} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-
         {/* <DebugLayout> */}
           <View style={styles.graphSection}>
             {renderBars()}
@@ -306,6 +280,25 @@ export const DailyNutritionScrollGraph = ({
             </View>
           </View>
         {/* </DebugLayout> */}
+
+        <View style={styles.controlsRow}>
+          <View style={styles.nutrientInfo}>
+            {/* <SymbolView 
+                name={currentConfig.icon} 
+                tintColor={currentConfig.color} 
+                style={{ width: 18, height: 18 }} 
+            /> */}
+            <Text style={styles.nutrientLabel}>{currentConfig.label}</Text>
+          </View>
+          <View style={styles.arrows}>
+            <TouchableOpacity onPress={handlePrev} hitSlop={10} style={styles.arrowButton}>
+              <SymbolView name="chevron.left" tintColor="#666" style={{ width: 12, height: 12 }} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleNext} hitSlop={10} style={styles.arrowButton}>
+              <SymbolView name="chevron.right" tintColor="#666" style={{ width: 12, height: 12 }} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     
   );
@@ -316,25 +309,12 @@ const styles = StyleSheet.create(theme => ({
     width: '100%',
     marginHorizontal: -8,
   },
-  header: {
+  controlsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24, 
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  subTitleLabel: {
-    ...theme.typography.label,
-    color: theme.colors.text.secondary,
-    fontWeight: '600',
-  },
-  headerControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    marginTop: 16,
+    paddingHorizontal: 8,
   },
   nutrientInfo: {
     flexDirection: 'row',
