@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, KeyboardAvoidingView, Platform } from 'react-native';
-import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { useRouter } from 'expo-router';
-import { useOnboarding } from '../context/OnboardingContext';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
+import { useOnboarding } from '../context/OnboardingContext';
 
 export default function WeightScreen() {
   const { theme } = useUnistyles();
@@ -38,7 +38,7 @@ export default function WeightScreen() {
                     placeholder="0"
                     placeholderTextColor={theme.colors.text.muted}
                     onSubmitEditing={handleNext}
-                    returnKeyType="next"
+                     
                     maxLength={5}
                 />
                 <Text style={styles.unit}>kg</Text>

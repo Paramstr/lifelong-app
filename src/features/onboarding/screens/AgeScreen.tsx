@@ -37,7 +37,6 @@ export default function AgeScreen() {
                 placeholder="Age"
                 placeholderTextColor={theme.colors.text.muted}
                 onSubmitEditing={handleNext}
-                returnKeyType="next"
                 maxLength={3}
             />
         </View>

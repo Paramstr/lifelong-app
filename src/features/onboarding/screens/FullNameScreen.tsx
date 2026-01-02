@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, KeyboardAvoidingView, Platform } from 'react-native';
-import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { useRouter } from 'expo-router';
-import { useOnboarding } from '../context/OnboardingContext';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DebugLayout } from '@/components/shared/DebugLayout';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
+import { useOnboarding } from '../context/OnboardingContext';
 
 export default function FullNameScreen() {
   const { theme } = useUnistyles();
@@ -35,7 +34,7 @@ export default function FullNameScreen() {
                 placeholder="Your Name"
                 placeholderTextColor={theme.colors.text.muted}
                 onSubmitEditing={handleNext}
-                returnKeyType="next"
+                 
                 autoCapitalize="words"
             />
         </View>
