@@ -166,7 +166,9 @@ const styles = StyleSheet.create(theme => ({
     fontSize: 20,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.subtle,
-    paddingVertical: 12,
+    paddingTop: 10,
+    paddingBottom: 0,
+    height: 60,
     color: theme.colors.text.primary,
   },
   customList: {

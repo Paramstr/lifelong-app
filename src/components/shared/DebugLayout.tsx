@@ -7,7 +7,10 @@ interface DebugLayoutProps {
   style?: StyleProp<ViewStyle>;
   label?: string;
   showDimensions?: boolean;
+  showFill?: boolean;
 }
+
+const DEBUG_LAYOUT_SHOW_FILL = true;
 
 const pickStyle = (obj: any, keys: string[]) => {
   const result: any = {};
@@ -29,8 +32,10 @@ const DebugLayoutSingle = ({
   style,
   label = 'Component',
   showDimensions = false,
+  showFill: showFillProp,
 }: DebugLayoutProps) => {
   const [layout, setLayout] = useState<{ width: number; height: number } | null>(null);
+  const showFill = showFillProp ?? DEBUG_LAYOUT_SHOW_FILL;
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -283,34 +288,38 @@ const DebugLayoutSingle = ({
 
   return (
     <View
-      style={[styles.container, style, childMarginStyle]}
+      style={[styles.container, !showFill && styles.borderOnly, style, childMarginStyle]}
       onLayout={onLayout}
     >
       {renderedChildren}
-      {layout && (
+      {layout && (showFill || showDimensions) && (
         <View style={styles.overlay} pointerEvents="none">
-          {/* Visual Padding (Red) */}
-          <View style={[styles.paddingOverlay, { height: paddingTop as number, top: 0, left: 0, right: 0 }]} />
-          <View style={[styles.paddingOverlay, { height: paddingBottom as number, bottom: 0, left: 0, right: 0 }]} />
-          <View style={[styles.paddingOverlay, { width: paddingLeft as number, top: 0, bottom: 0, left: 0 }]} />
-          <View style={[styles.paddingOverlay, { width: paddingRight as number, top: 0, bottom: 0, right: 0 }]} />
+          {showFill && (
+            <>
+              {/* Visual Padding (Red) */}
+              <View style={[styles.paddingOverlay, { height: paddingTop as number, top: 0, left: 0, right: 0 }]} />
+              <View style={[styles.paddingOverlay, { height: paddingBottom as number, bottom: 0, left: 0, right: 0 }]} />
+              <View style={[styles.paddingOverlay, { width: paddingLeft as number, top: 0, bottom: 0, left: 0 }]} />
+              <View style={[styles.paddingOverlay, { width: paddingRight as number, top: 0, bottom: 0, right: 0 }]} />
 
-          {/* Visual Margin (Green) - rendered outside */}
-          <View style={[styles.marginOverlay, { height: marginTop as number, top: -(marginTop as number), left: 0, right: 0 }]} />
-          <View style={[styles.marginOverlay, { height: marginBottom as number, bottom: -(marginBottom as number), left: 0, right: 0 }]} />
-          <View style={[styles.marginOverlay, { width: marginLeft as number, top: 0, bottom: 0, left: -(marginLeft as number) }]} />
-          <View style={[styles.marginOverlay, { width: marginRight as number, top: 0, bottom: 0, right: -(marginRight as number) }]} />
+              {/* Visual Margin (Green) - rendered outside */}
+              <View style={[styles.marginOverlay, { height: marginTop as number, top: -(marginTop as number), left: 0, right: 0 }]} />
+              <View style={[styles.marginOverlay, { height: marginBottom as number, bottom: -(marginBottom as number), left: 0, right: 0 }]} />
+              <View style={[styles.marginOverlay, { width: marginLeft as number, top: 0, bottom: 0, left: -(marginLeft as number) }]} />
+              <View style={[styles.marginOverlay, { width: marginRight as number, top: 0, bottom: 0, right: -(marginRight as number) }]} />
 
-          {/* Measurement lines (only if value >= 12) */}
-          {renderPaddingMeasureLine('y', 0, paddingTop as number, paddingTop as number)}
-          {renderPaddingMeasureLine('y', (layout?.height ?? 0) - (paddingBottom as number), layout?.height ?? 0, paddingBottom as number)}
-          {renderPaddingMeasureLine('x', 0, paddingLeft as number, paddingLeft as number)}
-          {renderPaddingMeasureLine('x', (layout?.width ?? 0) - (paddingRight as number), layout?.width ?? 0, paddingRight as number)}
+              {/* Measurement lines (only if value >= 12) */}
+              {renderPaddingMeasureLine('y', 0, paddingTop as number, paddingTop as number)}
+              {renderPaddingMeasureLine('y', (layout?.height ?? 0) - (paddingBottom as number), layout?.height ?? 0, paddingBottom as number)}
+              {renderPaddingMeasureLine('x', 0, paddingLeft as number, paddingLeft as number)}
+              {renderPaddingMeasureLine('x', (layout?.width ?? 0) - (paddingRight as number), layout?.width ?? 0, paddingRight as number)}
 
-          {renderMarginMeasureLine('y', -(marginTop as number), 0, marginTop as number)}
-          {renderMarginMeasureLine('y', layout?.height ?? 0, (layout?.height ?? 0) + (marginBottom as number), marginBottom as number)}
-          {renderMarginMeasureLine('x', -(marginLeft as number), 0, marginLeft as number)}
-          {renderMarginMeasureLine('x', layout?.width ?? 0, (layout?.width ?? 0) + (marginRight as number), marginRight as number)}
+              {renderMarginMeasureLine('y', -(marginTop as number), 0, marginTop as number)}
+              {renderMarginMeasureLine('y', layout?.height ?? 0, (layout?.height ?? 0) + (marginBottom as number), marginBottom as number)}
+              {renderMarginMeasureLine('x', -(marginLeft as number), 0, marginLeft as number)}
+              {renderMarginMeasureLine('x', layout?.width ?? 0, (layout?.width ?? 0) + (marginRight as number), marginRight as number)}
+            </>
+          )}
 
           {showDimensions && (
             <View style={[styles.labelContainer, { top: paddingTop as number, transform: [{ translateY: 0 }] }]}>
@@ -319,11 +328,15 @@ const DebugLayoutSingle = ({
               </Text>
             </View>
           )}
-          {/* Corner markers for precise boundary checking */}
-          <View style={[styles.corner, styles.topLeft]} />
-          <View style={[styles.corner, styles.topRight]} />
-          <View style={[styles.corner, styles.bottomLeft]} />
-          <View style={[styles.corner, styles.bottomRight]} />
+          {showFill && (
+            <>
+              {/* Corner markers for precise boundary checking */}
+              <View style={[styles.corner, styles.topLeft]} />
+              <View style={[styles.corner, styles.topRight]} />
+              <View style={[styles.corner, styles.bottomLeft]} />
+              <View style={[styles.corner, styles.bottomRight]} />
+            </>
+          )}
         </View>
       )}
     </View>
@@ -358,6 +371,9 @@ const styles = StyleSheet.create(theme => ({
     position: 'relative',
     // overflowing visible is needed to show margins outside
     overflow: 'visible',
+  },
+  borderOnly: {
+    backgroundColor: 'transparent',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

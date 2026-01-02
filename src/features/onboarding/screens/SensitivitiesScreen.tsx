@@ -70,6 +70,7 @@ const styles = StyleSheet.create(theme => ({
     fontSize: 20,
     color: theme.colors.text.primary,
     lineHeight: 28,
+    paddingVertical: 20,
   },
   footer: {
     paddingTop: 20,

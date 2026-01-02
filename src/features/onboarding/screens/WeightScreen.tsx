@@ -79,13 +79,16 @@ const styles = StyleSheet.create(theme => ({
     alignItems: 'baseline',
     borderBottomWidth: 2,
     borderBottomColor: theme.colors.border.subtle,
-    paddingVertical: 12,
+    height: 60,
   },
   input: {
     ...theme.typography.headline,
     fontSize: 28,
     color: theme.colors.text.primary,
     flex: 1,
+    paddingTop: 10,
+    paddingBottom: 0,
+    height: 60,
   },
   unit: {
     fontSize: 28,

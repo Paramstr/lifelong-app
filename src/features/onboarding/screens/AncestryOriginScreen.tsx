@@ -107,7 +107,10 @@ const styles = StyleSheet.create(theme => ({
   },
   searchBar: {
     ...theme.typography.body,
-    padding: 16,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 0,
+    height: 60,
     borderRadius: 12,
     backgroundColor: theme.colors.surface.card,
     color: theme.colors.text.primary,
