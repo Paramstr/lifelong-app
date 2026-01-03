@@ -20,6 +20,7 @@ import Animated, {
 import { useOnboarding } from '../context/OnboardingContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+//
 const OPTIONS = ['none', 'balanced', 'strong'] as const;
 type InfluenceLevel = typeof OPTIONS[number];
 const LABELS: Record<InfluenceLevel, string> = {

@@ -122,6 +122,7 @@ function PostHogRouteTracker() {
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const isOfflineMode = process.env.EXPO_PUBLIC_OFFLINE_MODE === 'true';
+  const disableOnboarding = process.env.EXPO_PUBLIC_DISABLE_ONBOARDING === 'true';
   const forceOnboarding = process.env.EXPO_PUBLIC_FORCE_ONBOARDING === 'true';
   
   // Use try-catch or optional chaining for query in case api is not generated yet? 
@@ -140,6 +141,10 @@ function AuthGate({ children }: { children: React.ReactNode }) {
         <ActivityIndicator />
       </View>
     );
+  }
+
+  if (disableOnboarding) {
+    return isAuthenticated ? <>{children}</> : <SignInScreen />;
   }
 
   // Force onboarding flow logic
