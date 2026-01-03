@@ -1,8 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, PanResponder, View, TouchableOpacity, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { GlassView } from 'expo-glass-effect';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { useRouter } from 'expo-router';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  runOnJS,
+  useDerivedValue,
+  interpolateColor,
+  withRepeat,
+  withTiming,
+  Easing,
+  useAnimatedProps,
+} from 'react-native-reanimated';
 import { useOnboarding } from '../context/OnboardingContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,6 +28,17 @@ const LABELS: Record<InfluenceLevel, string> = {
   strong: 'Strong',
 };
 
+// --- TWEAK COLORS HERE ---
+const SLIDER_CONFIG = {
+  // Use light/pastel versions for a "lighter" look
+  colors: ['#A8D5BA', '#BAE1FF'], // Light Forest Green to Soft Sky Blue
+  stops: [0, 1], // You can add more colors/stops here if needed
+  trackOpacity: 0.6,
+  thumbTintOpacity: 0.25,
+};
+
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
+
 export default function AncestryWeightScreen() {
   const { theme } = useUnistyles();
   const router = useRouter();
@@ -23,86 +48,106 @@ export default function AncestryWeightScreen() {
   );
   const insets = useSafeAreaInsets();
   const [trackWidth, setTrackWidth] = useState(0);
-  const sliderX = useRef(new Animated.Value(0)).current;
-  const startXRef = useRef(0);
-  const currentXRef = useRef(0);
-  const currentLevelRef = useRef(level);
 
   const thumbSize = 36;
   const trackHeight = 18;
-  const sliderRange = Math.max(0, trackWidth - thumbSize);
+  
+  const sliderX = useSharedValue(0);
+  const thumbScale = useSharedValue(1);
+  const contextX = useSharedValue(0);
+  const gradientShift = useSharedValue(0);
 
   useEffect(() => {
-    const id = sliderX.addListener(({ value }) => {
-      currentXRef.current = value;
-    });
-    return () => sliderX.removeListener(id);
-  }, [sliderX]);
+    gradientShift.value = withRepeat(
+      withTiming(1, { duration: 3000, easing: Easing.sin }),
+      -1,
+      true
+    );
+  }, []);
 
+  // Sync initial level to slider position once we know the width
   useEffect(() => {
-    currentLevelRef.current = level;
-  }, [level]);
-
-  useEffect(() => {
-    if (!trackWidth) return;
-    const index = OPTIONS.indexOf(level);
-    const targetX = (sliderRange * index) / (OPTIONS.length - 1);
-    sliderX.setValue(targetX);
-  }, [level, sliderRange, sliderX, trackWidth]);
-
-  const clamp = (value: number) => Math.min(Math.max(value, 0), sliderRange);
-
-  const updateLevelFromX = (x: number) => {
-    if (sliderRange === 0) return;
-    const ratio = x / sliderRange;
-    const index = Math.round(ratio * (OPTIONS.length - 1));
-    const nextLevel = OPTIONS[index];
-    if (nextLevel !== currentLevelRef.current) {
-      currentLevelRef.current = nextLevel;
-      setLevel(nextLevel);
+    if (trackWidth > 0) {
+      const sliderRange = Math.max(0, trackWidth - thumbSize);
+      const index = OPTIONS.indexOf(level);
+      const targetX = (sliderRange * index) / (OPTIONS.length - 1);
+      sliderX.value = withSpring(targetX, { damping: 20, stiffness: 150 });
     }
+  }, [trackWidth, level, thumbSize]);
+
+  const updateLevel = (newLevel: InfluenceLevel) => {
+    setLevel(newLevel);
   };
 
-  const snapToLevel = (nextLevel: InfluenceLevel) => {
-    const index = OPTIONS.indexOf(nextLevel);
-    const targetX = (sliderRange * index) / (OPTIONS.length - 1);
-    Animated.spring(sliderX, {
-      toValue: targetX,
-      useNativeDriver: false,
-      tension: 120,
-      friction: 18,
-    }).start();
-  };
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      contextX.value = sliderX.value;
+      thumbScale.value = withSpring(1.5);
+    })
+    .onUpdate((e) => {
+      const sliderRange = Math.max(0, trackWidth - thumbSize);
+      if (sliderRange === 0) return;
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
-        onPanResponderGrant: (event) => {
-          const pressX = clamp(event.nativeEvent.locationX - thumbSize / 2);
-          sliderX.setValue(pressX);
-          updateLevelFromX(pressX);
-          startXRef.current = pressX;
-        },
-        onPanResponderMove: (_, gesture) => {
-          const nextX = clamp(startXRef.current + gesture.dx);
-          sliderX.setValue(nextX);
-          updateLevelFromX(nextX);
-        },
-        onPanResponderRelease: (_, gesture) => {
-          const nextX = clamp(startXRef.current + gesture.dx);
-          const ratio = sliderRange === 0 ? 0 : nextX / sliderRange;
-          const index = Math.round(ratio * (OPTIONS.length - 1));
-          const snappedLevel = OPTIONS[index];
-          setLevel(snappedLevel);
-          snapToLevel(snappedLevel);
-        },
-      }),
-    [sliderRange, sliderX]
-  );
+      let nextX = contextX.value + e.translationX;
+      // Clamp
+      if (nextX < 0) nextX = 0;
+      if (nextX > sliderRange) nextX = sliderRange;
 
-  const fillWidth = useMemo(() => Animated.add(sliderX, thumbSize / 2), [sliderX, thumbSize]);
+      sliderX.value = nextX;
+
+      const ratio = nextX / sliderRange;
+      const index = Math.round(ratio * (OPTIONS.length - 1));
+      // const nextLevel = OPTIONS[index];
+    })
+    .onEnd(() => {
+      const sliderRange = Math.max(0, trackWidth - thumbSize);
+      thumbScale.value = withSpring(1);
+
+      if (sliderRange > 0) {
+        const ratio = sliderX.value / sliderRange;
+        const index = Math.round(ratio * (OPTIONS.length - 1));
+        const snappedLevel = OPTIONS[index];
+        const targetX = (sliderRange * index) / (OPTIONS.length - 1);
+
+        sliderX.value = withSpring(targetX, { damping: 20, stiffness: 150 });
+        runOnJS(updateLevel)(snappedLevel);
+      }
+    });
+
+  const thumbAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: sliderX.value },
+        { scale: thumbScale.value },
+      ],
+    };
+  });
+
+  const thumbTintStyle = useAnimatedStyle(() => {
+    const sliderRange = Math.max(0, trackWidth - thumbSize);
+    const backgroundColor = interpolateColor(
+      sliderX.value,
+      [0, sliderRange],
+      SLIDER_CONFIG.colors
+    );
+    return {
+      backgroundColor,
+    };
+  });
+
+  const activeTrackAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      width: sliderX.value + thumbSize / 2,
+    };
+  });
+
+  const gradientAnimatedProps = useAnimatedProps(() => {
+      const shift = gradientShift.value * 0.2;
+      return {
+          start: { x: 0 - shift, y: 0 },
+          end: { x: 1 + shift, y: 0 }
+      };
+  });
 
   const handleNext = () => {
     updateData({ ancestryInfluence: level });
@@ -110,68 +155,106 @@ export default function AncestryWeightScreen() {
     router.push('/onboarding/allergies');
   };
 
+  const handlePointPress = (opt: InfluenceLevel) => {
+    setLevel(opt);
+  };
+
   return (
     <View style={styles.container}>
-        <View style={[styles.content, { paddingTop: insets.top + 60 }]}>
-            <Text style={styles.prompt}>How much should this influence suggestions?</Text>
-            
-            <View style={styles.sliderContainer}>
-                <View
-                  style={[styles.trackWrapper, { height: thumbSize }]}
-                  onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
-                  {...panResponder.panHandlers}
-                >
-                  <View style={[styles.trackBase, { height: trackHeight, borderRadius: trackHeight / 2 }]} />
-                  <Animated.View style={[styles.trackActive, { height: trackHeight, borderRadius: trackHeight / 2, width: fillWidth }]}>
-                    <View style={[styles.trackActiveOverlay, { backgroundColor: theme.colors.text.primary }]} />
-                    <GlassView style={styles.trackActiveGlass} glassEffectStyle="regular" />
-                  </Animated.View>
-                  <Animated.View
-                    style={[
-                      styles.thumbContainer,
-                      { width: thumbSize, height: thumbSize, borderRadius: thumbSize / 2, transform: [{ translateX: sliderX }] }
-                    ]}
-                    pointerEvents="none"
-                  >
-                    <GlassView style={styles.thumbGlass} glassEffectStyle="regular" />
-                    <View style={[styles.thumbRing, { borderColor: theme.colors.border.subtle }]} />
-                  </Animated.View>
-                </View>
-                <View style={styles.points}>
-                    {OPTIONS.map((opt) => (
-                        <TouchableOpacity 
-                            key={opt}
-                            style={styles.pointContainer} 
-                            onPress={() => {
-                              setLevel(opt);
-                              snapToLevel(opt);
-                            }}
-                            activeOpacity={0.8}
-                        >
-                             <View style={[
-                                 styles.point, 
-                                 level === opt && styles.activePoint,
-                                 level === opt && { backgroundColor: theme.colors.text.primary }
-                             ]} />
-                             <Text style={[
-                                 styles.label, 
-                                 level === opt && styles.activeLabel
-                             ]}>{LABELS[opt]}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+      <View style={[styles.content, { paddingTop: insets.top + 60 }]}>
+        <Text style={styles.prompt}>How much should this influence suggestions?</Text>
+
+        <View style={styles.sliderContainer}>
+          <GestureDetector gesture={panGesture}>
+            <View
+              style={[styles.trackWrapper, { height: thumbSize }]}
+              onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
+            >
+              {/* Background Track (Glass) */}
+              <View style={[styles.trackBase, { height: trackHeight, borderRadius: trackHeight / 2 }]}>
+                 <GlassView style={styles.glassBase} glassEffectStyle="regular" />
+                 <View style={styles.glassBaseOverlay} />
+                {/* Points on the bar */}
+                {trackWidth > 0 && OPTIONS.map((opt, i) => {
+                  const pct = i / (OPTIONS.length - 1);
+                  const thumbCenterRange = trackWidth - thumbSize;
+                  const left = (thumbSize / 2) + (pct * thumbCenterRange);
+
+                  return (
+                    <View
+                      key={opt}
+                      style={[
+                        styles.trackPoint,
+                        { left: left - 2 }
+                      ]}
+                    />
+                  );
+                })}
+              </View>
+
+              {/* Active Track (Animated Width & Gradient) */}
+              <Animated.View
+                style={[
+                  styles.trackActive,
+                  { height: trackHeight, borderRadius: trackHeight / 2 },
+                  activeTrackAnimatedStyle,
+                ]}
+              >
+                <AnimatedLinearGradient
+                  colors={SLIDER_CONFIG.colors}
+                  locations={SLIDER_CONFIG.stops}
+                  animatedProps={gradientAnimatedProps}
+                  style={{ width: trackWidth, height: '100%', opacity: SLIDER_CONFIG.trackOpacity }}
+                />
+              </Animated.View>
+
+              {/* Thumb (Animated Position & Scale) */}
+              <Animated.View
+                style={[
+                  styles.thumbContainer,
+                  {
+                    width: thumbSize,
+                    height: thumbSize,
+                    borderRadius: thumbSize / 2,
+                  },
+                  thumbAnimatedStyle,
+                ]}
+              >
+                <GlassView style={styles.thumbGlass} glassEffectStyle="regular" />
+                {/* Thumb Tint Layer */}
+                <Animated.View style={[styles.thumbTint, thumbTintStyle, { opacity: SLIDER_CONFIG.thumbTintOpacity }]} />
+                <View style={[styles.thumbRing, { borderColor: theme.colors.border.subtle }]} />
+              </Animated.View>
             </View>
-        </View>
-        
-        <View style={[styles.footer, { paddingBottom: insets.bottom + 20 }]}>
-             <TouchableOpacity 
-                onPress={handleNext} 
-                style={styles.button}
+          </GestureDetector>
+
+          <View style={styles.labelsContainer}>
+            {OPTIONS.map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                style={styles.labelWrapper}
+                onPress={() => handlePointPress(opt)}
                 activeOpacity={0.8}
-             >
-                <Text style={styles.buttonText}>Next</Text>
-             </TouchableOpacity>
+              >
+                <Text style={[
+                  styles.label,
+                  level === opt && styles.activeLabel
+                ]}>{LABELS[opt]}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
+      </View>
+
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 20 }]}>
+        <TouchableOpacity
+          onPress={handleNext}
+          style={styles.button}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -204,21 +287,31 @@ const styles = StyleSheet.create(theme => ({
     left: 0,
     right: 0,
     overflow: 'hidden',
-    backgroundColor: theme.colors.border.subtle,
-    opacity: 0.35,
+    backgroundColor: theme.colors.border.subtle, // Fallback
+  },
+  glassBase: {
+      flex: 1,
+  },
+  glassBaseOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: theme.colors.background.primary,
+      opacity: 0.1,
+  },
+  trackPoint: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 4,
+    borderRadius: 2,
+    backgroundColor: theme.colors.text.muted,
+    opacity: 0.5,
+    height: 8,
+    top: 5,
   },
   trackActive: {
     position: 'absolute',
     left: 0,
     overflow: 'hidden',
-  },
-  trackActiveOverlay: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    opacity: 0.18,
   },
   trackActiveGlass: {
     flex: 1,
@@ -237,6 +330,10 @@ const styles = StyleSheet.create(theme => ({
   thumbGlass: {
     flex: 1,
   },
+  thumbTint: {
+      ...StyleSheet.absoluteFillObject,
+      opacity: 0.3, // Subtle tint
+  },
   thumbRing: {
     position: 'absolute',
     top: 4,
@@ -246,30 +343,17 @@ const styles = StyleSheet.create(theme => ({
     borderRadius: 999,
     borderWidth: 1,
   },
-  points: {
+  labelsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 16,
+    marginTop: 12,
   },
-  pointContainer: {
+  labelWrapper: {
     alignItems: 'center',
-    flex: 1,
-  },
-  point: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: theme.colors.background.primary,
-    borderWidth: 2,
-    borderColor: theme.colors.border.subtle,
-    marginBottom: 12,
-  },
-  activePoint: {
-    borderColor: theme.colors.text.primary,
-    transform: [{ scale: 1.2 }],
+    paddingVertical: 8,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     color: theme.colors.text.muted,
     fontWeight: '500',
   },
