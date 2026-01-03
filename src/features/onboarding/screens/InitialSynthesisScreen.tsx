@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useUnistyles } from 'react-native-unistyles';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { useRouter } from 'expo-router';
 import { useOnboarding } from '../context/OnboardingContext';
 import Animated, { FadeIn } from 'react-native-reanimated';
